@@ -1,5 +1,6 @@
-# weather-forecast
-기상청 초단기 예보 API를 이용한 스프링 프로젝트입니다
+# Mail Summary
+Open AI API를 이용한 메일 요약 서비스 프로젝트입니다.
+
 ### git 저장소 연결하기
 
 ---

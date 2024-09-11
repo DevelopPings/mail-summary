@@ -1,5 +1,5 @@
 # Mail Summary
-Open AI API를 이용한 메일 요약 서비스 프로젝트입니다.
+Open AI API를 이용한 메일 요약 서비스 프로젝트입니다. 
 
 ### git 저장소 연결하기
 

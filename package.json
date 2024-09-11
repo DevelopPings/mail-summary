@@ -4,7 +4,8 @@
 	"description": "Chrome extension project that summarizes the content of an email and generates a todo-list",
 	"main": "script.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"build-css": "sass assets/styles/index.scss public/dist/style.css --no-source-map",
+		"watch-css": "sass --watch assets/styles/index.scss public/dist/style.css --no-source-map"
 	},
 	"repository": {
 		"type": "git",
@@ -21,7 +22,8 @@
 		"eslint": "^9.10.0",
 		"eslint-config-prettier": "^9.1.0",
 		"globals": "^15.9.0",
-		"prettier": "^3.3.3"
+		"prettier": "^3.3.3",
+		"sass": "^1.78.0"
 	},
 	"type": "module",
 	"dependencies": {

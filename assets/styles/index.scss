@@ -1,0 +1,14 @@
+@import './reset';
+@import './constants';
+@import './mixins';
+@import './font';
+@import './animations';
+@import './images';
+@import './components';
+@import './layouts';
+@import './routes';
+
+* {
+	box-sizing: border-box;
+	font-family: 'SUIT', sans-serif !important;
+}

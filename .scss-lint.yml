@@ -1,0 +1,29 @@
+linters:
+    BorderZero:
+        enabled: true
+    ColorVariable:
+        enabled: true
+    DuplicateProperty:
+        enabled: true
+    EmptyRule:
+        enabled: true
+    Indentation:
+        enabled: true
+        width: 1
+        character: tab
+    PropertySortOrder:
+        enabled: true
+    SelectorIndentation:
+        enabled: true
+        width: 1
+        character: tab
+    SpaceAfterPropertyColon:
+        enabled: true
+    SpaceBeforeSelector:
+        enabled: true
+    Comment:
+        enabled: false
+    PseudoElement:
+        enabled: false
+    ImportantRule:
+        enabled: false

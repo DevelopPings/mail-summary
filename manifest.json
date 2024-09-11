@@ -1,10 +1,10 @@
 {
-    "manifest_version": 3,
-    "name": "Mail Summary Service",
-    "version": "1.0",
-    "description": "This is a mail summary service using AI",
-    "action": {
-      "default_popup": "main.html",
-      "default_icon": "images/icon_light.png"
-    }
+	"manifest_version": 3,
+	"name": "웨-일이 쉽지?(Whale Mail)",
+	"version": "1.0",
+	"description": "This is a mail summary service using AI",
+	"action": {
+		"default_popup": "main.html",
+		"default_icon": "images/icon_light.png"
+	}
 }

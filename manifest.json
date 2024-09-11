@@ -5,6 +5,6 @@
     "description": "This is a mail summary service using AI",
     "action": {
       "default_popup": "main.html",
-      "default_icon": "images/free-icon-e-mail.png"
+      "default_icon": "images/icon_light.png"
     }
 }

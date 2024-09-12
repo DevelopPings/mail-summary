@@ -1,1 +1,12 @@
 @import './layouts/header';
+@import './layouts/footer';
+
+body {
+	width: 320px;
+	height: 500px;
+	background: #f3f3f3;
+}
+
+html {
+	background: black;
+}

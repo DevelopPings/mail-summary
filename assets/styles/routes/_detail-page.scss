@@ -1,2 +1,37 @@
 #detail-page {
+	header {
+		height: 80px;
+
+		#title {
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			padding-top: 5px;
+			width: 300px;
+			height: 60px;
+
+			h1 {
+				font-size: 18px;
+				font-weight: bold;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+
+			#mail-disc {
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+				height: 30px;
+				p {
+					font-size: 12px;
+				}
+			}
+		}
+
+		#header-side {
+			width: 20px;
+			text-align: right;
+		}
+	}
 }

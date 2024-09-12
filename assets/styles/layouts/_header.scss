@@ -1,14 +1,69 @@
 header {
+	align-items: center;
+	background: $header-light;
+	border-bottom: 1px solid $gray05;
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
-	background: gold;
 	padding: 5px;
+	position: relative;
+
 	#title {
 		background: tomato;
 	}
 
 	#header-side {
 		background: cornflowerblue;
+	}
+
+	.toggle-mode {
+		background-color: $red;
+		background-image: url($light-mode);
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: 20px 20px;
+
+		border: 1px solid $gray05;
+		border-radius: 50%;
+
+		position: absolute;
+		right: 27px;
+		bottom: 0;
+
+		transform: translateY(20px);
+		height: 39px;
+		width: 39px;
+	}
+}
+
+.main-header {
+	color: $gray03;
+	padding: 18px 23px 16px 25px;
+
+	&-left {
+		flex-grow: 1;
+	}
+
+	&-title {
+		color: $primary-light;
+		font-size: 22px;
+		margin-bottom: 10px;
+	}
+
+	.extra-bold {
+		font-weight: 800;
+	}
+
+	.today-date {
+		font-size: 12px;
+		font-weight: 500;
+	}
+
+	.task-count {
+		font-size: 12px;
+		transform: translateY(-8px);
+	}
+
+	.bold {
+		font-weight: 700;
 	}
 }

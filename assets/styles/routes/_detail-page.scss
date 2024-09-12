@@ -1,7 +1,25 @@
 #detail-page {
 	header {
-		height: 80px;
-
+		height: 90px;
+		> * {
+			padding: 15px 0;
+			border: 0;
+			outline: 0;
+		}
+		#return {
+			background-color: salmon;
+			align-self: baseline;
+			span {
+				background-image: url($go-back);
+				width: 24px;
+				height: 24px;
+				// position: absolute;
+				// top: 0;
+				// left: 0;
+				display: inline-block;
+				background-color: red;
+			}
+		}
 		#title {
 			display: flex;
 			flex-direction: column;
@@ -10,13 +28,17 @@
 			width: 300px;
 			height: 60px;
 
-			h1 {
+			input {
+				background-color: aqua;
 				font-size: 18px;
-				font-weight: bold;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				white-space: nowrap;
 			}
+			// h1 {
+			// 	font-size: 18px;
+			// 	font-weight: bold;
+			// 	overflow: hidden;
+			// 	text-overflow: ellipsis;
+			// 	white-space: nowrap;
+			// }
 
 			#mail-disc {
 				display: flex;
@@ -32,6 +54,25 @@
 		#header-side {
 			width: 20px;
 			text-align: right;
+			font-size: 14px;
+			height: 60px;
+			padding: 3px;
+
+			input {
+				font-size: 14px;
+			}
+
+			button {
+				border: 0;
+				cursor: pointer;
+				padding: 3px;
+				align-self: baseline;
+			}
 		}
+	}
+
+	#content {
+		padding: 10px 30px;
+		height: calc(100% - 150px);
 	}
 }

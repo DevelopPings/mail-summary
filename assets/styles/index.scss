@@ -4,11 +4,14 @@
 @import './font';
 @import './animations';
 @import './images';
-@import './components';
-@import './layouts';
-@import './routes';
 
 * {
 	box-sizing: border-box;
 	font-family: 'SUIT', sans-serif !important;
+	font-weight: 400;
+	letter-spacing: -0.32px;
 }
+
+@import './layouts';
+@import './components';
+@import './routes';

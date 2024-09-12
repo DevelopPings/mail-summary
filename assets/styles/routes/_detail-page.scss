@@ -3,34 +3,29 @@
 		height: 90px;
 		> * {
 			padding: 15px 0;
+			padding-top: 5px;
 			border: 0;
 			outline: 0;
 		}
 		#return {
-			background-color: salmon;
-			align-self: baseline;
+			height: 60px;
 			span {
 				background-image: url($go-back);
 				width: 24px;
 				height: 24px;
-				// position: absolute;
-				// top: 0;
-				// left: 0;
 				display: inline-block;
-				background-color: red;
 			}
 		}
 		#title {
 			display: flex;
 			flex-direction: column;
 			justify-content: space-between;
-			padding-top: 5px;
 			width: 300px;
 			height: 60px;
 
 			input {
-				background-color: aqua;
 				font-size: 18px;
+				font-weight: bold;
 			}
 			// h1 {
 			// 	font-size: 18px;
@@ -51,12 +46,11 @@
 			}
 		}
 
-		#header-side {
+		#mail-setting {
 			width: 20px;
-			text-align: right;
+			text-align: center;
 			font-size: 14px;
 			height: 60px;
-			padding: 3px;
 
 			input {
 				font-size: 14px;
@@ -65,8 +59,11 @@
 			button {
 				border: 0;
 				cursor: pointer;
-				padding: 3px;
+				padding: 12px 5px;
 				align-self: baseline;
+				width: 1px;
+				height: 12px;
+				background: url($three-dots) no-repeat center;
 			}
 		}
 	}
@@ -74,5 +71,62 @@
 	#content {
 		padding: 10px 30px;
 		height: calc(100% - 150px);
+
+		section {
+			margin-top: 15px;
+			h2 {
+				margin-bottom: 10px;
+			}
+		}
+		#summary {
+			h2 {
+				display: flex;
+				span {
+					background: url($chat-bubble);
+					width: 16.74px;
+					height: 18px;
+					display: inline-block;
+				}
+			}
+
+			textarea {
+				height: 100px;
+			}
+		}
+
+		#check-list {
+			h2 {
+				display: flex;
+				span {
+					background: url($check);
+					width: 18px;
+					height: 18px;
+					display: inline-block;
+				}
+			}
+
+			ul {
+				li {
+					margin-bottom: 6px;
+					span {
+						background: url($check-box-blank);
+						width: 12.43px;
+						height: 12px;
+						display: inline-block;
+					}
+					input {
+						width: 230.04px;
+					}
+					&.checked {
+						span {
+							background: url($check-box);
+						}
+						input {
+							text-decoration: line-through;
+						}
+					}
+				}
+			}
+		}
 	}
 }

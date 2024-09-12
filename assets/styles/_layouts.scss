@@ -10,3 +10,16 @@ body {
 html {
 	background: black;
 }
+
+input,
+textarea {
+	outline: 0;
+	border: 0;
+	width: 260px;
+	font-size: 14px;
+	border-radius: 7px;
+}
+
+textarea {
+	resize: none;
+}

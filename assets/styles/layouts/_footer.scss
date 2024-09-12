@@ -1,6 +1,22 @@
 footer {
 	// display: none;
-	padding: 30px;
 	height: 60px;
 	background-color: mistyrose;
+	display: flex;
+	justify-content: center;
+	section {
+		display: flex;
+		align-items: center;
+		input {
+			width: 239px;
+			height: 43px;
+		}
+
+		button {
+			width: 43px;
+			height: 43px;
+			background: url($reset) no-repeat center;
+			border-radius: 7px;
+		}
+	}
 }

@@ -1,4 +1,4 @@
-#detail-page {
+#detail-body {
 	header {
 		height: 90px;
 		> * {
@@ -14,6 +14,7 @@
 				width: 24px;
 				height: 24px;
 				display: inline-block;
+				cursor: pointer;
 			}
 		}
 		#title {
@@ -128,5 +129,15 @@
 				}
 			}
 		}
+	}
+}
+.change {
+	header {
+		#mail-setting {
+			display: none;
+		}
+	}
+
+	footer {
 	}
 }

@@ -1,6 +1,8 @@
 const optionButtons = document.querySelectorAll('.option-button');
 const optionMenu = document.querySelector('.option-menu');
 const viewportHeight = 500;
+const mainPage = '/public/main.html';
+const detailPage = '/public/detail.html';
 
 // 옵션 메뉴 클릭
 optionButtons.forEach((el) => {
@@ -11,7 +13,21 @@ optionButtons.forEach((el) => {
 });
 
 // 바깥 부분 클릭 (꺼짐)
-optionMenu.addEventListener('click', () => hideOptionMenu());
+optionMenu.addEventListener('click', (event) => {
+	if (isOutBorder(event)) {
+		if (location.pathname == mainPage) {
+			// write event code
+		} else if (location.pathname == detailPage) {
+			// write event code
+		}
+	}
+	hideOptionMenu();
+});
+
+function isOutBorder(event) {
+	// event.target
+	return false;
+}
 
 const showOptionMenu = (rect) => {
 	if (optionMenu.style.visibility === 'visible') return;

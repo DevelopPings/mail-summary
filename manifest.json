@@ -12,8 +12,6 @@
 		"service_worker": "assets/scripts/background.js"
 	},
 	"icons": {
-		"16": "public/images/logo-light.png",
-		"48": "public/images/logo-light.png",
-		"128": "public/images/logo-light.png"
+		"140": "public/images/logo-light.png"
 	}
 }

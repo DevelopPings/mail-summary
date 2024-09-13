@@ -1,16 +1,19 @@
-// top level await is available in ES modules loaded from script tags
-const [tab] = await chrome.tabs.query({
-  active: true,
-  lastFocusedWindow: true
-});
+fetch('images/logo-light.svg')
+	.then((response) => response.text())
+	.then((svgData) => {
+		document.getElementById('svg').innerHTML = svgData;
 
-const tabId = tab.id;
-const button = document.getElementById('openSidePanel');
-button.addEventListener('click', async () => {
-  await chrome.sidePanel.open({ tabId });
-  await chrome.sidePanel.setOptions({
-    tabId,
-    path: 'sidepanel-tab.html',
-    enabled: true
-  });
-});
+		const logo = document.querySelector('#svg #logo');
+		console.log(logo);
+		const number = [3, 4, 1, 0, 2, 2, 0, 1, 4];
+		number.forEach((num, index) => {
+			setTimeout(() => {
+				let x = 0;
+				x += 0.05;
+				logo.children[num].animate([{ opacity: x }], {
+					duration: 1200,
+					iterations: Infinity,
+				});
+			}, index * 200);
+		});
+	});

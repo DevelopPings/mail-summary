@@ -20,3 +20,13 @@ footer {
 		}
 	}
 }
+.change {
+	&-first {
+		input {
+			width: 289px;
+		}
+		button {
+			display: none;
+		}
+	}
+}

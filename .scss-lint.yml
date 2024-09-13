@@ -29,3 +29,8 @@ linters:
         enabled: false
     LeadingZero:
         enabled: false
+    PropertySortOrder:
+        enabled: false
+    NestingDepth:
+        max_depth: 4
+

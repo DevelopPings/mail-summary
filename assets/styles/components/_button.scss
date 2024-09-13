@@ -1,0 +1,20 @@
+.save {
+	@include shadow;
+	height: 43px;
+	flex-grow: 1;
+	border-radius: 7px;
+	color: $white;
+	background-color: $secondary-light;
+	cursor: pointer;
+}
+
+.reset {
+	@include image($reset, 23px, 23px);
+	@include shadow;
+	background-color: $white;
+
+	width: 43px;
+	height: 43px;
+	border-radius: 7px;
+	cursor: pointer;
+}

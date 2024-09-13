@@ -48,6 +48,13 @@
 			}
 		}
 
+		.edit-title-input {
+			border: 1px solid $gray04;
+			height: 26px;
+			padding: 0 8.28px;
+			margin-right: 14px;
+		}
+
 		.item-info {
 			display: flex;
 			align-items: center;
@@ -63,18 +70,20 @@
 		}
 
 		.finish-task {
-			position: relative;
+			display: flex;
+			align-items: center;
 
 			&::before {
-				@include icon($check-box, 12px, 12px, -16px);
+				@include icon($check-box, 12px, 12px, 0 3px 0 0);
 			}
 		}
 
 		.unfinish-task {
-			position: relative;
+			display: flex;
+			align-items: center;
 
 			&::before {
-				@include icon($check-box-blank, 12px, 12px, -16px);
+				@include icon($check-box-blank, 12px, 12px, 0 3px 0 0);
 			}
 		}
 

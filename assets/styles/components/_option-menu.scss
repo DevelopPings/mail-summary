@@ -7,6 +7,7 @@
 	overflow: auto;
 
 	&-wrap {
+		@include shadow;
 		width: 74px;
 		height: 55px;
 
@@ -17,7 +18,6 @@
 		background-color: $white;
 		border: 1px solid $gray03;
 		border-radius: 7px;
-		box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
 
 		button {
 			flex-grow: 1;

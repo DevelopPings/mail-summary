@@ -38,6 +38,12 @@ textarea {
 	resize: none;
 }
 
+button {
+	background-color: transparent;
+	border: 0;
+	padding: 0;
+}
+
 @import './layouts';
 @import './components';
 @import './routes';

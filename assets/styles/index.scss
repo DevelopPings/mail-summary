@@ -9,8 +9,33 @@
 	box-sizing: border-box;
 	font-family: 'SUIT', sans-serif !important;
 	font-weight: 400;
+	font-size: 14px;
 	letter-spacing: -0.32px;
 	outline: none;
+}
+
+html {
+	background-color: #000; // for test
+	width: 320px;
+	height: 500px;
+}
+
+body {
+	height: 100%;
+	background-color: $white;
+}
+
+input,
+textarea {
+	outline: 0;
+	border: 0;
+	width: 260px;
+	font-size: 14px;
+	border-radius: 7px;
+}
+
+textarea {
+	resize: none;
 }
 
 @import './layouts';

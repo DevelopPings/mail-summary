@@ -1,0 +1,16 @@
+{
+  "folders": [
+	{
+		"path": "D:/mail-summary"
+	},
+	{
+		"path": "../../../project/mail-summary"
+	},
+	{
+		"path": ".."
+	}
+],
+  "settings": {
+    "liveServer.settings.multiRootWorkspaceName": "mail-summary"
+  }
+}

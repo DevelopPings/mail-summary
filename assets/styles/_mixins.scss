@@ -1,1 +1,20 @@
-@import './mixins/shadow';
+@mixin image($img-path, $width, $height, $display: auto) {
+	display: $display;
+	background-image: url($img-path);
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: $width $height;
+	width: $width;
+	height: $height;
+}
+
+@mixin icon($img-path, $width, $height, $left: auto, $right: auto) {
+	@include image($img-path, $width, $height);
+
+	content: '';
+	position: absolute;
+	left: $left;
+	right: $right;
+	top: 50%;
+	transform: translateY(-50%);
+}

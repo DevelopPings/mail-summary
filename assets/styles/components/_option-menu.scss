@@ -1,0 +1,44 @@
+.option-menu {
+	visibility: hidden;
+	position: absolute;
+	width: 320px;
+	height: 500px;
+	z-index: 99999;
+	overflow: auto;
+
+	&-wrap {
+		width: 74px;
+		height: 55px;
+
+		display: flex;
+		flex-direction: column;
+		position: absolute;
+
+		background-color: $white;
+		border: 1px solid $gray03;
+		border-radius: 7px;
+		box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
+
+		button {
+			flex-grow: 1;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			gap: 8px;
+			cursor: pointer;
+			color: $gray01;
+
+			.edit-icon {
+				@include image($edit, 18px, 18px, inline-block);
+			}
+
+			.delete-icon {
+				@include image($delete, 18px, 18px, inline-block);
+			}
+		}
+	}
+
+	&-edit {
+		border-bottom: 1px solid $gray03;
+	}
+}

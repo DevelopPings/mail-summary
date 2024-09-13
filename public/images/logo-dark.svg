@@ -91,3 +91,21 @@
 </radialGradient>
 </defs>
 </svg>
+    <script>
+      const logo = document.getElementById("logo").children;
+
+      const number = [3, 4, 1, 0, 2];
+      let x = 0;
+      number.forEach((num, index) => {
+        // 일정 시간 차를 두고 애니메이션 실행 (index * 1000은 각 애니메이션에 1초 딜레이)
+        setTimeout(() => {
+          x += 0.05;
+          logo[num].animate([{ opacity: x }], {
+            duration: 1200, // 애니메이션 시간
+            iterations: Infinity,
+          });
+        }, index * 200); // index에 따라 시간 차 적용
+      });
+    </script>
+  </body>
+</html>

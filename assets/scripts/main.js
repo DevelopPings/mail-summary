@@ -1,14 +1,12 @@
-const VIEW_PORT_HEIGHT = 500;
-const PATH_MAIN = '/public/main.html';
-const PATH_DETAIL = '/public/detail.html';
+import common from './common.js';
 
-const optionButtons = document.querySelectorAll('.option-button');
-const optionMenuBackground = document.querySelector('.option-menu');
-const [optionEdit, optionDelete] =
-	optionMenuBackground.firstElementChild.children;
 const inputFocusArea = document.querySelector('.focus-area');
 const editFooter = document.querySelector('.edit-footer');
 const editFooterSpace = document.querySelector('.edit-footer-space');
+const warningMessage = document.querySelector('.warning-message');
+
+let deleteClickCount = 0;
+let deleteMessageInterval;
 
 const currentOption = {
 	targetElement: null,
@@ -26,7 +24,7 @@ const setCurrentOption = (
 	currentOption.titleElement = titleElement;
 };
 
-const startEditMode = () => {
+const startEditMode = (hideOptionMenu) => {
 	const { inputElement, titleElement } = currentOption;
 	inputElement.value = titleElement.textContent;
 	titleElement.style.display = 'none';
@@ -35,9 +33,10 @@ const startEditMode = () => {
 	editFooter.style.display = 'flex';
 	editFooterSpace.style.display = 'block';
 	inputElement.focus();
+	if (hideOptionMenu) hideOptionMenu();
 };
 
-const endEditMode = () => {
+const endEditMode = (hideOptionMenu) => {
 	const { inputElement, titleElement } = currentOption;
 	titleElement.textContent = inputElement.value;
 	inputElement.style.display = 'none';
@@ -45,40 +44,8 @@ const endEditMode = () => {
 	inputFocusArea.style.display = 'none';
 	editFooter.style.display = 'none';
 	editFooterSpace.style.display = 'none';
+	if (hideOptionMenu) hideOptionMenu();
 };
-
-// 옵션 메뉴 클릭
-optionButtons.forEach((el) =>
-	el.addEventListener('click', () =>
-		showOptionMenu(
-			el.getBoundingClientRect(),
-			el.parentElement.parentElement,
-		),
-	),
-);
-
-// 바깥 부분 클릭 (꺼짐)
-optionMenuBackground.addEventListener('click', (event) => {
-	event.stopPropagation();
-
-	if (isOutBorder(event)) {
-		if (location.pathname == PATH_MAIN) {
-			// write event code
-		} else if (location.pathname == PATH_DETAIL) {
-			// write event code
-		}
-	}
-
-	hideOptionMenu();
-});
-
-// 수정 버튼 클릭
-optionEdit.addEventListener('click', (event) => {
-	event.stopPropagation();
-
-	startEditMode();
-	hideOptionMenu();
-});
 
 // 수정 인풋 요소 바깥 영역 클릭
 inputFocusArea.addEventListener('click', (event) => {
@@ -86,41 +53,40 @@ inputFocusArea.addEventListener('click', (event) => {
 	endEditMode();
 });
 
-function isOutBorder(event) {
-	// event.target
-	return false;
-}
+const deleteCheckList = (hideOptionMenu) => {
+	deleteClickCount++;
+	warningMessage.classList.add('active');
 
-const showOptionMenu = (rect, targetElement) => {
-	if (optionMenuBackground.style.display === 'block') return;
+	if (deleteMessageInterval) {
+		clearInterval(deleteMessageInterval);
+	}
 
+	deleteMessageInterval = setInterval(() => {
+		if (deleteClickCount === 0) {
+			clearInterval(deleteMessageInterval);
+			warningMessage.classList.remove('active');
+		} else {
+			deleteClickCount = 0;
+		}
+	}, 1000);
+
+	if (deleteClickCount === 2) {
+		currentOption.targetElement.remove();
+		clearInterval(deleteMessageInterval);
+		deleteClickCount = 0;
+		warningMessage.classList.remove('active');
+		if (hideOptionMenu) hideOptionMenu();
+	}
+};
+
+common.onClickOptionMenu((targetElement) => {
 	setCurrentOption(
 		targetElement,
 		targetElement.getElementsByClassName('edit-title-input')[0],
 		targetElement.getElementsByClassName('item-title')[0],
 	);
+});
 
-	optionMenuBackground.style.display = 'block';
-	const optionMenuButton = optionMenuBackground.firstElementChild;
-
-	const buttonWidth = optionMenuButton.offsetWidth;
-	const buttonHeight = optionMenuButton.offsetHeight;
-
-	const centerX = rect.left + rect.width / 2;
-	const centerY = rect.top + rect.height / 2;
-
-	optionMenuButton.style.top = `${centerY}px`;
-	optionMenuButton.style.left = `${centerX - buttonWidth}px`;
-
-	// 메뉴창이 뷰포트 밑으로 나갈시, 위로 출력
-	if (
-		parseFloat(optionMenuButton.style.top) + buttonHeight >
-		VIEW_PORT_HEIGHT
-	) {
-		optionMenuButton.style.top = `${centerY - buttonHeight}px`;
-	}
-};
-
-const hideOptionMenu = () => {
-	optionMenuBackground.style.display = 'none';
-};
+common.onClickEdit((hideOptionMenu) => startEditMode(hideOptionMenu));
+common.onClickDelete((hideOptionMenu) => deleteCheckList(hideOptionMenu));
+common.onClickOutOption(() => warningMessage.classList.remove('active'));

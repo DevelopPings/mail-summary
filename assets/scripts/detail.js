@@ -1,3 +1,5 @@
+import common from './common.js';
+
 const detailBody = document.querySelector('#detail-body');
 const returnIcon = document.querySelector('#return span');
 const textareas = document.querySelectorAll('textarea');
@@ -63,4 +65,28 @@ function activeAlert(event) {
 		warning.classList.remove('active');
 		timer = 0;
 	}, 2000);
+}
+
+// 경고창 띄우기
+let clickCount = 0;
+let messageInterval;
+
+function alertMessage(element) {
+	clickCount++;
+	element.classList.toggle('active');
+
+	messageInterval = setInterval(() => {
+		if (clickCount === 0) {
+			return clearInterval(messageInterval);
+		}
+
+		element.classList.remove('active');
+		clickCount = 0;
+	}, 2000);
+
+	if (clickCount === 2) {
+		//TODO: 2번 클릭 시 실행 로직
+		clickCount = 0;
+		common.hideOptionMenu();
+	}
 }

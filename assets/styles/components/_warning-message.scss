@@ -1,0 +1,33 @@
+.warning-message {
+	position: fixed;
+	width: 320px;
+	height: 500px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 0.5s ease;
+	z-index: 4;
+
+	&.active {
+		opacity: 1;
+	}
+
+	&-content {
+		width: 289px;
+		min-height: 91px;
+
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+		line-height: 1.7;
+
+		background-color: rgba(var(--background-dark), 0.8);
+		color: $white;
+		border-radius: 7px;
+		font-weight: 700;
+		transform: translateY(-140%);
+	}
+}

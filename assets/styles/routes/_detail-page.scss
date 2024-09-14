@@ -9,24 +9,26 @@
 		}
 		#return {
 			height: 60px;
-			span {
-				background-image: url($go-back);
-				width: 24px;
-				height: 24px;
-				display: inline-block;
-				cursor: pointer;
-			}
+			background-image: url($go-back);
+			width: 24px;
+			height: 24px;
+			display: inline-block;
+			cursor: pointer;
+			align-self: baseline;
+			margin: 15px 0;
 		}
 		#title {
 			display: flex;
 			flex-direction: column;
 			justify-content: space-between;
-			width: 300px;
+			width: 267px;
 			height: 60px;
 
 			input {
 				font-size: 18px;
 				font-weight: bold;
+				width: 267px;
+				text-overflow: ellipsis;
 			}
 			// h1 {
 			// 	font-size: 18px;
@@ -41,6 +43,7 @@
 				flex-direction: column;
 				justify-content: space-between;
 				height: 30px;
+
 				p {
 					font-size: 12px;
 				}
@@ -52,10 +55,6 @@
 			text-align: center;
 			font-size: 14px;
 			height: 60px;
-
-			input {
-				font-size: 14px;
-			}
 
 			button {
 				border: 0;
@@ -70,9 +69,10 @@
 	}
 
 	#content {
-		padding: 10px 30px;
+		padding: 10px 20px;
 		height: calc(100% - 150px);
-
+		overflow-y: scroll;
+		background-color: gold;
 		section {
 			margin-top: 15px;
 			h2 {
@@ -91,6 +91,7 @@
 			}
 
 			textarea {
+				width: 279px;
 				height: 100px;
 			}
 		}
@@ -109,20 +110,29 @@
 			ul {
 				li {
 					margin-bottom: 6px;
-					span {
-						background: url($check-box-blank);
+					display: flex;
+					justify-content: space-between;
+					.checkbox {
+						background: url($check-box-blank) no-repeat center;
 						width: 12.43px;
 						height: 12px;
 						display: inline-block;
+						padding: 7px 0;
 					}
-					input {
+					textarea {
 						width: 230.04px;
 					}
+
+					.delete-button {
+						width: 20px;
+						height: 20px;
+						background: url($delete);
+					}
 					&.checked {
-						span {
-							background: url($check-box);
+						.checkbox {
+							background: url($check-box) no-repeat center;
 						}
-						input {
+						textarea {
 							text-decoration: line-through;
 						}
 					}
@@ -130,14 +140,43 @@
 			}
 		}
 	}
-}
-.change {
-	header {
-		#mail-setting {
-			display: none;
-		}
-	}
+	// &.change {
+	// 	header {
+	// 		#mail-setting {
+	// 			display: none;
+	// 		}
+	// 	}
+	// 	&-first {
+	// 		header {
+	// 			#mail-setting {
+	// 				display: block;
+	// 			}
+	// 		}
+	// 	}
+	// }
+	#warning {
+		position: absolute;
+		top: 76px;
+		left: 16px;
+		display: none;
+		justify-content: center;
+		align-items: center;
+		width: 289px;
+		height: 91px;
+		background: $alert;
+		border-radius: 7px;
 
-	footer {
+		&.active {
+			display: flex;
+		}
+
+		&-message {
+			text-align: center;
+			color: $white;
+			font-size: 14px;
+			font-weight: bold;
+			user-select: none;
+			line-height: 24px;
+		}
 	}
 }

@@ -1,9 +1,8 @@
 footer {
 	// display: none;
 	height: 60px;
-	background-color: mistyrose;
 	display: flex;
-	justify-content: center;
+	// justify-content: center;
 	section {
 		display: flex;
 		align-items: center;
@@ -20,6 +19,7 @@ footer {
 		}
 	}
 }
+
 .change {
 	&-first {
 		input {
@@ -29,4 +29,22 @@ footer {
 			display: none;
 		}
 	}
+}
+
+.edit-footer {
+	display: none;
+	position: fixed;
+	top: 440px;
+	left: 0;
+	right: 0;
+	width: 320px;
+	align-items: center;
+	padding: 0 15px 14.56px;
+	gap: 8px;
+	z-index: 9;
+}
+
+.edit-footer-space {
+	display: none;
+	height: 60px;
 }

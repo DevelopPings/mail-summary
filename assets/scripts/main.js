@@ -1,18 +1,66 @@
-const optionButtons = document.querySelectorAll('.option-button');
-const optionMenuBackground = document.querySelector('.option-menu');
 const VIEW_PORT_HEIGHT = 500;
 const PATH_MAIN = '/public/main.html';
 const PATH_DETAIL = '/public/detail.html';
 
+const optionButtons = document.querySelectorAll('.option-button');
+const optionMenuBackground = document.querySelector('.option-menu');
+const [optionEdit, optionDelete] =
+	optionMenuBackground.firstElementChild.children;
+const inputFocusArea = document.querySelector('.focus-area');
+const editFooter = document.querySelector('.edit-footer');
+const editFooterSpace = document.querySelector('.edit-footer-space');
+
+const currentOption = {
+	targetElement: null,
+	inputElement: null,
+	titleElement: null,
+};
+
+const setCurrentOption = (
+	targetElement = null,
+	inputElement = null,
+	titleElement = null,
+) => {
+	currentOption.targetElement = targetElement;
+	currentOption.inputElement = inputElement;
+	currentOption.titleElement = titleElement;
+};
+
+const startEditMode = () => {
+	const { inputElement, titleElement } = currentOption;
+	inputElement.value = titleElement.textContent;
+	titleElement.style.display = 'none';
+	inputElement.style.display = 'block';
+	inputFocusArea.style.display = 'block';
+	editFooter.style.display = 'flex';
+	editFooterSpace.style.display = 'block';
+	inputElement.focus();
+};
+
+const endEditMode = () => {
+	const { inputElement, titleElement } = currentOption;
+	titleElement.textContent = inputElement.value;
+	inputElement.style.display = 'none';
+	titleElement.style.display = 'block';
+	inputFocusArea.style.display = 'none';
+	editFooter.style.display = 'none';
+	editFooterSpace.style.display = 'none';
+};
+
 // 옵션 메뉴 클릭
 optionButtons.forEach((el) =>
 	el.addEventListener('click', () =>
-		showOptionMenu(el.getBoundingClientRect()),
+		showOptionMenu(
+			el.getBoundingClientRect(),
+			el.parentElement.parentElement,
+		),
 	),
 );
 
 // 바깥 부분 클릭 (꺼짐)
 optionMenuBackground.addEventListener('click', (event) => {
+	event.stopPropagation();
+
 	if (isOutBorder(event)) {
 		if (location.pathname == PATH_MAIN) {
 			// write event code
@@ -20,7 +68,22 @@ optionMenuBackground.addEventListener('click', (event) => {
 			// write event code
 		}
 	}
+
 	hideOptionMenu();
+});
+
+// 수정 버튼 클릭
+optionEdit.addEventListener('click', (event) => {
+	event.stopPropagation();
+
+	startEditMode();
+	hideOptionMenu();
+});
+
+// 수정 인풋 요소 바깥 영역 클릭
+inputFocusArea.addEventListener('click', (event) => {
+	event.stopPropagation();
+	endEditMode();
 });
 
 function isOutBorder(event) {
@@ -28,10 +91,16 @@ function isOutBorder(event) {
 	return false;
 }
 
-const showOptionMenu = (rect) => {
-	if (optionMenuBackground.style.visibility === 'visible') return;
+const showOptionMenu = (rect, targetElement) => {
+	if (optionMenuBackground.style.display === 'block') return;
 
-	optionMenuBackground.style.visibility = 'visible';
+	setCurrentOption(
+		targetElement,
+		targetElement.getElementsByClassName('edit-title-input')[0],
+		targetElement.getElementsByClassName('item-title')[0],
+	);
+
+	optionMenuBackground.style.display = 'block';
 	const optionMenuButton = optionMenuBackground.firstElementChild;
 
 	const buttonWidth = optionMenuButton.offsetWidth;
@@ -52,4 +121,6 @@ const showOptionMenu = (rect) => {
 	}
 };
 
-const hideOptionMenu = () => (optionMenuBackground.style.visibility = 'hidden');
+const hideOptionMenu = () => {
+	optionMenuBackground.style.display = 'none';
+};

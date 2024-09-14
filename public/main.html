@@ -18,6 +18,8 @@
 			<button class="toggle-mode"></button>
 		</header>
 		<main class="main-content">
+			<!-- 입력 시 다른 영역 클릭 방지 -->
+
 			<!-- 체크리스트 없을시 -->
 			<!-- <div class="no-content"> -->
 			<!-- <p class="no-content-message">
@@ -31,15 +33,16 @@
 			<!-- </div> -->
 
 			<!-- 체크리스트 있을시 -->
+
 			<ul class="list">
-				<li class="list-item">
-					<!-- <h2 class="item-title">쌍용교육센터 OT 일정</h2> -->
+				<div class="focus-area"></div>
+				<li class="list-item" data-id="1">
+					<h2 class="item-title">쌍용교육센터 OT 일정</h2>
 					<input
 						class="edit-title-input"
 						type="text"
 						name="title"
 						id="title"
-						value="쌍용교육센터 OT 일정"
 					/>
 					<div class="item-info">
 						<ul class="check-count">
@@ -52,8 +55,14 @@
 						<button class="option-button"></button>
 					</div>
 				</li>
-				<li class="list-item">
+				<li class="list-item" data-id="2">
 					<h2 class="item-title">프로젝트 문서 작업</h2>
+					<input
+						class="edit-title-input"
+						type="text"
+						name="title"
+						id="title"
+					/>
 					<div class="item-info">
 						<ul class="check-count">
 							<li class="finish-task">2</li>
@@ -65,8 +74,14 @@
 						<button class="option-button"></button>
 					</div>
 				</li>
-				<li class="list-item">
+				<li class="list-item" data-id="3">
 					<h2 class="item-title">10월 일본 여행 준비</h2>
+					<input
+						class="edit-title-input"
+						type="text"
+						name="title"
+						id="title"
+					/>
 					<div class="item-info">
 						<ul class="check-count">
 							<li class="finish-task">6</li>
@@ -78,8 +93,14 @@
 						<button class="option-button"></button>
 					</div>
 				</li>
-				<li class="list-item">
+				<li class="list-item" data-id="4">
 					<h2 class="item-title finished">코딩테스트 사전 과제</h2>
+					<input
+						class="edit-title-input"
+						type="text"
+						name="title"
+						id="title"
+					/>
 					<div class="item-info">
 						<ul class="check-count">
 							<li class="finish-task">5</li>
@@ -90,8 +111,14 @@
 						<button class="option-button"></button>
 					</div>
 				</li>
-				<li class="list-item">
+				<li class="list-item" data-id="5">
 					<h2 class="item-title">대충 그냥 할 일의 제목</h2>
+					<input
+						class="edit-title-input"
+						type="text"
+						name="title"
+						id="title"
+					/>
 					<div class="item-info">
 						<ul class="check-count">
 							<li class="unfinish-task">10</li>
@@ -102,8 +129,14 @@
 						<button class="option-button"></button>
 					</div>
 				</li>
-				<li class="list-item">
+				<li class="list-item" data-id="6">
 					<h2 class="item-title">대충 그냥 할 일의 제목2</h2>
+					<input
+						class="edit-title-input"
+						type="text"
+						name="title"
+						id="title"
+					/>
 					<div class="item-info">
 						<ul class="check-count">
 							<li class="finish-task">3</li>
@@ -115,8 +148,14 @@
 						<button class="option-button"></button>
 					</div>
 				</li>
-				<li class="list-item">
+				<li class="list-item" data-id="7">
 					<h2 class="item-title">쌍용교육센터 OT 일정</h2>
+					<input
+						class="edit-title-input"
+						type="text"
+						name="title"
+						id="title"
+					/>
 					<div class="item-info">
 						<ul class="check-count">
 							<li class="finish-task">2</li>
@@ -128,8 +167,14 @@
 						<button class="option-button"></button>
 					</div>
 				</li>
-				<li class="list-item">
+				<li class="list-item" data-id="8">
 					<h2 class="item-title">프로젝트 문서 작업</h2>
+					<input
+						class="edit-title-input"
+						type="text"
+						name="title"
+						id="title"
+					/>
 					<div class="item-info">
 						<ul class="check-count">
 							<li class="finish-task">2</li>
@@ -141,8 +186,14 @@
 						<button class="option-button"></button>
 					</div>
 				</li>
-				<li class="list-item">
+				<li class="list-item" data-id="9">
 					<h2 class="item-title">10월 일본 여행 준비</h2>
+					<input
+						class="edit-title-input"
+						type="text"
+						name="title"
+						id="title"
+					/>
 					<div class="item-info">
 						<ul class="check-count">
 							<li class="finish-task">6</li>
@@ -154,8 +205,14 @@
 						<button class="option-button"></button>
 					</div>
 				</li>
-				<li class="list-item">
+				<li class="list-item" data-id="10">
 					<h2 class="item-title finished">코딩테스트 사전 과제</h2>
+					<input
+						class="edit-title-input"
+						type="text"
+						name="title"
+						id="title"
+					/>
 					<div class="item-info">
 						<ul class="check-count">
 							<li class="finish-task">5</li>
@@ -166,8 +223,14 @@
 						<button class="option-button"></button>
 					</div>
 				</li>
-				<li class="list-item">
+				<li class="list-item" data-id="11">
 					<h2 class="item-title">대충 그냥 할 일의 제목</h2>
+					<input
+						class="edit-title-input"
+						type="text"
+						name="title"
+						id="title"
+					/>
 					<div class="item-info">
 						<ul class="check-count">
 							<li class="unfinish-task">10</li>
@@ -178,8 +241,14 @@
 						<button class="option-button"></button>
 					</div>
 				</li>
-				<li class="list-item">
+				<li class="list-item" data-id="12">
 					<h2 class="item-title">대충 그냥 할 일의 제목2</h2>
+					<input
+						class="edit-title-input"
+						type="text"
+						name="title"
+						id="title"
+					/>
 					<div class="item-info">
 						<ul class="check-count">
 							<li class="finish-task">3</li>
@@ -191,8 +260,9 @@
 						<button class="option-button"></button>
 					</div>
 				</li>
-			</ul>
 			<div class="edit-footer-space"></div>
+			</ul>
+			
 		</main>
 
 		<footer class="edit-footer">

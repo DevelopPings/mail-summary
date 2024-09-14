@@ -5,6 +5,7 @@
 	.main-content {
 		flex-grow: 1;
 		overflow: scroll;
+		position: relative;
 	}
 
 	.no-content {
@@ -29,6 +30,8 @@
 	}
 
 	.list {
+		position: relative;
+
 		&-item {
 			height: 75px;
 			display: flex;
@@ -49,10 +52,12 @@
 		}
 
 		.edit-title-input {
+			display: none;
 			border: 1px solid $gray04;
 			height: 26px;
 			padding: 0 8.28px;
 			margin-right: 14px;
+			z-index: 2;
 		}
 
 		.item-info {
@@ -105,5 +110,15 @@
 			height: 30px;
 			cursor: pointer;
 		}
+	}
+
+	.focus-area {
+		display: none;
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 1;
 	}
 }

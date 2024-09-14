@@ -3,7 +3,7 @@
 	position: absolute;
 	width: 320px;
 	height: 500px;
-	z-index: 99999;
+	z-index: 3;
 
 	&-wrap {
 		@include shadow;

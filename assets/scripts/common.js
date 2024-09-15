@@ -5,7 +5,14 @@ const optionMenuBackground = document.querySelector('.option-menu');
 const [optionEdit, optionDelete] =
 	optionMenuBackground.firstElementChild.children;
 
+const darkModeButton = document.querySelector('.toggle-mode');
+
 const hideOptionMenu = () => (optionMenuBackground.style.display = 'none');
+
+// 다크모드 버튼
+darkModeButton.addEventListener('click', () => {
+	document.body.classList.toggle('dark-mode');
+});
 
 // 옵션 메뉴 클릭
 const onClickOptionMenu = (callback) => {

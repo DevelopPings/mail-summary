@@ -8,7 +8,7 @@
 		></script>
 		<link rel="stylesheet" href="dist/style.css" />
 	</head>
-	<body id="detail-body" class="change before-save">
+	<body id="detail-body" class="before-save">
 		<header>
 			<button id="return"></button>
 			<section id="title">
@@ -17,15 +17,22 @@
 					id="mail-title"
 					value="쌍용교육센터 OT 일정"
 				/> -->
-				<input
-					type="text"
-					id="mail-title"
-					value="쌍용교육센터 OT 일정일정 일정일정일정일정일정
+				<div id="mail-title">
+					<input
+						type="text"
+						id="mail-title"
+						value="쌍용교육센터 OT 일정일정 일정일정일정일정일정
 					일정일정일정일정일정"
-					title="쌍용교육센터 OT 일정일정 일정일정일정일정일정
+						readonly
+					/>
+					<h1
+						title="쌍용교육센터 OT 일정일정 일정일정일정일정일정
 					일정일정일정일정일정"
-					readonly
-				/>
+					>
+						쌍용교육센터 OT 일정일정 일정일정일정일정일정
+						일정일정일정일정일정
+					</h1>
+				</div>
 				<!-- <h1 id="mail-title">
 					쌍용교육센터 OT 일정일정 일정일정일정일정일정
 					일정일정일정일정일정
@@ -43,47 +50,86 @@
 		<main id="content">
 			<section id="summary">
 				<h2><span></span>Summary</h2>
-				<textarea readonly>
+				<div class="summary-content">
+					<!-- 맨앞/뒤 trim제거해서 저장하고 불러오기 -->
+					<textarea>
 교육 과정: AWS 클라우드와 Kafka를 활용한 Java Full-Stack 개발자 양성과정 
 훈련 기간: 2024-06-19 ~ 2024-12-02 
 국민내일배움카드 발급이 필수 
 서류 제출 기한: 6월 3일 월요일까지
 				</textarea
-				>
+					>
+					<p>
+						교육 과정: AWS 클라우드와 Kafka를 활용한 Java
+						Full-Stack<br />
+						개발자 양성과정 훈련 기간: 2024-06-19 ~ 2024-12-02<br />
+						국민내일배움카드 발급이 필수 서류 제출 기한: 6월 3일
+						월요일까지
+					</p>
+				</div>
 			</section>
 			<section id="check-list">
 				<h2><span></span>Check List</h2>
 				<ul>
 					<li class="checked">
-						<button class="checkbox"></button
-						><textarea>
+						<button class="checkbox"></button>
+						<div class="checkbox-content">
+							<textarea>
 국민내일배움카드 신청 신청할거 많다 얼른 해봐 지금 얼마 안남았어 며칠까지 해야된다고?</textarea
-						><button class="delete-button"></button>
+							>
+							<p>
+								국민내일배움카드 신청 신청할거 많다 얼른 해봐
+								지금 얼마 안남았어 며칠까지 해야된다고?
+							</p>
+						</div>
+						<button class="delete-button"></button>
 					</li>
 					<li class="checked">
-						<button class="checkbox"></button
-						><textarea readonly>온라인 수강신청</textarea
-						><button class="delete-button"></button>
+						<button class="checkbox"></button>
+						<div class="checkbox-content">
+							<textarea>온라인 수강신청</textarea>
+							<p>온라인 수강신청</p>
+						</div>
+						<button class="delete-button"></button>
 					</li>
 					<li>
-						<button class="checkbox"></button
-						><textarea readonly>연락 요청</textarea
-						><button class="delete-button"></button>
+						<button class="checkbox"></button>
+						<div class="checkbox-content">
+							<textarea>연락 요청</textarea>
+							<p>연락 요청</p>
+						</div>
+						<button class="delete-button"></button>
 					</li>
 					<li>
-						<button class="checkbox"></button
-						><textarea readonly>서류 제출</textarea
-						><button class="delete-button"></button>
+						<button class="checkbox"></button>
+						<div class="checkbox-content">
+							<textarea>서류 제출</textarea>
+							<p>서류 제출</p>
+						</div>
+						<button class="delete-button"></button>
 					</li>
+					<li><button class="add-list"></button></li>
 				</ul>
 			</section>
 		</main>
-		<footer>
-			<section>
-				<input type="button" value="저장하기" />
-				<button id="reset"></button>
-			</section>
+
+		<footer class="edit-footer">
+			<button class="save">저장하기</button>
+			<button class="reset"></button>
 		</footer>
+
+		<!-- 옵션 메뉴 -->
+		<div class="option-menu">
+			<div class="option-menu-wrap">
+				<button class="option-menu-edit">
+					수정<span class="edit-icon"></span>
+				</button>
+				<button class="option-menu-delete">
+					삭제<span class="delete-icon"></span>
+				</button>
+			</div>
+		</div>
+
 		<div id="warning">
 			<p id="warning-message"></p>
 		</div>

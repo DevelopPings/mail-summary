@@ -9,6 +9,7 @@ const [optionEdit, optionDelete] =
 const inputFocusArea = document.querySelector('.focus-area');
 const editFooter = document.querySelector('.edit-footer');
 const editFooterSpace = document.querySelector('.edit-footer-space');
+const lists = document.querySelectorAll('.list .list-item');
 
 const currentOption = {
 	targetElement: null,
@@ -72,6 +73,9 @@ optionMenuBackground.addEventListener('click', (event) => {
 	hideOptionMenu();
 });
 
+// 리스트 클릭
+lists.forEach((list) => list.addEventListener('click', moveDetail));
+
 // 수정 버튼 클릭
 optionEdit.addEventListener('click', (event) => {
 	event.stopPropagation();
@@ -124,3 +128,11 @@ const showOptionMenu = (rect, targetElement) => {
 const hideOptionMenu = () => {
 	optionMenuBackground.style.display = 'none';
 };
+
+function moveDetail(event) {
+	const target = event.target;
+	if (!target.classList.contains('option-button')) {
+		// id에 해당하는 요약 내용을 local file에서 불러오기
+		location.href = 'detail.html';
+	}
+}

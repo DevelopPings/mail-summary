@@ -1,9 +1,10 @@
 #detail-body {
 	header {
 		height: 90px;
+		// background: rgba(199, 206, 170, 0.4);
+		padding-top: 15px;
+		align-items: normal;
 		> * {
-			padding: 15px 0;
-			padding-top: 5px;
 			border: 0;
 			outline: 0;
 		}
@@ -14,8 +15,6 @@
 			height: 24px;
 			display: inline-block;
 			cursor: pointer;
-			align-self: baseline;
-			margin: 15px 0;
 		}
 		#title {
 			display: flex;
@@ -23,22 +22,29 @@
 			justify-content: space-between;
 			width: 267px;
 			height: 60px;
+			// background: rgba(86, 199, 111, 0.4);
 
-			input {
-				font-size: 18px;
-				font-weight: bold;
-				width: 267px;
-				text-overflow: ellipsis;
+			#mail-title {
+				input {
+					display: none;
+					font-size: 18px;
+					font-weight: bold;
+					width: 267px;
+				}
+
+				h1 {
+					// height: 100%;
+					font-size: 18px;
+					font-weight: bold;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+					padding: 3px 0;
+				}
 			}
-			// h1 {
-			// 	font-size: 18px;
-			// 	font-weight: bold;
-			// 	overflow: hidden;
-			// 	text-overflow: ellipsis;
-			// 	white-space: nowrap;
-			// }
 
 			#mail-disc {
+				// background: rgba(86, 107, 199, 0.4);
 				display: flex;
 				flex-direction: column;
 				justify-content: space-between;
@@ -52,58 +58,72 @@
 
 		#mail-setting {
 			width: 20px;
-			text-align: center;
-			font-size: 14px;
-			height: 60px;
+			align-self: baseline;
+			// background: rgba(86, 107, 199, 0.4);
 
 			button {
 				border: 0;
 				cursor: pointer;
 				padding: 12px 5px;
-				align-self: baseline;
 				width: 1px;
 				height: 12px;
 				background: url($three-dots) no-repeat center;
+
+				&.before-save {
+					display: none;
+				}
 			}
 		}
 	}
 
 	#content {
 		padding: 10px 20px;
-		height: calc(100% - 150px);
-		overflow-y: scroll;
-		background-color: gold;
+		height: calc(100% - 90px);
+		overflow-y: auto;
+		// background-color: gold;
+
 		section {
 			margin-top: 15px;
 			h2 {
 				margin-bottom: 10px;
 			}
 		}
+
 		#summary {
 			h2 {
 				display: flex;
+
 				span {
-					background: url($chat-bubble);
+					display: inline-block;
+					margin-right: 5.58px;
 					width: 16.74px;
 					height: 18px;
-					display: inline-block;
+					background: url($chat-bubble);
 				}
 			}
-
-			textarea {
-				width: 279px;
-				height: 100px;
+			.summary-content {
+				textarea {
+					display: none;
+					width: 279px;
+					height: 100px;
+				}
+				p {
+					width: 279px;
+				}
 			}
 		}
 
 		#check-list {
 			h2 {
 				display: flex;
+
 				span {
-					background: url($check);
+					display: inline-block;
+					margin-right: 2px;
+					margin-top: -2px;
 					width: 18px;
 					height: 18px;
-					display: inline-block;
+					background: url($check);
 				}
 			}
 
@@ -112,6 +132,7 @@
 					margin-bottom: 6px;
 					display: flex;
 					justify-content: space-between;
+
 					.checkbox {
 						background: url($check-box-blank) no-repeat center;
 						width: 12.43px;
@@ -119,11 +140,21 @@
 						display: inline-block;
 						padding: 7px 0;
 					}
-					textarea {
-						width: 230.04px;
+					.checkbox-content {
+						width: 260px;
+						textarea {
+							display: none;
+							width: 230.04px;
+							margin: 0 auto;
+						}
+
+						p {
+						}
 					}
 
 					.delete-button {
+						display: none;
+						margin-top: 3px;
 						width: 20px;
 						height: 20px;
 						background: url($delete);
@@ -132,28 +163,78 @@
 						.checkbox {
 							background: url($check-box) no-repeat center;
 						}
-						textarea {
+						p {
 							text-decoration: line-through;
 						}
+					}
+					.add-list {
+						display: none;
+						width: 230.04px;
+						height: 26px;
+						margin-left: 21px;
+						border: 1px solid $gray04;
+						border-radius: 7px;
+						background: url($plus) no-repeat center;
 					}
 				}
 			}
 		}
 	}
-	// &.change {
-	// 	header {
-	// 		#mail-setting {
-	// 			display: none;
-	// 		}
-	// 	}
-	// 	&-first {
-	// 		header {
-	// 			#mail-setting {
-	// 				display: block;
-	// 			}
-	// 		}
-	// 	}
-	// }
+	&.edit-mode {
+		header {
+			#title #mail-title {
+				input {
+					display: block;
+				}
+				h1 {
+					display: none;
+				}
+			}
+			#mail-setting button {
+				display: none;
+			}
+		}
+
+		#content {
+			#summary {
+				p {
+					display: none;
+				}
+				textarea {
+					display: block;
+				}
+			}
+
+			#check-list ul li {
+				.checkbox {
+					margin-top: 3px;
+				}
+
+				p {
+					display: none;
+				}
+
+				textarea {
+					display: block;
+				}
+
+				.delete-button {
+					display: block;
+				}
+
+				.add-list {
+					display: block;
+				}
+			}
+		}
+		// 	&-first {
+		// 		header {
+		// 			#mail-setting {
+		// 				display: block;
+		// 			}
+		// 		}
+		// 	}
+	}
 	#warning {
 		position: absolute;
 		top: 76px;

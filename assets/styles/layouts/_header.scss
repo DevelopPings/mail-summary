@@ -56,6 +56,21 @@ header {
 	.bold {
 		font-weight: 700;
 	}
+
+	.main-body.dark-mode & {
+		background-color: $header-dark;
+		border-bottom: 1px solid $gray04;
+
+		&-title {
+			color: $primary-dark;
+		}
+
+		.toggle-mode {
+			background-color: $purple;
+			background-image: url($dark-mode);
+			border: 1px solid $gray04;
+		}
+	}
 }
 
 .detail-header {

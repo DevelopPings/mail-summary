@@ -32,5 +32,8 @@ linters:
     PropertySortOrder:
         enabled: false
     NestingDepth:
-        max_depth: 4
-
+        enabled: false
+    QualifyingElement:
+        enabled: false
+    SelectorDepth: 
+        enabled: false

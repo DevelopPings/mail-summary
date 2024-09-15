@@ -19,6 +19,9 @@ let timer = {
 	targetId: '',
 };
 
+common.onClickOptionMenu();
+common.onClickOutOption();
+
 window.addEventListener('load', () => {
 	autoResize(textareas);
 });

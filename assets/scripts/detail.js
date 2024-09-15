@@ -75,18 +75,27 @@ function alertMessage(element) {
 	clickCount++;
 	element.classList.toggle('active');
 
+	if (messageInterval) {
+		clearInterval(messageInterval);
+	}
+
 	messageInterval = setInterval(() => {
 		if (clickCount === 0) {
-			return clearInterval(messageInterval);
+			clearInterval(messageInterval);
+			warningMessage.classList.remove('active');
+		} else {
+			clickCount = 0;
 		}
-
-		element.classList.remove('active');
-		clickCount = 0;
 	}, 2000);
 
 	if (clickCount === 2) {
-		//TODO: 2번 클릭 시 실행 로직
+		element.targetElement.remove();
+		clearInterval(messageInterval);
+		clickCount = 0;
+		warningMessage.classList.remove('active');
 		clickCount = 0;
 		common.hideOptionMenu();
+
+		//TODO: 2번 클릭 시 실행 로직
 	}
 }

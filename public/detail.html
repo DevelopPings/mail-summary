@@ -9,7 +9,7 @@
 		<link rel="stylesheet" href="dist/style.css" />
 	</head>
 	<body id="detail-body" class="before-save">
-		<header>
+		<header class="detail-header">
 			<button id="return"></button>
 			<section id="title">
 				<!-- <input
@@ -20,10 +20,8 @@
 				<div id="mail-title">
 					<input
 						type="text"
-						id="mail-title"
 						value="쌍용교육센터 OT 일정일정 일정일정일정일정일정
 					일정일정일정일정일정"
-						readonly
 					/>
 					<h1
 						title="쌍용교육센터 OT 일정일정 일정일정일정일정일정
@@ -49,7 +47,7 @@
 		</header>
 		<main id="content">
 			<section id="summary">
-				<h2><span></span>Summary</h2>
+				<h2 class="extra-bold"><span></span>Summary</h2>
 				<div class="summary-content">
 					<!-- 맨앞/뒤 trim제거해서 저장하고 불러오기 -->
 					<textarea>
@@ -69,7 +67,7 @@
 				</div>
 			</section>
 			<section id="check-list">
-				<h2><span></span>Check List</h2>
+				<h2 class="extra-bold"><span></span>Check List</h2>
 				<ul>
 					<li class="checked">
 						<button class="checkbox"></button>
@@ -108,7 +106,7 @@
 						</div>
 						<button class="delete-button"></button>
 					</li>
-					<li><button class="add-list"></button></li>
+					<li><button class="add-button"></button></li>
 				</ul>
 			</section>
 		</main>
@@ -134,6 +132,6 @@
 			<p id="warning-message"></p>
 		</div>
 		<script src="../assets/scripts/detail.js" type="module"></script>
-		<script src="../assets/scripts/main.js" type="module"></script>
+		<script src="../assets/scripts/common.js" type="module"></script>
 	</body>
 </html>

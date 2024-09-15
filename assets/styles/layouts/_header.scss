@@ -43,10 +43,6 @@ header {
 		margin-bottom: 10px;
 	}
 
-	.extra-bold {
-		font-weight: 800;
-	}
-
 	.today-date {
 		font-size: 12px;
 		font-weight: 500;
@@ -59,5 +55,96 @@ header {
 
 	.bold {
 		font-weight: 700;
+	}
+}
+
+.detail-header {
+	height: 90px;
+	// background: rgba(199, 206, 170, 0.4);
+	padding-top: 15px;
+	align-items: normal;
+
+	#return {
+		height: 60px;
+		background-image: url($go-back);
+		width: 24px;
+		height: 24px;
+		display: inline-block;
+		cursor: pointer;
+	}
+
+	#title {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		width: 267px;
+		height: 60px;
+		// background: rgba(86, 199, 111, 0.4);
+
+		#mail-title {
+			input {
+				display: none;
+				font-size: 18px;
+				font-weight: bold;
+				width: 267px;
+			}
+
+			h1 {
+				// height: 100%;
+				font-size: 18px;
+				font-weight: bold;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				padding: 3px 0;
+			}
+		}
+
+		#mail-disc {
+			// background: rgba(86, 107, 199, 0.4);
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			height: 30px;
+
+			p {
+				font-size: 12px;
+			}
+		}
+	}
+
+	#mail-setting {
+		width: 20px;
+		align-self: baseline;
+		// background: rgba(86, 107, 199, 0.4);
+
+		button {
+			display: block;
+			border: 0;
+			cursor: pointer;
+			padding: 12px 5px;
+			width: 1px;
+			height: 12px;
+			background: url($three-dots) no-repeat center;
+		}
+	}
+	&.edit-mode {
+		#mail-setting button {
+			display: none;
+		}
+	}
+}
+
+.before-save .detail-header #mail-setting button {
+	display: none;
+}
+
+#detail-body.edit-mode .detail-header #title #mail-title {
+	input {
+		display: block;
+	}
+
+	h1 {
+		display: none;
 	}
 }

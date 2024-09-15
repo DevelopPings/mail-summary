@@ -38,6 +38,7 @@ textarea {
 textarea {
 	resize: none;
 	overflow: hidden;
+	height: 26px;
 }
 
 button {
@@ -46,6 +47,9 @@ button {
 	padding: 0;
 }
 
+.extra-bold {
+	font-weight: 800;
+}
 @import './layouts';
 @import './components';
 @import './routes';

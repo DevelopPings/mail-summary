@@ -1,12 +1,15 @@
 import common from './common.js';
 
 const EDIT_MODE = 'edit-mode';
+const NOT_EXIST_SUMMARY = '요약 내용이 존재하지 않습니다.';
 
 const detailBody = document.querySelector('#detail-body');
 const returnIcon = document.querySelector('#return');
 const textareas = document.querySelectorAll('textarea');
 
 const checklists = document.querySelectorAll('#check-list > ul > li');
+const addButton = document.querySelector('.add-button');
+const deleteButtons = document.querySelectorAll('.delete-button');
 const reset = document.querySelector('#reset');
 const warning = document.querySelector('#warning');
 const warningMessage = document.querySelector('#warning-message');
@@ -15,19 +18,43 @@ let timer = {
 	num: 0,
 	targetId: '',
 };
+
 window.addEventListener('load', () => {
 	autoResize(textareas);
 });
 detailBody.addEventListener('dblclick', toggleEditMode);
 textareas.forEach((textarea) => textarea.addEventListener('keyup', autoResize));
 
+addButton.addEventListener('click', addCheckList);
+
+deleteButtons.forEach((deleteButton) =>
+	deleteButton.addEventListener('click', deleteCheckList),
+);
+
 // return & reset button event
 // returnIcon.addEventListener('click', returnMain);
 // reset.addEventListener('click', resetDetail);
+returnIcon.addEventListener('click', (event) => alertMessage(event.target));
 
 checklists.forEach((checklist) => {
 	checklist.addEventListener('click', toggleCheck);
+	checklist.querySelector('textarea').addEventListener('keydown', blockEnter);
+	checklist
+		.querySelector('textarea')
+		.addEventListener('blur', controlDeleteCheck);
 });
+
+function blockEnter(event) {
+	if (event.keyCode == 13) {
+		event.preventDefault();
+	}
+}
+
+function controlDeleteCheck() {
+	if (this.value.trim().length == 0) {
+		deleteCheckList.call(this);
+	}
+}
 
 function toggleEditMode() {
 	detailBody.classList.toggle(EDIT_MODE);
@@ -99,6 +126,45 @@ function autoResize() {
 function toggleCheck() {
 	if (!detailBody.classList.contains(EDIT_MODE)) {
 		this.classList.toggle('checked');
+	}
+}
+
+function addCheckList() {
+	const li = document.createElement('li');
+	const checkboxButton = document.createElement('button');
+	const contentArea = document.createElement('div');
+	const textarea = document.createElement('textarea');
+	const p = document.createElement('p');
+	const deleteButton = document.createElement('button');
+
+	checkboxButton.classList.add('checkbox');
+	contentArea.classList.add('checkbox-content');
+	deleteButton.classList.add('delete-button');
+
+	li.addEventListener('click', toggleCheck);
+	textarea.addEventListener('keyup', autoResize);
+	textarea.addEventListener('blur', controlDeleteCheck);
+	textarea.addEventListener('keydown', blockEnter);
+	deleteButton.addEventListener('click', deleteCheckList);
+
+	contentArea.append(textarea);
+	contentArea.append(p);
+
+	li.append(checkboxButton);
+	li.append(contentArea);
+	li.append(deleteButton);
+
+	this.parentNode.insertAdjacentElement('beforebegin', li);
+
+	textarea.focus();
+}
+
+function deleteCheckList() {
+	console.log(this.tagName);
+	if (this.tagName == 'TEXTAREA') {
+		this.parentNode.parentNode.classList.add('delete');
+	} else if (this.tagName == 'BUTTON') {
+		this.parentNode.classList.add('delete');
 	}
 }
 

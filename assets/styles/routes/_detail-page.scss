@@ -1,81 +1,4 @@
 #detail-body {
-	header {
-		height: 90px;
-		// background: rgba(199, 206, 170, 0.4);
-		padding-top: 15px;
-		align-items: normal;
-		> * {
-			border: 0;
-			outline: 0;
-		}
-		#return {
-			height: 60px;
-			background-image: url($go-back);
-			width: 24px;
-			height: 24px;
-			display: inline-block;
-			cursor: pointer;
-		}
-		#title {
-			display: flex;
-			flex-direction: column;
-			justify-content: space-between;
-			width: 267px;
-			height: 60px;
-			// background: rgba(86, 199, 111, 0.4);
-
-			#mail-title {
-				input {
-					display: none;
-					font-size: 18px;
-					font-weight: bold;
-					width: 267px;
-				}
-
-				h1 {
-					// height: 100%;
-					font-size: 18px;
-					font-weight: bold;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-					padding: 3px 0;
-				}
-			}
-
-			#mail-disc {
-				// background: rgba(86, 107, 199, 0.4);
-				display: flex;
-				flex-direction: column;
-				justify-content: space-between;
-				height: 30px;
-
-				p {
-					font-size: 12px;
-				}
-			}
-		}
-
-		#mail-setting {
-			width: 20px;
-			align-self: baseline;
-			// background: rgba(86, 107, 199, 0.4);
-
-			button {
-				border: 0;
-				cursor: pointer;
-				padding: 12px 5px;
-				width: 1px;
-				height: 12px;
-				background: url($three-dots) no-repeat center;
-
-				&.before-save {
-					display: none;
-				}
-			}
-		}
-	}
-
 	#content {
 		padding: 10px 20px;
 		height: calc(100% - 90px);
@@ -133,6 +56,19 @@
 					display: flex;
 					justify-content: space-between;
 
+					&.checked {
+						.checkbox {
+							background: url($check-box) no-repeat center;
+						}
+						p {
+							text-decoration: line-through;
+						}
+					}
+
+					&.delete {
+						display: none;
+					}
+
 					.checkbox {
 						background: url($check-box-blank) no-repeat center;
 						width: 12.43px;
@@ -157,17 +93,11 @@
 						margin-top: 3px;
 						width: 20px;
 						height: 20px;
-						background: url($delete);
+						mask-image: url($delete);
+						background-color: $red;
 					}
-					&.checked {
-						.checkbox {
-							background: url($check-box) no-repeat center;
-						}
-						p {
-							text-decoration: line-through;
-						}
-					}
-					.add-list {
+
+					.add-button {
 						display: none;
 						width: 230.04px;
 						height: 26px;
@@ -181,20 +111,6 @@
 		}
 	}
 	&.edit-mode {
-		header {
-			#title #mail-title {
-				input {
-					display: block;
-				}
-				h1 {
-					display: none;
-				}
-			}
-			#mail-setting button {
-				display: none;
-			}
-		}
-
 		#content {
 			#summary {
 				p {
@@ -206,6 +122,8 @@
 			}
 
 			#check-list ul li {
+				width: 280px;
+
 				.checkbox {
 					margin-top: 3px;
 				}
@@ -222,7 +140,7 @@
 					display: block;
 				}
 
-				.add-list {
+				.add-button {
 					display: block;
 				}
 			}

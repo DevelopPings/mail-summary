@@ -10,12 +10,12 @@ const hideOptionMenu = () => (optionMenuBackground.style.display = 'none');
 // 옵션 메뉴 클릭
 const onClickOptionMenu = (callback) => {
 	optionButtons.forEach((el) =>
-		el.addEventListener('click', () =>
+		el.addEventListener('click', () => {
 			showOptionMenu(
 				el.getBoundingClientRect(),
 				el.parentElement.parentElement,
-			),
-		),
+			);
+		}),
 	);
 
 	const showOptionMenu = (rect, targetElement) => {
@@ -65,7 +65,7 @@ const onClickDelete = (callback) => {
 const onClickOutOption = (callback) => {
 	optionMenuBackground.addEventListener('click', (event) => {
 		event.stopPropagation();
-		callback();
+		if (callback) callback();
 		hideOptionMenu();
 	});
 };
@@ -75,5 +75,4 @@ export default {
 	onClickEdit,
 	onClickDelete,
 	onClickOutOption,
-	hideOptionMenu,
 };

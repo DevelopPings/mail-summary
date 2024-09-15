@@ -15,6 +15,10 @@ let timer = {
 	num: 0,
 	targetId: '',
 };
+
+common.onClickOptionMenu();
+common.onClickOutOption();
+
 window.addEventListener('load', () => {
 	autoResize(textareas);
 });

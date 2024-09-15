@@ -9,6 +9,18 @@
 		<link rel="stylesheet" href="dist/style.css" />
 	</head>
 	<body id="detail-body" class="before-save">
+		<!-- 옵션 메뉴 -->
+		<div class="option-menu">
+			<div class="option-menu-wrap">
+				<button class="option-menu-edit">
+					수정<span class="edit-icon"></span>
+				</button>
+				<button class="option-menu-delete">
+					삭제<span class="delete-icon"></span>
+				</button>
+			</div>
+		</div>
+
 		<header>
 			<button id="return"></button>
 			<section id="title">
@@ -43,7 +55,7 @@
 				</div>
 			</section>
 			<section id="mail-setting">
-				<button></button>
+				<button class="option-button"></button>
 			</section>
 			<button class="toggle-mode" />
 		</header>
@@ -118,22 +130,11 @@
 			<button class="reset"></button>
 		</footer>
 
-		<!-- 옵션 메뉴 -->
-		<div class="option-menu">
-			<div class="option-menu-wrap">
-				<button class="option-menu-edit">
-					수정<span class="edit-icon"></span>
-				</button>
-				<button class="option-menu-delete">
-					삭제<span class="delete-icon"></span>
-				</button>
-			</div>
-		</div>
-
 		<div id="warning">
 			<p id="warning-message"></p>
 		</div>
 		<script src="../assets/scripts/detail.js" type="module"></script>
-		<script src="../assets/scripts/main.js" type="module"></script>
+		<!-- <script src="../assets/scripts/main.js" type="module"></script> -->
+		<script src="../assets/scripts/common.js" type="module"></script>
 	</body>
 </html>

@@ -12,6 +12,7 @@
 	cursor: pointer;
 
 	&.active {
+		display: flex;
 		opacity: 1;
 	}
 
@@ -68,7 +69,7 @@
 
 			.cancel {
 				background-color: $white;
-				border: 2px solid $secondary-light;
+				border: 1px solid $secondary-light;
 				color: $secondary-light;
 			}
 		}

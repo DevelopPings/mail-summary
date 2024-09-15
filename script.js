@@ -1,3 +1,5 @@
+// 익명함수라고 오류라고 뜸
+
 fetch('images/logo-light.svg')
 	.then((response) => response.text())
 	.then((svgData) => {

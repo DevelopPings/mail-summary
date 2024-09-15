@@ -1,3 +1,5 @@
+import common from './common.js';
+
 const EDIT_MODE = 'edit-mode';
 
 const detailBody = document.querySelector('#detail-body');
@@ -97,5 +99,38 @@ function autoResize() {
 function toggleCheck() {
 	if (!detailBody.classList.contains(EDIT_MODE)) {
 		this.classList.toggle('checked');
+	}
+}
+
+// 경고창 띄우기
+let clickCount = 0;
+let messageInterval;
+
+function alertMessage(element) {
+	clickCount++;
+	element.classList.toggle('active');
+
+	if (messageInterval) {
+		clearInterval(messageInterval);
+	}
+
+	messageInterval = setInterval(() => {
+		if (clickCount === 0) {
+			clearInterval(messageInterval);
+			warningMessage.classList.remove('active');
+		} else {
+			clickCount = 0;
+		}
+	}, 2000);
+
+	if (clickCount === 2) {
+		element.targetElement.remove();
+		clearInterval(messageInterval);
+		clickCount = 0;
+		warningMessage.classList.remove('active');
+		clickCount = 0;
+		common.hideOptionMenu();
+
+		//TODO: 2번 클릭 시 실행 로직
 	}
 }

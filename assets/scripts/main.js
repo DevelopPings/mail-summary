@@ -1,13 +1,16 @@
 import common from './common.js';
 
 const inputFocusArea = document.querySelector('.focus-area');
-const editFooter = document.querySelector('.edit-footer');
 const editFooterSpace = document.querySelector('.edit-footer-space');
 
 const warningModal = document.querySelector('.warning-modal');
 const warningModalContent = document.querySelector('.warning-modal-content');
 const modalDeleteButton = warningModal.getElementsByClassName('delete')[0];
 const modalCancelButton = warningModal.getElementsByClassName('cancel')[0];
+
+const editFooter = document.querySelector('.edit-footer');
+const footerSaveButton = editFooter.getElementsByClassName('save')[0];
+const footerResetButton = editFooter.getElementsByClassName('reset')[0];
 
 const currentOption = {
 	targetElement: null,
@@ -25,26 +28,48 @@ const setCurrentOption = (
 	currentOption.titleElement = titleElement;
 };
 
+// 옵션 메뉴
+common.onClickOptionMenu((targetElement) => {
+	setCurrentOption(
+		targetElement,
+		targetElement.getElementsByClassName('edit-title-input')[0],
+		targetElement.getElementsByClassName('item-title')[0],
+	);
+});
+
+common.onClickEdit((hideOptionMenu) => {
+	resetInput();
+	startEditMode(hideOptionMenu);
+});
+common.onClickDelete(() => showDeleteModal());
+common.onClickOutOption(() => warningModal.classList.remove('active'));
+
 const startEditMode = (hideOptionMenu) => {
-	const { inputElement, titleElement } = currentOption;
-	inputElement.value = titleElement.textContent;
-	titleElement.style.display = 'none';
-	inputElement.style.display = 'block';
+	currentOption.titleElement.style.display = 'none';
+	currentOption.inputElement.style.display = 'block';
 	inputFocusArea.style.display = 'block';
 	editFooter.style.display = 'flex';
 	editFooterSpace.style.display = 'block';
-	inputElement.focus();
+
+	currentOption.inputElement.addEventListener('keydown', (event) => {
+		saveOnEnter(event);
+	});
+
+	const end = currentOption.inputElement.value.length;
+	currentOption.inputElement.setSelectionRange(end, end);
+	currentOption.inputElement.focus();
 	if (hideOptionMenu) hideOptionMenu();
 };
 
 const endEditMode = (hideOptionMenu) => {
-	const { inputElement, titleElement } = currentOption;
-	titleElement.textContent = inputElement.value;
-	inputElement.style.display = 'none';
-	titleElement.style.display = 'block';
+	currentOption.inputElement.style.display = 'none';
+	currentOption.titleElement.style.display = 'block';
 	inputFocusArea.style.display = 'none';
 	editFooter.style.display = 'none';
 	editFooterSpace.style.display = 'none';
+
+	currentOption.inputElement.removeEventListener('keydown', saveOnEnter);
+
 	if (hideOptionMenu) hideOptionMenu();
 };
 
@@ -94,14 +119,33 @@ const hideWarningModal = () => {
 	});
 };
 
-common.onClickOptionMenu((targetElement) => {
-	setCurrentOption(
-		targetElement,
-		targetElement.getElementsByClassName('edit-title-input')[0],
-		targetElement.getElementsByClassName('item-title')[0],
-	);
+// 수정 모드 푸터
+footerSaveButton.addEventListener('click', (event) => {
+	event.stopPropagation();
+	saveInput();
+	endEditMode();
 });
 
-common.onClickEdit((hideOptionMenu) => startEditMode(hideOptionMenu));
-common.onClickDelete(() => showDeleteModal());
-common.onClickOutOption(() => warningModal.classList.remove('active'));
+footerResetButton.addEventListener('click', (event) => {
+	event.stopPropagation();
+	resetInput();
+});
+
+const resetInput = () =>
+	(currentOption.inputElement.value = currentOption.titleElement.textContent);
+
+const saveInput = () => {
+	if (currentOption.inputElement.value.length === 0) {
+		currentOption.targetElement.remove();
+	} else {
+		currentOption.titleElement.textContent =
+			currentOption.inputElement.value;
+	}
+};
+
+const saveOnEnter = (event) => {
+	if (event.key === 'Enter') {
+		saveInput();
+		endEditMode();
+	}
+};

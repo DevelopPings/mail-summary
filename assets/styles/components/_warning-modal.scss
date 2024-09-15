@@ -1,0 +1,77 @@
+.warning-modal {
+	position: fixed;
+	width: 320px;
+	height: 500px;
+	display: none;
+	justify-content: center;
+	align-items: center;
+	opacity: 0;
+	transition: opacity 0.5s ease;
+	z-index: 4;
+	background-color: rgba(var(--background-dark), 0.5);
+	cursor: pointer;
+
+	&.active {
+		display: flex;
+		opacity: 1;
+	}
+
+	&-content {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+		width: 230px;
+		height: 190px;
+
+		padding: 21px 11px 13px;
+		text-align: center;
+		background-color: $white;
+		border-radius: 7px;
+
+		.warning-icon {
+			@include image($warning, 55px, 55px, block);
+			margin-bottom: 9.63px;
+		}
+
+		.title-wrap {
+			margin-bottom: 19px;
+
+			.title {
+				font-weight: 800;
+				margin-bottom: 8px;
+			}
+
+			.description {
+				font-weight: 300;
+				font-size: 12px;
+			}
+		}
+
+		.button-wrap {
+			display: flex;
+			gap: 12px;
+
+			button {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				width: 98px;
+				height: 36px;
+				border-radius: 7px;
+				font-weight: 700;
+			}
+
+			.delete {
+				background-color: $secondary-light;
+				color: $white;
+			}
+
+			.cancel {
+				background-color: $white;
+				border: 2px solid $secondary-light;
+				color: $secondary-light;
+			}
+		}
+	}
+}

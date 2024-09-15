@@ -75,4 +75,5 @@ export default {
 	onClickEdit,
 	onClickDelete,
 	onClickOutOption,
+	hideOptionMenu,
 };

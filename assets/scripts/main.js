@@ -3,11 +3,11 @@ import common from './common.js';
 const inputFocusArea = document.querySelector('.focus-area');
 const editFooter = document.querySelector('.edit-footer');
 const editFooterSpace = document.querySelector('.edit-footer-space');
-const lists = document.querySelectorAll('.list .list-item');
-const warningMessage = document.querySelector('.warning-message');
 
-let deleteClickCount = 0;
-let deleteMessageInterval;
+const warningModal = document.querySelector('.warning-modal');
+const warningModalContent = document.querySelector('.warning-modal-content');
+const modalDeleteButton = warningModal.getElementsByClassName('delete')[0];
+const modalCancelButton = warningModal.getElementsByClassName('cancel')[0];
 
 const currentOption = {
 	targetElement: null,
@@ -48,39 +48,36 @@ const endEditMode = (hideOptionMenu) => {
 	if (hideOptionMenu) hideOptionMenu();
 };
 
-// 리스트 클릭
-lists.forEach((list) => list.addEventListener('click', moveDetail));
-
 // 수정 인풋 요소 바깥 영역 클릭
 inputFocusArea.addEventListener('click', (event) => {
 	event.stopPropagation();
 	endEditMode();
 });
 
-const deleteCheckList = (hideOptionMenu) => {
-	deleteClickCount++;
-	warningMessage.classList.add('active');
+// 삭제 확인 모달
+warningModal.addEventListener('click', (event) => {
+	event.stopPropagation();
+	warningModal.classList.remove('active');
+});
 
-	if (deleteMessageInterval) {
-		clearInterval(deleteMessageInterval);
-	}
+warningModalContent.addEventListener('click', (event) => {
+	event.stopPropagation();
+});
 
-	deleteMessageInterval = setInterval(() => {
-		if (deleteClickCount === 0) {
-			clearInterval(deleteMessageInterval);
-			warningMessage.classList.remove('active');
-		} else {
-			deleteClickCount = 0;
-		}
-	}, 1000);
+modalCancelButton.addEventListener('click', (event) => {
+	event.stopPropagation();
+	warningModal.classList.remove('active');
+});
 
-	if (deleteClickCount === 2) {
-		currentOption.targetElement.remove();
-		clearInterval(deleteMessageInterval);
-		deleteClickCount = 0;
-		warningMessage.classList.remove('active');
-		if (hideOptionMenu) hideOptionMenu();
-	}
+modalDeleteButton.addEventListener('click', (event) => {
+	event.stopPropagation();
+	currentOption.targetElement.remove();
+	warningModal.classList.remove('active');
+});
+
+const showDeleteModal = () => {
+	common.hideOptionMenu();
+	warningModal.classList.add('active');
 };
 
 common.onClickOptionMenu((targetElement) => {
@@ -91,14 +88,6 @@ common.onClickOptionMenu((targetElement) => {
 	);
 });
 
-function moveDetail(event) {
-	const target = event.target;
-	if (!target.classList.contains('option-button')) {
-		// id에 해당하는 요약 내용을 local file에서 불러오기
-		location.href = 'detail.html';
-	}
-}
-
 common.onClickEdit((hideOptionMenu) => startEditMode(hideOptionMenu));
-common.onClickDelete((hideOptionMenu) => deleteCheckList(hideOptionMenu));
-common.onClickOutOption(() => warningMessage.classList.remove('active'));
+common.onClickDelete(() => showDeleteModal());
+common.onClickOutOption(() => warningModal.classList.remove('active'));

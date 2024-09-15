@@ -8,7 +8,7 @@
 	opacity: 0;
 	transition: opacity 0.5s ease;
 	z-index: 4;
-	background-color: rgba(var(--background-dark), 0.5);
+	background-color: rgba(0, 0, 0, 0.3);
 	cursor: pointer;
 
 	&.active {
@@ -71,6 +71,30 @@
 				background-color: $white;
 				border: 1px solid $secondary-light;
 				color: $secondary-light;
+			}
+		}
+	}
+
+	body.dark-mode & {
+		background-color: rgba(0, 0, 0, 0.6);
+
+		&-content {
+			background-color: $background-dark;
+			color: $white;
+
+			.warning-icon {
+				@include image($warning-dark, 55px, 55px, block);
+			}
+
+			.button-wrap {
+				.delete {
+					background-color: $secondary-dark;
+				}
+
+				.cancel {
+					background-color: $background-dark;
+					color: $secondary-dark;
+				}
 			}
 		}
 	}

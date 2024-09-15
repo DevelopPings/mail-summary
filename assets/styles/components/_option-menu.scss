@@ -40,4 +40,28 @@
 	&-edit {
 		border-bottom: 1px solid $gray03;
 	}
+
+	body.dark-mode & {
+		&-wrap {
+			@include shadow-dark;
+			background-color: $background-dark;
+			border: 1px solid $gray04;
+
+			button {
+				color: $white;
+
+				.edit-icon {
+					@include image($edit-dark, 18px, 18px, inline-block);
+				}
+
+				.delete-icon {
+					@include image($delete-dark, 18px, 18px, inline-block);
+				}
+			}
+		}
+
+		&-edit {
+			border-bottom: 1px solid $gray04;
+		}
+	}
 }

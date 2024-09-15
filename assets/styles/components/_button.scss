@@ -6,6 +6,11 @@
 	color: $white;
 	background-color: $secondary-light;
 	cursor: pointer;
+
+	body.dark-mode & {
+		@include shadow-dark;
+		background-color: $secondary-dark;
+	}
 }
 
 .reset {
@@ -17,4 +22,10 @@
 	height: 43px;
 	border-radius: 7px;
 	cursor: pointer;
+
+	body.dark-mode & {
+		@include shadow-dark;
+		color: $secondary-dark;
+		background-color: $background-dark;
+	}
 }

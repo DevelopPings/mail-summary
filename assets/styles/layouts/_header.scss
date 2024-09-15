@@ -141,17 +141,42 @@ header {
 			width: 1px;
 			height: 12px;
 			background: url($three-dots) no-repeat center;
+
+			.before-save & {
+				display: none;
+			}
 		}
 	}
+
 	&.edit-mode {
 		#mail-setting button {
 			display: none;
 		}
 	}
-}
 
-.before-save .detail-header #mail-setting button {
-	display: none;
+	#detail-body.dark-mode & {
+		background-color: $header-dark;
+		border-bottom: 1px solid $gray04;
+
+		#mail-title {
+			color: $primary-dark;
+			input {
+				color: $primary-dark;
+				background-color: $background-dark;
+				border: 1px solid $gray04;
+			}
+		}
+
+		#mail-disc {
+			color: $gray04;
+		}
+
+		.toggle-mode {
+			background-color: $purple;
+			background-image: url($dark-mode);
+			border: 1px solid $gray04;
+		}
+	}
 }
 
 #detail-body.edit-mode .detail-header #title #mail-title {

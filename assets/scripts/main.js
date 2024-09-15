@@ -57,7 +57,7 @@ inputFocusArea.addEventListener('click', (event) => {
 // 삭제 확인 모달
 warningModal.addEventListener('click', (event) => {
 	event.stopPropagation();
-	warningModal.classList.remove('active');
+	hideWarningModal();
 });
 
 warningModalContent.addEventListener('click', (event) => {
@@ -66,18 +66,32 @@ warningModalContent.addEventListener('click', (event) => {
 
 modalCancelButton.addEventListener('click', (event) => {
 	event.stopPropagation();
-	warningModal.classList.remove('active');
+	hideWarningModal();
 });
 
 modalDeleteButton.addEventListener('click', (event) => {
 	event.stopPropagation();
 	currentOption.targetElement.remove();
-	warningModal.classList.remove('active');
+	hideWarningModal();
 });
 
 const showDeleteModal = () => {
 	common.hideOptionMenu();
-	warningModal.classList.add('active');
+	showWarningModal();
+};
+
+const showWarningModal = () => {
+	warningModal.style.display = 'flex';
+	setTimeout(() => {
+		warningModal.classList.add('active');
+	});
+};
+
+const hideWarningModal = () => {
+	warningModal.style.display = 'none';
+	setTimeout(() => {
+		warningModal.classList.remove('active');
+	});
 };
 
 common.onClickOptionMenu((targetElement) => {

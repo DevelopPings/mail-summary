@@ -1,27 +1,42 @@
 const noContentLogo = document.querySelector('.no-content-logo');
+const darkModeButton = document.querySelector('.toggle-mode');
 
-fetch('../public/images/logo-light2.svg')
-	.then((response) => {
-		if (!response.ok) {
-			throw new Error('Network response was not ok');
-		}
-		return response.text();
-	})
-	.then((svgContent) => {
-		const parser = new DOMParser();
-		const svgElement = parser.parseFromString(
-			svgContent,
-			'image/svg+xml',
-		).documentElement;
+const isDarkMode = () => document.body.classList.contains('dark-mode');
+const IMAGE_PATH = '../public/images/';
 
-		const mailIcons = svgElement.querySelectorAll('.mail-icon');
+const toggleNoContentLogo = () => {
+	const svgFile = IMAGE_PATH + `logo-${isDarkMode() ? 'dark' : 'light2'}.svg`;
 
-		mailIcons.forEach((el, i) => {
-			el.classList.add(`float${i + 1}`);
+	fetch(svgFile)
+		.then((response) => {
+			return response.text();
+		})
+		.then((svgContent) => {
+			const parser = new DOMParser();
+			const svgElement = parser.parseFromString(
+				svgContent,
+				'image/svg+xml',
+			).documentElement;
+
+			const mailIcons = svgElement.querySelectorAll('.mail-icon');
+
+			mailIcons.forEach((el, i) => {
+				el.classList.add(`float${i + 1}`);
+			});
+
+			if (noContentLogo.childElementCount > 0) {
+				noContentLogo.firstElementChild.remove();
+			}
+
+			noContentLogo.appendChild(svgElement);
+		})
+		.catch((error) => {
+			console.error('Error :', error);
 		});
+};
 
-		noContentLogo.appendChild(svgElement);
-	})
-	.catch((error) => {
-		console.error('There was a problem with the fetch operation:', error);
-	});
+toggleNoContentLogo();
+
+darkModeButton.addEventListener('click', () => {
+	toggleNoContentLogo();
+});

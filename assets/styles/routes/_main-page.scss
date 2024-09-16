@@ -177,6 +177,11 @@
 
 		.no-content {
 			&-message {
+				color: $gray04;
+			}
+
+			&-logo {
+				opacity: 0.7;
 			}
 		}
 

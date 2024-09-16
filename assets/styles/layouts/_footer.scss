@@ -1,24 +1,23 @@
-footer {
-	// display: none;
-	height: 60px;
-	display: flex;
-	// justify-content: center;
-	section {
-		display: flex;
-		align-items: center;
-		input {
-			width: 239px;
-			height: 43px;
-		}
+// footer {
+// 	height: 60px;
+// 	display: flex;
 
-		button {
-			width: 43px;
-			height: 43px;
-			background: url($reset) no-repeat center;
-			border-radius: 7px;
-		}
-	}
-}
+// 	section {
+// 		display: flex;
+// 		align-items: center;
+// 		input {
+// 			width: 239px;
+// 			height: 43px;
+// 		}
+
+// 		button {
+// 			width: 43px;
+// 			height: 43px;
+// 			background: url($reset) no-repeat center;
+// 			border-radius: 7px;
+// 		}
+// 	}
+// }
 
 .edit-footer {
 	display: none;
@@ -31,6 +30,11 @@ footer {
 	padding: 0 15px 14.56px;
 	gap: 8px;
 	z-index: 5;
+
+	.before-save &,
+	.edit-mode & {
+		display: flex;
+	}
 }
 
 .edit-footer-space {

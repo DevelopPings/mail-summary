@@ -9,6 +9,7 @@
 		<link rel="stylesheet" href="dist/style.css" />
 	</head>
 	<body id="detail-body" class="before-save">
+		<!-- <body id="detail-body"> -->
 		<!-- 옵션 메뉴 -->
 		<div class="option-menu">
 			<div class="option-menu-wrap">
@@ -24,24 +25,9 @@
 		<header class="detail-header">
 			<button id="return"></button>
 			<section id="title">
-				<!-- <input
-					type="text"
-					id="mail-title"
-					value="쌍용교육센터 OT 일정"
-				/> -->
 				<div id="mail-title">
-					<input
-						type="text"
-						value="쌍용교육센터 OT 일정일정 일정일정일정일정일정
-					일정일정일정일정일정"
-					/>
-					<h1
-						title="쌍용교육센터 OT 일정일정 일정일정일정일정일정
-					일정일정일정일정일정"
-					>
-						쌍용교육센터 OT 일정일정 일정일정일정일정일정
-						일정일정일정일정일정
-					</h1>
+					<input type="text" value="쌍용교육센터 OT 일정" />
+					<h1 title="쌍용교육센터 OT 일정">쌍용교육센터 OT 일정</h1>
 				</div>
 				<!-- <h1 id="mail-title">
 					쌍용교육센터 OT 일정일정 일정일정일정일정일정
@@ -62,7 +48,7 @@
 				<h2 class="extra-bold"><span></span>Summary</h2>
 				<div class="summary-content">
 					<!-- 맨앞/뒤 trim제거해서 저장하고 불러오기 -->
-					<textarea>
+					<!-- <textarea>
 교육 과정: AWS 클라우드와 Kafka를 활용한 Java Full-Stack 개발자 양성과정 
 훈련 기간: 2024-06-19 ~ 2024-12-02 
 국민내일배움카드 발급이 필수 
@@ -75,6 +61,12 @@
 						개발자 양성과정 훈련 기간: 2024-06-19 ~ 2024-12-02<br />
 						국민내일배움카드 발급이 필수 서류 제출 기한: 6월 3일
 						월요일까지
+					</p> -->
+					<textarea>
+교육 과정: AWS 클라우드와 Kafka를 활용한 Java Full-Stack</textarea
+					>
+					<p>
+						교육 과정: AWS 클라우드와 Kafka를 활용한 Java Full-Stack
 					</p>
 				</div>
 			</section>
@@ -83,20 +75,15 @@
 				<ul>
 					<li class="checked">
 						<button class="checkbox"></button>
-						<div class="checkbox-content">
-							<textarea>
-국민내일배움카드 신청 신청할거 많다 얼른 해봐 지금 얼마 안남았어 며칠까지 해야된다고?</textarea
-							>
-							<p>
-								국민내일배움카드 신청 신청할거 많다 얼른 해봐
-								지금 얼마 안남았어 며칠까지 해야된다고?
-							</p>
+						<div class="check-list-content">
+							<textarea>국민내일배움카드 신청</textarea>
+							<p>국민내일배움카드 신청</p>
 						</div>
 						<button class="delete-button"></button>
 					</li>
 					<li class="checked">
 						<button class="checkbox"></button>
-						<div class="checkbox-content">
+						<div class="check-list-content">
 							<textarea>온라인 수강신청</textarea>
 							<p>온라인 수강신청</p>
 						</div>
@@ -104,7 +91,7 @@
 					</li>
 					<li>
 						<button class="checkbox"></button>
-						<div class="checkbox-content">
+						<div class="check-list-content">
 							<textarea>연락 요청</textarea>
 							<p>연락 요청</p>
 						</div>
@@ -112,7 +99,7 @@
 					</li>
 					<li>
 						<button class="checkbox"></button>
-						<div class="checkbox-content">
+						<div class="check-list-content">
 							<textarea>서류 제출</textarea>
 							<p>서류 제출</p>
 						</div>
@@ -131,6 +118,21 @@
 		<div id="warning">
 			<p id="warning-message"></p>
 		</div>
+
+		<div class="warning-modal">
+			<div class="warning-modal-content">
+				<span class="warning-icon"></span>
+				<div class="title-wrap">
+					<h1 class="title">삭제하시겠습니까?</h1>
+					<p class="description">이 작업은 되돌릴 수 없습니다.</p>
+				</div>
+				<div class="button-wrap">
+					<button class="delete">삭제</button>
+					<button class="cancel">취소</button>
+				</div>
+			</div>
+		</div>
+
 		<script src="../assets/scripts/detail.js" type="module"></script>
 		<script src="../assets/scripts/common.js" type="module"></script>
 	</body>

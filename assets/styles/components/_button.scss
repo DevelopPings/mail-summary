@@ -11,6 +11,10 @@
 		@include shadow-dark;
 		background-color: $secondary-dark;
 	}
+
+	body.before-save & {
+		width: 289px;
+	}
 }
 
 .reset {
@@ -27,5 +31,9 @@
 		@include shadow-dark;
 		color: $secondary-dark;
 		background-color: $background-dark;
+	}
+
+	body.before-save & {
+		display: none;
 	}
 }

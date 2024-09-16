@@ -23,6 +23,10 @@ html {
 body {
 	height: 100%;
 	background-color: $white;
+
+	&.dark-mode {
+		background-color: $background-dark;
+	}
 }
 
 input,

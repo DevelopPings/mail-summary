@@ -148,7 +148,7 @@ header {
 		}
 	}
 
-	&.edit-mode {
+	.edit-mode & {
 		#mail-setting button {
 			display: none;
 		}

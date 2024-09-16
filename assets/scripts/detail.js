@@ -1,51 +1,130 @@
 import common from './common.js';
 
+const BEFORE_SAVE = 'before-save';
 const EDIT_MODE = 'edit-mode';
 const NOT_EXIST_SUMMARY = '요약 내용이 존재하지 않습니다.';
 
 const detailBody = document.querySelector('#detail-body');
-const returnIcon = document.querySelector('#return');
+const returnButton = document.querySelector('#return');
 const textareas = document.querySelectorAll('textarea');
 
 const checklists = document.querySelectorAll('#check-list > ul > li');
-const addButton = document.querySelector('.add-button');
-const deleteButtons = document.querySelectorAll('.delete-button');
-const reset = document.querySelector('#reset');
+const checklistAddButton = document.querySelector('#check-list .add-button');
+const checklistDeleteButtons = document.querySelectorAll(
+	'#check-list .delete-button',
+);
+
+const editFooter = document.querySelector('.edit-footer');
+const footerSaveButton = editFooter.getElementsByClassName('save')[0];
+const footerResetButton = editFooter.getElementsByClassName('reset')[0];
+
 const warning = document.querySelector('#warning');
 const warningMessage = document.querySelector('#warning-message');
+
+const warningModal = document.querySelector('.warning-modal');
 
 let timer = {
 	num: 0,
 	targetId: '',
 };
 
+function getContents() {
+	const title = document.querySelector('#mail-title');
+	const summary = document.querySelector('.summary-content');
+	const checklists = document.querySelectorAll(
+		'#check-list ul li:not(:last-child, .delete) .check-list-content',
+	);
+	const deleteChecklists = document.querySelectorAll(
+		'#check-list ul li.delete',
+	);
+
+	return {
+		title: title,
+		summary: summary,
+		checklists: checklists,
+		deleteChecklists: deleteChecklists,
+	};
+}
+
 common.onClickOptionMenu();
 common.onClickOutOption();
+common.onClickEdit((hideOptionMenu) => {
+	// 수정모드
+	toggleEditMode();
+	if (hideOptionMenu) hideOptionMenu();
+});
+
+common.onClickDelete(() => showDeleteModal());
+
+const showDeleteModal = () => {
+	common.hideOptionMenu();
+	showWarningModal();
+};
+
+const showWarningModal = () => {
+	warningModal.style.display = 'flex';
+	setTimeout(() => {
+		warningModal.classList.add('active');
+	});
+};
 
 window.addEventListener('load', () => {
 	autoResize(textareas);
 });
+
 detailBody.addEventListener('dblclick', toggleEditMode);
 textareas.forEach((textarea) => textarea.addEventListener('keyup', autoResize));
 
-addButton.addEventListener('click', addCheckList);
+checklists.forEach((checklist, index) => {
+	checklist.addEventListener('click', toggleCheck);
 
-deleteButtons.forEach((deleteButton) =>
+	if (index < checklists.length - 1) {
+		checklist
+			.querySelector('textarea')
+			.addEventListener('keydown', blockEnter);
+		checklist
+			.querySelector('textarea')
+			.addEventListener('blur', controlDeleteCheck);
+	}
+});
+
+checklistAddButton.addEventListener('click', addCheckList);
+
+checklistDeleteButtons.forEach((deleteButton) =>
 	deleteButton.addEventListener('click', deleteCheckList),
 );
+
+footerSaveButton.addEventListener('click', saveSummary);
+footerResetButton.addEventListener('click', resetSummary);
 
 // return & reset button event
 // returnIcon.addEventListener('click', returnMain);
 // reset.addEventListener('click', resetDetail);
-returnIcon.addEventListener('click', (event) => alertMessage(event.target));
+returnButton.addEventListener('click', clickReturnButton);
 
-checklists.forEach((checklist) => {
-	checklist.addEventListener('click', toggleCheck);
-	checklist.querySelector('textarea').addEventListener('keydown', blockEnter);
-	checklist
-		.querySelector('textarea')
-		.addEventListener('blur', controlDeleteCheck);
-});
+function clickReturnButton(event) {
+	const bodyClasses = document.body.classList;
+
+	if (bodyClasses.contains(EDIT_MODE)) {
+		if (isContentEdited()) {
+			// 수정 후 그냥 돌아가기 > 경고 메세지
+			console.log('수정 후 그냥 돌아가기 > 경고 메세지');
+		} else {
+			// 수정 안하고 돌아가기 > 내용 되돌리고 수정 모드 풀기
+			bodyClasses.remove(EDIT_MODE);
+			// console.log('수정 안하고 돌아가기 > 내용 되돌리고 수정 모드 풀기');
+			returnContent();
+		}
+	} else if (bodyClasses.contains(BEFORE_SAVE)) {
+		// 저장 전 돌아가기 > 경고 메세지
+		console.log('저장 전 돌아가기 > 경고 메세지');
+	} else {
+		// 목록으로 돌아가기
+		location.href = 'main.html';
+	}
+
+	alertMessage(event.target);
+}
 
 function blockEnter(event) {
 	if (event.keyCode == 13) {
@@ -60,9 +139,13 @@ function controlDeleteCheck() {
 }
 
 function toggleEditMode() {
-	detailBody.classList.toggle(EDIT_MODE);
+	const bodyClasses = document.body.classList;
+	if (bodyClasses.contains(BEFORE_SAVE) || bodyClasses.contains(EDIT_MODE))
+		return;
 
-	if (detailBody.classList.contains(EDIT_MODE)) {
+	bodyClasses.toggle(EDIT_MODE);
+
+	if (bodyClasses.contains(EDIT_MODE)) {
 		autoResizeList();
 	}
 }
@@ -141,7 +224,7 @@ function addCheckList() {
 	const deleteButton = document.createElement('button');
 
 	checkboxButton.classList.add('checkbox');
-	contentArea.classList.add('checkbox-content');
+	contentArea.classList.add('check-list-content');
 	deleteButton.classList.add('delete-button');
 
 	li.addEventListener('click', toggleCheck);
@@ -162,13 +245,160 @@ function addCheckList() {
 	textarea.focus();
 }
 
+function isContentEdited() {
+	const { title, summary, checklists, deleteChecklists } = getContents();
+	if (
+		isTwinsDifferent(title) ||
+		isTwinsDifferent(summary) ||
+		isTwinsListDifferent(checklists) ||
+		deleteChecklists.length > 0
+	) {
+		return true;
+	}
+	return false;
+}
+
+function isTwinsListDifferent(list) {
+	let result = false;
+	for (let i = 0; i < list.length; i++) {
+		if (isValueDifferent(list[i].children[0], list[i].children[1])) {
+			result = true;
+			break;
+		}
+	}
+	return result;
+}
+
+function isTwinsDifferent(element) {
+	return isValueDifferent(element.children[0], element.children[1]);
+}
+
+function isValueDifferent(element1, element2) {
+	if (getElementValue(element1) != getElementValue(element2)) {
+		return true;
+	}
+	return false;
+}
+
+function getElementValue(element) {
+	let result = '';
+
+	switch (element.tagName) {
+		case 'P':
+			result = element.innerHTML.replace(/<br>/g, '\n');
+			break;
+		case 'H1':
+			result = element.textContent;
+			break;
+		default:
+			result = element.value;
+	}
+
+	return result.trim();
+}
+
 function deleteCheckList() {
-	console.log(this.tagName);
 	if (this.tagName == 'TEXTAREA') {
 		this.parentNode.parentNode.classList.add('delete');
 	} else if (this.tagName == 'BUTTON') {
 		this.parentNode.classList.add('delete');
 	}
+}
+
+function saveSummary(event) {
+	const bodyClasses = document.body.classList;
+
+	if (bodyClasses.contains(EDIT_MODE)) {
+		if (isContentEdited()) {
+			replaceWithEditContent();
+		}
+		bodyClasses.remove(EDIT_MODE);
+	} else if (bodyClasses.contains(BEFORE_SAVE)) {
+		// 메일 요약내용 처음 저장
+		bodyClasses.remove(BEFORE_SAVE);
+	}
+	alertMessage(event);
+}
+
+function resetSummary() {
+	const { title, summary, checklists, deleteChecklists } = getContents();
+
+	pasteToEditor(title);
+	pasteToEditor(summary);
+	checklists.forEach((item) => {
+		pasteToEditor(item);
+		if (getElementValue(item.children[0]) == '') {
+			item.parentNode.remove();
+		}
+	});
+	deleteChecklists.forEach((item) => {
+		pasteToEditor(item.querySelector('.check-list-content'));
+		item.classList.remove('delete');
+	});
+}
+
+function replaceWithEditContent() {
+	const { title, summary, checklists, deleteChecklists } = getContents();
+
+	// update title
+	pasteToOrigin(title);
+	// const editTitle = title.querySelector('input');
+	// const originTitle = title.querySelector('h1');
+
+	// editTitle.textContent = getElementValue(editTitle);
+	// originTitle.textContent = getElementValue(editTitle);
+	// originTitle.title = getElementValue(editTitle);
+
+	// update summary
+	pasteToOrigin(summary);
+	// const editSummary = summary.querySelector('textarea');
+	// const originSummary = summary.querySelector('p');
+
+	// editSummary.value = getElementValue(editSummary);
+	// originSummary.textContent = getElementValue(editSummary);
+
+	// update checklist
+	checklists.forEach((item) => pasteToOrigin(item));
+	// for (let i = 0; i < checklists.length; i++) {
+	// pasteToOrigin(checklists[i]);
+	// const editChecklist = checklists[i].querySelector('textarea');
+	// const originChecklist = checklists[i].querySelector('p');
+	// editChecklist.value = getElementValue(editChecklist);
+	// originChecklist.textContent = getElementValue(editChecklist);
+	// }
+
+	// delete checklist
+	deleteChecklists.forEach((item) => item.remove());
+}
+
+function pasteToOrigin(element) {
+	changeContent(element.children[1], element.children[0]);
+}
+
+function pasteToEditor(element) {
+	changeContent(element.children[0], element.children[1]);
+}
+
+function changeContent(target, provider) {
+	const targetTag = target.tagName;
+	const providerTag = provider.tagName;
+
+	if (targetTag == 'P' && providerTag == 'TEXTAREA') {
+		provider.value = getElementValue(provider);
+		target.textContent = provider.value;
+	} else if (targetTag == 'TEXTAREA' && providerTag == 'P') {
+		target.value = getElementValue(provider);
+	} else if (targetTag == 'H1' && providerTag == 'INPUT') {
+		provider.textContent = getElementValue(provider);
+		target.textContent = provider.textContent;
+		target.title = provider.textContent;
+	} else if (targetTag == 'INPUT' && providerTag == 'H1') {
+		target.value = getElementValue(provider);
+	}
+}
+
+function saveContent() {
+	const { title, summary, checklists } = getContents();
 }
 
 // 경고창 띄우기

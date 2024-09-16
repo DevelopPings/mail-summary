@@ -3,13 +3,17 @@
 		padding: 10px 20px;
 		height: calc(100% - 90px);
 		overflow-y: auto;
-		// background-color: gold;
 
 		section {
 			margin-top: 15px;
 			h2 {
 				margin-bottom: 10px;
 			}
+		}
+
+		p {
+			cursor: default;
+			line-height: 24px;
 		}
 
 		#summary {
@@ -21,7 +25,7 @@
 					margin-right: 5.58px;
 					width: 16.74px;
 					height: 18px;
-					background: url($chat-bubble);
+					background: url($chat-bubble) no-repeat center;
 				}
 			}
 			.summary-content {
@@ -37,6 +41,10 @@
 		}
 
 		#check-list {
+			p {
+				cursor: pointer;
+			}
+
 			h2 {
 				display: flex;
 
@@ -46,7 +54,7 @@
 					margin-top: -2px;
 					width: 18px;
 					height: 18px;
-					background: url($check);
+					background: url($check) no-repeat center;
 				}
 			}
 
@@ -55,6 +63,14 @@
 					margin-bottom: 6px;
 					display: flex;
 					justify-content: space-between;
+
+					.checkbox {
+						background: url($check-box-blank) no-repeat center;
+						width: 12.43px;
+						height: 12px;
+						display: inline-block;
+						padding: 7px 0;
+					}
 
 					&.checked {
 						.checkbox {
@@ -69,22 +85,12 @@
 						display: none;
 					}
 
-					.checkbox {
-						background: url($check-box-blank) no-repeat center;
-						width: 12.43px;
-						height: 12px;
-						display: inline-block;
-						padding: 7px 0;
-					}
-					.checkbox-content {
+					.check-list-content {
 						width: 260px;
 						textarea {
 							display: none;
 							width: 230.04px;
 							margin: 0 auto;
-						}
-
-						p {
 						}
 					}
 
@@ -126,6 +132,7 @@
 
 				.checkbox {
 					margin-top: 3px;
+					cursor: default;
 				}
 
 				p {
@@ -145,14 +152,8 @@
 				}
 			}
 		}
-		// 	&-first {
-		// 		header {
-		// 			#mail-setting {
-		// 				display: block;
-		// 			}
-		// 		}
-		// 	}
 	}
+
 	#warning {
 		position: absolute;
 		top: 76px;
@@ -176,6 +177,49 @@
 			font-weight: bold;
 			user-select: none;
 			line-height: 24px;
+		}
+	}
+
+	&.dark-mode {
+		background: $background-dark;
+		color: $white;
+
+		textarea {
+			background-color: $background-dark;
+			border: 1px solid $gray04;
+			color: $white;
+		}
+
+		#content {
+			#summary {
+				h2 span {
+					background-image: url($chat-bubble-dark);
+				}
+			}
+
+			#check-list {
+				h2 span {
+					background-image: url($check-dark);
+				}
+
+				ul li {
+					.checkbox {
+						background-image: url($check-box-blank-dark);
+					}
+
+					&.checked .checkbox {
+						background-image: url($check-box-dark);
+					}
+
+					.delete-button {
+						background-color: $yellow;
+					}
+
+					.add-button {
+						background-image: url($plus-dark);
+					}
+				}
+			}
 		}
 	}
 }

@@ -7,11 +7,20 @@
 		"default_popup": "public/main.html",
 		"default_icon": "public/images/logo-light.png"
 	},
-	"permissions": ["contextMenus"],
+	"permissions": ["contextMenus", "scripting", "activeTab"],
 	"background": {
 		"service_worker": "assets/scripts/background.js"
 	},
 	"icons": {
 		"140": "public/images/logo-light.png"
-	}
+	},
+	"content_scripts": [
+		{
+			"matches": [
+				"https://*.mail.google.com/*",
+				"https://*.mail.naver.com/*"
+			],
+			"js": ["assets/scripts/content.js"]
+		}
+	]
 }

@@ -4,6 +4,7 @@ fetch('images/logo-light.svg')
 	.then((response) => response.text())
 	.then((svgData) => {
 		document.getElementById('svg').innerHTML = svgData;
+		conso;
 
 		const logo = document.querySelector('#svg #logo');
 		console.log(logo);

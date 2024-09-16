@@ -5,71 +5,84 @@ function crawlContent() {
 			// 제목
 			const mailTitle = document.querySelectorAll(
 				'.text > span > span:nth-child(2)',
-			);
-
-			const titleArray = Array.from(mailTitle).map(
-				(subject) => subject.textContent,
-			);
+			)[0].innerHTML;
 
 			// 보낸 사람
-			const mailSend = document.querySelectorAll('.option_area > button');
-
-			const sendArray = Array.from(mailSend).map(
-				(subject) => subject.textContent,
-			);
+			const mailSend = document.querySelectorAll(
+				'.option_area > button',
+			)[0].innerHTML;
 
 			// 시간
-			const mailTime = document.querySelectorAll('.info_area > span');
-
-			const timeArray = Array.from(mailTime).map(
-				(subject) => subject.textContent,
-			);
+			const mailTime =
+				document.querySelectorAll('.info_area > span')[0].innerHTML;
 
 			// 내용
-			const mailContent = document.querySelectorAll(
-				'.mail_view_contents',
-			);
+			const mailContent = document
+				.querySelectorAll('.mail_view_contents')[0]
+				.innerText.trim();
 
-			const contentArray = Array.from(mailContent).map(
-				(subject) => subject.textContent,
-			);
-
-			const mailContent = {
-				title: titleArray[0],
-				send: sendArray[0],
-				time: timeArray[0],
-				content: contentArray[0].trim(),
+			const mail = {
+				title: mailTitle,
+				send: mailSend,
+				time: mailTime,
+				content: mailContent,
 			};
 
-			console.log(mailContent);
+			console.log(mail);
 		} else if (location.host == 'mail.google.com') {
 			// 구글
 			// 제목
-			const mailTitle = document.querySelectorAll('.ha > h2');
+			document.querySelectorAll('.ajz')[0].click();
+			document.querySelectorAll('.ajz')[0].click();
 
-			const headerArray = Array.from(mailTitle).map(
-				(subject) => subject.textContent,
-			);
+			let mailTitle;
+			const getTitle = () => {
+				mailTitle = document
+					.querySelectorAll('.ajv')[3]
+					.querySelectorAll('td')[1].innerText;
+			};
 
 			// 받는 사람
-			const mailSend = document.querySelectorAll(
-				'.UszGxc.ajv td:nth-child(2) span span span:nth-child(3)',
-			);
 
-			const sendArray = Array.from(mailSend).map(
-				(subject) => subject.textContent,
-			);
+			let mailSend;
+			const getSend = () => {
+				mailSend = document
+					.querySelectorAll('.ajv')[0]
+					.querySelectorAll('span.qu')[0].innerText;
+			};
 
 			// 시간
+			let mailTime;
+			const getTime = () => {
+				mailTime = document
+					.querySelectorAll('.ajv')[2]
+					.querySelectorAll('span')[1].innerHTML;
+			};
 
 			// 내용
-
-			const mailContent = {
-				title: titleArray[0],
-				send: sendArray[0],
-				time: timeArray[0],
-				content: contentArray[0].trim(),
+			let mailContent;
+			const getContent = () => {
+				let mailContentArray = document
+					.querySelectorAll('.Bk div div div div.gs div div div')[2]
+					.querySelectorAll('div div div span');
+				for (let i = 0; i < mailContentArray.length; i++) {
+					mailContent += mailContentArray[i].innerHTML;
+				}
 			};
+
+			getTitle();
+			getSend();
+			getTime();
+			getContent();
+
+			const mail = {
+				title: mailTitle,
+				send: mailSend,
+				time: mailTime,
+				content: mailContent,
+			};
+
+			console.log(mail);
 		}
 	}, 1000);
 }

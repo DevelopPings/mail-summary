@@ -74,10 +74,12 @@ const endEditMode = (hideOptionMenu) => {
 };
 
 // 수정 인풋 요소 바깥 영역 클릭
-inputFocusArea.addEventListener('click', (event) => {
-	event.stopPropagation();
-	endEditMode();
-});
+if (inputFocusArea) {
+	inputFocusArea.addEventListener('click', (event) => {
+		event.stopPropagation();
+		endEditMode();
+	});
+}
 
 // 삭제 확인 모달
 warningModal.addEventListener('click', (event) => {

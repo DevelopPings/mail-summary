@@ -1,12 +1,11 @@
 // 익명함수라고 오류라고 뜸
 
-fetch('images/logo-light.svg')
+fetch('../public/images/logo-light.svg')
 	.then((response) => response.text())
 	.then((svgData) => {
-		document.getElementById('svg').innerHTML = svgData;
+		document.getElementById('loading').innerHTML = svgData;
 
 		const logo = document.querySelector('#svg #logo');
-		console.log(logo);
 		const number = [3, 4, 1, 0, 2, 2, 0, 1, 4];
 		number.forEach((num, index) => {
 			setTimeout(() => {

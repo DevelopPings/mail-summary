@@ -1,0 +1,21 @@
+@keyframes swim {
+	0% {
+		transform: translateX(0) rotate(0deg);
+	}
+
+	20% {
+		transform: translateX(-5px) rotate(-3deg);
+	}
+
+	40% {
+		transform: translateX(0) rotate(0deg);
+	}
+
+	60% {
+		transform: translateX(5px) rotate(3deg);
+	}
+
+	100% {
+		transform: translateX(0) rotate(0deg);
+	}
+}

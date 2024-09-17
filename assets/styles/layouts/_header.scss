@@ -97,11 +97,14 @@ header {
 		// background: rgba(86, 199, 111, 0.4);
 
 		#mail-title {
+			color: $primary-light;
+
 			input {
 				display: none;
+				width: 267px;
+				color: $primary-light;
 				font-size: 18px;
 				font-weight: bold;
-				width: 267px;
 			}
 
 			h1 {

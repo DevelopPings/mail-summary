@@ -1,5 +1,6 @@
 .warning-message {
 	position: fixed;
+	top: 0;
 	width: 320px;
 	height: 500px;
 	display: flex;
@@ -29,5 +30,10 @@
 		border-radius: 7px;
 		font-weight: 700;
 		transform: translateY(-140%);
+
+		.dark-mode & {
+			background-color: rgba(var(--background-white), 0.8);
+			color: $gray01;
+		}
 	}
 }

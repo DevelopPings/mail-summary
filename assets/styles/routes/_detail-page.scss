@@ -65,11 +65,12 @@
 					justify-content: space-between;
 
 					.checkbox {
-						background: url($check-box-blank) no-repeat center;
+						display: inline-block;
+						align-self: center;
+						padding: 7px 0;
 						width: 12.43px;
 						height: 12px;
-						display: inline-block;
-						padding: 7px 0;
+						background: url($check-box-blank) no-repeat center;
 					}
 
 					&.checked {
@@ -96,7 +97,7 @@
 
 					.delete-button {
 						display: none;
-						margin-top: 3px;
+						align-self: center;
 						width: 20px;
 						height: 20px;
 						mask-image: url($delete);
@@ -127,28 +128,31 @@
 				}
 			}
 
-			#check-list ul li {
-				width: 280px;
+			#check-list {
+				margin-bottom: 70px;
 
-				.checkbox {
-					margin-top: 3px;
-					cursor: default;
-				}
+				ul li {
+					width: 280px;
 
-				p {
-					display: none;
-				}
+					.checkbox {
+						cursor: default;
+					}
 
-				textarea {
-					display: block;
-				}
+					p {
+						display: none;
+					}
 
-				.delete-button {
-					display: block;
-				}
+					textarea {
+						display: block;
+					}
 
-				.add-button {
-					display: block;
+					.delete-button {
+						display: block;
+					}
+
+					.add-button {
+						display: block;
+					}
 				}
 			}
 		}

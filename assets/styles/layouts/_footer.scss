@@ -34,6 +34,7 @@
 	.before-save &,
 	.edit-mode & {
 		display: flex;
+		z-index: 3;
 	}
 }
 

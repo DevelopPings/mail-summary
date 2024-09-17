@@ -2,7 +2,6 @@ import common from './common.js';
 
 const BEFORE_SAVE = 'before-save';
 const EDIT_MODE = 'edit-mode';
-const NOT_EXIST_SUMMARY = '요약 내용이 존재하지 않습니다.';
 
 const detailBody = document.querySelector('#detail-body');
 const returnButton = document.querySelector('#return');
@@ -18,14 +17,25 @@ const editFooter = document.querySelector('.edit-footer');
 const footerSaveButton = editFooter.getElementsByClassName('save')[0];
 const footerResetButton = editFooter.getElementsByClassName('reset')[0];
 
-const warning = document.querySelector('#warning');
-const warningMessage = document.querySelector('#warning-message');
+// const warning = document.querySelector('#warning');
+// const warningMessage = document.querySelector('#warning-message');
+const warning = document.querySelector('.warning-message');
+const warningMessage = document.querySelector('.warning-message-content');
 
 const warningModal = document.querySelector('.warning-modal');
+const warningModalContent = document.querySelector('.warning-modal-content');
+const modalDeleteButton = warningModal.getElementsByClassName('delete')[0];
+const modalCancelButton = warningModal.getElementsByClassName('cancel')[0];
 
-let timer = {
-	num: 0,
-	targetId: '',
+const editModeTimer = {
+	id: 0,
+	target: null,
+};
+
+const msg = {
+	beforeSave: '아직 저장되지 않았습니다. <br>돌아가려면 다시 클릭해주세요.',
+	reset: '초기화하려면 다시 클릭해주세요.',
+	notExistSummary: '요약 내용이 존재하지 않습니다.',
 };
 
 function getContents() {
@@ -34,7 +44,7 @@ function getContents() {
 	const checklists = document.querySelectorAll(
 		'#check-list ul li:not(:last-child, .delete) .check-list-content',
 	);
-	const deleteChecklists = document.querySelectorAll(
+	const deleteCheckLists = document.querySelectorAll(
 		'#check-list ul li.delete',
 	);
 
@@ -42,7 +52,7 @@ function getContents() {
 		title: title,
 		summary: summary,
 		checklists: checklists,
-		deleteChecklists: deleteChecklists,
+		deleteCheckLists: deleteCheckLists,
 	};
 }
 
@@ -68,11 +78,19 @@ const showWarningModal = () => {
 	});
 };
 
+const hideWarningModal = () => {
+	warningModal.style.display = 'none';
+	setTimeout(() => {
+		warningModal.classList.remove('active');
+	});
+};
+
 window.addEventListener('load', () => {
 	autoResize(textareas);
 });
 
-detailBody.addEventListener('dblclick', toggleEditMode);
+detailBody.addEventListener('click', controlDoubleClickToEditMode);
+// detailBody.addEventListener('dblclick', toggleEditMode);
 textareas.forEach((textarea) => textarea.addEventListener('keyup', autoResize));
 
 checklists.forEach((checklist, index) => {
@@ -102,6 +120,28 @@ footerResetButton.addEventListener('click', resetSummary);
 // reset.addEventListener('click', resetDetail);
 returnButton.addEventListener('click', clickReturnButton);
 
+// 삭제 확인 모달
+warningModal.addEventListener('click', (event) => {
+	event.stopPropagation();
+	hideWarningModal();
+});
+
+warningModalContent.addEventListener('click', (event) => {
+	event.stopPropagation();
+});
+
+modalCancelButton.addEventListener('click', (event) => {
+	event.stopPropagation();
+	hideWarningModal();
+});
+
+modalDeleteButton.addEventListener('click', (event) => {
+	// 요약 삭제 이벤트 추가
+	event.stopPropagation();
+	hideWarningModal();
+	location.href = 'main.html';
+});
+
 function clickReturnButton(event) {
 	const bodyClasses = document.body.classList;
 
@@ -118,12 +158,11 @@ function clickReturnButton(event) {
 	} else if (bodyClasses.contains(BEFORE_SAVE)) {
 		// 저장 전 돌아가기 > 경고 메세지
 		console.log('저장 전 돌아가기 > 경고 메세지');
+		alertMessage(event.target);
 	} else {
 		// 목록으로 돌아가기
 		location.href = 'main.html';
 	}
-
-	alertMessage(event.target);
 }
 
 function blockEnter(event) {
@@ -133,15 +172,41 @@ function blockEnter(event) {
 }
 
 function controlDeleteCheck() {
-	if (this.value.trim().length == 0) {
-		deleteCheckList.call(this);
+	if (getElementValue(this).length == 0) {
+		if (isTwinsDifferent(this.parentNode)) {
+			deleteCheckList.call(this);
+		} else {
+			this.parentNode.parentNode.remove();
+		}
+	}
+}
+
+function controlDoubleClickToEditMode(event) {
+	const tagName = event.target.tagName;
+	const bodyClasses = document.body.classList;
+
+	if (bodyClasses.contains(BEFORE_SAVE) || bodyClasses.contains(EDIT_MODE))
+		return;
+
+	if (tagName != 'BUTTON') {
+		if (event.target == editModeTimer.target) {
+			toggleEditMode();
+		} else {
+			if (editModeTimer.id != 0) {
+				clearTimeout(editModeTimer.id);
+			}
+
+			editModeTimer.target = event.target;
+			editModeTimer.id = setTimeout(() => {
+				editModeTimer.id = 0;
+				editModeTimer.target = null;
+			}, 200);
+		}
 	}
 }
 
 function toggleEditMode() {
 	const bodyClasses = document.body.classList;
-	if (bodyClasses.contains(BEFORE_SAVE) || bodyClasses.contains(EDIT_MODE))
-		return;
 
 	bodyClasses.toggle(EDIT_MODE);
 
@@ -222,6 +287,7 @@ function addCheckList() {
 	const textarea = document.createElement('textarea');
 	const p = document.createElement('p');
 	const deleteButton = document.createElement('button');
+	const main = document.querySelector('main');
 
 	checkboxButton.classList.add('checkbox');
 	contentArea.classList.add('check-list-content');
@@ -242,16 +308,17 @@ function addCheckList() {
 
 	this.parentNode.insertAdjacentElement('beforebegin', li);
 
+	main.scrollTo(0, main.scrollHeight);
 	textarea.focus();
 }
 
 function isContentEdited() {
-	const { title, summary, checklists, deleteChecklists } = getContents();
+	const { title, summary, checklists, deleteCheckLists } = getContents();
 	if (
 		isTwinsDifferent(title) ||
 		isTwinsDifferent(summary) ||
 		isTwinsListDifferent(checklists) ||
-		deleteChecklists.length > 0
+		deleteCheckLists.length > 0
 	) {
 		return true;
 	}
@@ -280,6 +347,19 @@ function isValueDifferent(element1, element2) {
 	return false;
 }
 
+function setElementValue(element, value) {
+	switch (element.tagName) {
+		case 'P':
+			element.innerHTML = value;
+			break;
+		case 'H1':
+			element.textContent = value;
+			break;
+		default:
+			element.value = value;
+	}
+}
+
 function getElementValue(element) {
 	let result = '';
 
@@ -297,19 +377,25 @@ function getElementValue(element) {
 	return result.trim();
 }
 
-function deleteCheckList() {
-	if (this.tagName == 'TEXTAREA') {
-		this.parentNode.parentNode.classList.add('delete');
-	} else if (this.tagName == 'BUTTON') {
-		this.parentNode.classList.add('delete');
+function addDeleteCheckList(element) {
+	if (element.tagName == 'TEXTAREA') {
+		element.parentNode.parentNode.classList.add('delete');
+	} else if (element.tagName == 'BUTTON') {
+		element.parentNode.classList.add('delete');
 	}
+}
+
+function deleteCheckList() {
+	addDeleteCheckList(this);
 }
 
 function saveSummary(event) {
 	const bodyClasses = document.body.classList;
 
 	if (bodyClasses.contains(EDIT_MODE)) {
+		// 수정모드 일 때
 		if (isContentEdited()) {
+			// 수정된 내용이 있으면 보여주는 내용에 붙여넣기
 			replaceWithEditContent();
 		}
 		bodyClasses.remove(EDIT_MODE);
@@ -317,11 +403,11 @@ function saveSummary(event) {
 		// 메일 요약내용 처음 저장
 		bodyClasses.remove(BEFORE_SAVE);
 	}
-	alertMessage(event);
+	// 요약 내용 파일에 저장
 }
 
 function resetSummary() {
-	const { title, summary, checklists, deleteChecklists } = getContents();
+	const { title, summary, checklists, deleteCheckLists } = getContents();
 
 	pasteToEditor(title);
 	pasteToEditor(summary);
@@ -331,44 +417,34 @@ function resetSummary() {
 			item.parentNode.remove();
 		}
 	});
-	deleteChecklists.forEach((item) => {
+	deleteCheckLists.forEach((item) => {
 		pasteToEditor(item.querySelector('.check-list-content'));
-		item.classList.remove('delete');
+		if (
+			getElementValue(
+				item.querySelector('.check-list-content').children[1],
+			) == ''
+		) {
+			item.remove();
+		} else {
+			item.classList.remove('delete');
+		}
 	});
 }
 
 function replaceWithEditContent() {
-	const { title, summary, checklists, deleteChecklists } = getContents();
+	const { title, summary, checklists, deleteCheckLists } = getContents();
 
 	// update title
 	pasteToOrigin(title);
-	// const editTitle = title.querySelector('input');
-	// const originTitle = title.querySelector('h1');
-
-	// editTitle.textContent = getElementValue(editTitle);
-	// originTitle.textContent = getElementValue(editTitle);
-	// originTitle.title = getElementValue(editTitle);
 
 	// update summary
 	pasteToOrigin(summary);
-	// const editSummary = summary.querySelector('textarea');
-	// const originSummary = summary.querySelector('p');
-
-	// editSummary.value = getElementValue(editSummary);
-	// originSummary.textContent = getElementValue(editSummary);
 
 	// update checklist
 	checklists.forEach((item) => pasteToOrigin(item));
-	// for (let i = 0; i < checklists.length; i++) {
-	// pasteToOrigin(checklists[i]);
-	// const editChecklist = checklists[i].querySelector('textarea');
-	// const originChecklist = checklists[i].querySelector('p');
-	// editChecklist.value = getElementValue(editChecklist);
-	// originChecklist.textContent = getElementValue(editChecklist);
-	// }
 
 	// delete checklist
-	deleteChecklists.forEach((item) => item.remove());
+	deleteCheckLists.forEach((item) => item.remove());
 }
 
 function pasteToOrigin(element) {
@@ -397,36 +473,37 @@ function changeContent(target, provider) {
 	}
 }
 
-function saveContent() {
-	const { title, summary, checklists } = getContents();
-}
-
 // 경고창 띄우기
 let clickCount = 0;
 let messageInterval;
 
 function alertMessage(element) {
+	const bodyClasses = document.body.classList;
 	clickCount++;
-	element.classList.toggle('active');
+	warning.classList.toggle('active');
 
 	if (messageInterval) {
 		clearInterval(messageInterval);
 	}
 
+	if (element == returnButton && bodyClasses.contains(BEFORE_SAVE)) {
+		setElementValue(warningMessage, msg.beforeSave);
+	}
+
 	messageInterval = setInterval(() => {
 		if (clickCount === 0) {
 			clearInterval(messageInterval);
-			warningMessage.classList.remove('active');
+			warning.classList.remove('active');
 		} else {
 			clickCount = 0;
 		}
-	}, 2000);
+	}, 1000);
 
 	if (clickCount === 2) {
 		element.targetElement.remove();
 		clearInterval(messageInterval);
 		clickCount = 0;
-		warningMessage.classList.remove('active');
+		warning.classList.remove('active');
 		clickCount = 0;
 		common.hideOptionMenu();
 

@@ -2,14 +2,17 @@ import common from './common.js';
 
 const BEFORE_SAVE = 'before-save';
 const EDIT_MODE = 'edit-mode';
+const NO_TITLE = 'no-title';
+const NO_SUMMARY = 'no-summary';
+const NO_CHECK_LIST = 'no-check-list';
 
 const detailBody = document.querySelector('#detail-body');
 const returnButton = document.querySelector('#return');
 const textareas = document.querySelectorAll('textarea');
 
-const checklists = document.querySelectorAll('#check-list > ul > li');
-const checklistAddButton = document.querySelector('#check-list .add-button');
-const checklistDeleteButtons = document.querySelectorAll(
+const checkLists = document.querySelectorAll('#check-list > ul > li');
+const checkListAddButton = document.querySelector('#check-list .add-button');
+const checkListDeleteButtons = document.querySelectorAll(
 	'#check-list .delete-button',
 );
 
@@ -38,7 +41,7 @@ const msg = {
 function getContents() {
 	const title = document.querySelector('#mail-title');
 	const summary = document.querySelector('.summary-content');
-	const checklists = document.querySelectorAll(
+	const checkLists = document.querySelectorAll(
 		'#check-list ul li:not(:last-child, .delete) .check-list-content',
 	);
 	const deleteCheckLists = document.querySelectorAll(
@@ -48,7 +51,7 @@ function getContents() {
 	return {
 		title: title,
 		summary: summary,
-		checklists: checklists,
+		checkLists: checkLists,
 		deleteCheckLists: deleteCheckLists,
 	};
 }
@@ -89,22 +92,22 @@ window.addEventListener('load', () => {
 detailBody.addEventListener('click', controlDoubleClickToEditMode);
 textareas.forEach((textarea) => textarea.addEventListener('keyup', autoResize));
 
-checklists.forEach((checklist, index) => {
-	checklist.addEventListener('click', toggleCheck);
+checkLists.forEach((checkList, index) => {
+	checkList.addEventListener('click', toggleCheck);
 
-	if (index < checklists.length - 1) {
-		checklist
+	if (index < checkLists.length - 1) {
+		checkList
 			.querySelector('textarea')
 			.addEventListener('keydown', blockEnter);
-		checklist
+		checkList
 			.querySelector('textarea')
 			.addEventListener('blur', controlDeleteCheck);
 	}
 });
 
-checklistAddButton.addEventListener('click', addCheckList);
+checkListAddButton.addEventListener('click', addCheckList);
 
-checklistDeleteButtons.forEach((deleteButton) =>
+checkListDeleteButtons.forEach((deleteButton) =>
 	deleteButton.addEventListener('click', deleteCheckList),
 );
 
@@ -258,12 +261,12 @@ function addCheckList() {
 }
 
 function isContentEdited() {
-	const { title, summary, checklists, deleteCheckLists } = getContents();
+	const { title, summary, checkLists, deleteCheckLists } = getContents();
 
 	if (
 		isTwinsDifferent(title) ||
 		isTwinsDifferent(summary) ||
-		isTwinsListDifferent(checklists) ||
+		isTwinsListDifferent(checkLists) ||
 		deleteCheckLists.length > 0
 	) {
 		return true;
@@ -359,11 +362,11 @@ function controlResetSummary() {
 }
 
 function resetSummary() {
-	const { title, summary, checklists, deleteCheckLists } = getContents();
+	const { title, summary, checkLists, deleteCheckLists } = getContents();
 
 	pasteToEditor(title);
 	pasteToEditor(summary);
-	checklists.forEach((item) => {
+	checkLists.forEach((item) => {
 		pasteToEditor(item);
 		if (isElementEmpty(getEditElement(item))) {
 			item.parentNode.remove();
@@ -384,7 +387,7 @@ function resetSummary() {
 }
 
 function replaceWithEditContent() {
-	const { title, summary, checklists, deleteCheckLists } = getContents();
+	const { title, summary, checkLists, deleteCheckLists } = getContents();
 
 	// update title
 	pasteToOrigin(title);
@@ -393,7 +396,7 @@ function replaceWithEditContent() {
 	pasteToOrigin(summary);
 
 	// update checklist
-	checklists.forEach((item) => pasteToOrigin(item));
+	checkLists.forEach((item) => pasteToOrigin(item));
 
 	// delete checklist
 	deleteCheckLists.forEach((item) => item.remove());
@@ -512,27 +515,42 @@ function resetAlertTimer() {
 
 function controlDisplayContent() {
 	const bodyClasses = getBodyClasses();
-	const { title, summary, checklists } = getContents();
+	const { title, summary, checkLists } = getContents();
 
 	if (isAreaEmpty(title)) {
+		if (bodyClasses.contains(EDIT_MODE)) {
+			bodyClasses.remove(NO_TITLE);
+		} else {
+			bodyClasses.add(NO_TITLE);
+		}
 	}
 
 	if (isAreaEmpty(summary)) {
+		if (bodyClasses.contains(EDIT_MODE)) {
+			bodyClasses.remove(NO_SUMMARY);
+		} else {
+			bodyClasses.add(NO_SUMMARY);
+		}
 	}
 
-	if (isAreaEmpty(checklists)) {
+	if (isAreaEmpty(checkLists)) {
+		if (bodyClasses.contains(EDIT_MODE)) {
+			bodyClasses.remove(NO_CHECK_LIST);
+		} else {
+			bodyClasses.add(NO_CHECK_LIST);
+		}
 	}
 }
 
 function isAreaEmpty(element) {
-	const { title, summary, checklists } = getContents();
+	const { title, summary, checkLists } = getContents();
 	if (element == title || element == summary) {
 		if (isElementEmpty(getViewElement(element))) {
 			return true;
 		} else {
 			return false;
 		}
-	} else if (element == checklists) {
+	} else if (element == checkLists) {
 		if (element.length > 0) {
 			return false;
 		} else {

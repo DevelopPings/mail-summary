@@ -33,7 +33,6 @@ const editModeTimer = {
 const msg = {
 	beforeSave: '아직 저장되지 않았습니다. <br>돌아가려면 다시 클릭해주세요.',
 	reset: '초기화하려면 다시 클릭해주세요.',
-	notExistSummary: '요약 내용이 존재하지 않습니다.',
 };
 
 function getContents() {
@@ -88,7 +87,6 @@ window.addEventListener('load', () => {
 });
 
 detailBody.addEventListener('click', controlDoubleClickToEditMode);
-// detailBody.addEventListener('dblclick', toggleEditMode);
 textareas.forEach((textarea) => textarea.addEventListener('keyup', autoResize));
 
 checklists.forEach((checklist, index) => {
@@ -110,13 +108,10 @@ checklistDeleteButtons.forEach((deleteButton) =>
 	deleteButton.addEventListener('click', deleteCheckList),
 );
 
+// return & save & reset button event
+returnButton.addEventListener('click', clickReturnButton);
 footerSaveButton.addEventListener('click', saveSummary);
 footerResetButton.addEventListener('click', controlResetSummary);
-
-// return & reset button event
-// returnIcon.addEventListener('click', returnMain);
-// reset.addEventListener('click', resetDetail);
-returnButton.addEventListener('click', clickReturnButton);
 
 // 삭제 확인 모달
 warningModal.addEventListener('click', (event) => {
@@ -141,7 +136,7 @@ modalDeleteButton.addEventListener('click', (event) => {
 });
 
 function clickReturnButton(event) {
-	const bodyClasses = document.body.classList;
+	const bodyClasses = getBodyClasses();
 
 	if (bodyClasses.contains(EDIT_MODE)) {
 		if (isContentEdited()) {
@@ -151,8 +146,7 @@ function clickReturnButton(event) {
 		} else {
 			// 수정 안하고 돌아가기 > 내용 되돌리고 수정 모드 풀기
 			bodyClasses.remove(EDIT_MODE);
-			// console.log('수정 안하고 돌아가기 > 내용 되돌리고 수정 모드 풀기');
-			returnContent();
+			resetSummary();
 		}
 	} else if (bodyClasses.contains(BEFORE_SAVE)) {
 		// 저장 전 돌아가기 > 경고 메세지
@@ -182,7 +176,7 @@ function controlDeleteCheck() {
 
 function controlDoubleClickToEditMode(event) {
 	const tagName = event.target.tagName;
-	const bodyClasses = document.body.classList;
+	const bodyClasses = getBodyClasses();
 
 	if (bodyClasses.contains(BEFORE_SAVE) || bodyClasses.contains(EDIT_MODE))
 		return;
@@ -205,7 +199,7 @@ function controlDoubleClickToEditMode(event) {
 }
 
 function toggleEditMode() {
-	const bodyClasses = document.body.classList;
+	const bodyClasses = getBodyClasses();
 
 	bodyClasses.toggle(EDIT_MODE);
 
@@ -224,54 +218,6 @@ function autoResize() {
 	this.style.height = '26px';
 	this.style.height = this.scrollHeight + 'px';
 }
-
-// function returnMain(event) {
-// 	const targetId = event.target.id;
-// 	console.log('returnMain');
-// 	if (
-// 		detailBody.classList.contains('before-save') &&
-// 		!warning.classList.contains('active')
-// 	) {
-// 		activeAlert(event);
-// 	} else if (targetId == timer.targetId) {
-// 		location.href = 'main.html';
-// 	}
-// }
-
-// function resetDetail(event) {
-// 	console.log('resetDetail - 1');
-// 	const targetId = event.target.id;
-// 	console.log('resetDetail -2');
-// 	if (!warning.classList.contains('active')) {
-// 		activeAlert(event);
-// 	} else if (targetId == timer.targetId) {
-// 		detailBody.classList.remove('change');
-// 	}
-// }
-
-// function activeAlert(event) {
-// 	const targetId = event.target.id;
-// 	console.log('activeAlert', targetId, timer);
-
-// 	if (targetId == 'reset') {
-// 		// reset 버튼 클릭
-// 		warningMessage.textContent = '초기화하려면 다시 클릭해주세요.';
-// 	} else if (targetId == 'return') {
-// 		// 저장안한 상태로 return 버튼 클릭
-// 		warningMessage.innerHTML =
-// 			'아직 저장되지 않았습니다.<br />돌아가려면 다시 클릭해주세요.';
-// 	}
-// 	if (timer == 0) {
-// 		warning.classList.add('active');
-// 		timer.targetId = targetId;
-// 	} else {
-// 		timer.num = setTimeout(() => {
-// 			warning.classList.remove('active');
-// 			timer.num = 0;
-// 			timer.targetId = '';
-// 		}, 2000);
-// 	}
-// }
 
 function toggleCheck() {
 	if (!detailBody.classList.contains(EDIT_MODE)) {
@@ -313,6 +259,7 @@ function addCheckList() {
 
 function isContentEdited() {
 	const { title, summary, checklists, deleteCheckLists } = getContents();
+
 	if (
 		isTwinsDifferent(title) ||
 		isTwinsDifferent(summary) ||
@@ -326,17 +273,19 @@ function isContentEdited() {
 
 function isTwinsListDifferent(list) {
 	let result = false;
+
 	for (let i = 0; i < list.length; i++) {
-		if (isValueDifferent(list[i].children[0], list[i].children[1])) {
+		if (isTwinsDifferent(list[i])) {
 			result = true;
 			break;
 		}
 	}
+
 	return result;
 }
 
 function isTwinsDifferent(element) {
-	return isValueDifferent(element.children[0], element.children[1]);
+	return isValueDifferent(getEditElement(element), getViewElement(element));
 }
 
 function isValueDifferent(element1, element2) {
@@ -389,7 +338,7 @@ function deleteCheckList() {
 }
 
 function saveSummary(event) {
-	const bodyClasses = document.body.classList;
+	const bodyClasses = getBodyClasses();
 
 	if (bodyClasses.contains(EDIT_MODE)) {
 		// 수정모드 일 때
@@ -416,16 +365,16 @@ function resetSummary() {
 	pasteToEditor(summary);
 	checklists.forEach((item) => {
 		pasteToEditor(item);
-		if (getElementValue(item.children[0]) == '') {
+		if (isElementEmpty(getEditElement(item))) {
 			item.parentNode.remove();
 		}
 	});
 	deleteCheckLists.forEach((item) => {
 		pasteToEditor(item.querySelector('.check-list-content'));
 		if (
-			getElementValue(
-				item.querySelector('.check-list-content').children[1],
-			) == ''
+			isElementEmpty(
+				getViewElement(item.querySelector('.check-list-content')),
+			)
 		) {
 			item.remove();
 		} else {
@@ -451,14 +400,20 @@ function replaceWithEditContent() {
 }
 
 function pasteToOrigin(element) {
-	changeContent(element.children[1], element.children[0]);
+	changeContent({
+		target: getViewElement(element),
+		provider: getEditElement(element),
+	});
 }
 
 function pasteToEditor(element) {
-	changeContent(element.children[0], element.children[1]);
+	changeContent({
+		target: getEditElement(element),
+		provider: getViewElement(element),
+	});
 }
 
-function changeContent(target, provider) {
+function changeContent({ target, provider }) {
 	const targetTag = target.tagName;
 	const providerTag = provider.tagName;
 
@@ -484,7 +439,7 @@ const alertTimer = {
 };
 
 function alertMessage(element) {
-	const bodyClasses = document.body.classList;
+	const bodyClasses = getBodyClasses();
 
 	console.log(alertTimer);
 	// 메세지 내용 바꾸기
@@ -553,4 +508,51 @@ function resetAlertTimer() {
 	alertTimer.target = null;
 	alertTimer.id = 0;
 	alertTimer.clickCount = 0;
+}
+
+function controlDisplayContent() {
+	const bodyClasses = getBodyClasses();
+	const { title, summary, checklists } = getContents();
+
+	if (isAreaEmpty(title)) {
+	}
+
+	if (isAreaEmpty(summary)) {
+	}
+
+	if (isAreaEmpty(checklists)) {
+	}
+}
+
+function isAreaEmpty(element) {
+	const { title, summary, checklists } = getContents();
+	if (element == title || element == summary) {
+		if (isElementEmpty(getViewElement(element))) {
+			return true;
+		} else {
+			return false;
+		}
+	} else if (element == checklists) {
+		if (element.length > 0) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+}
+
+function isElementEmpty(element) {
+	return getElementValue(element) == '';
+}
+
+function getBodyClasses() {
+	return document.body.classList;
+}
+
+function getEditElement(element) {
+	return element.children[0];
+}
+
+function getViewElement(element) {
+	return element.children[1];
 }

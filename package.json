@@ -26,9 +26,6 @@
 		"sass": "^1.78.0"
 	},
 	"type": "module",
-	"dependencies": {
-		"openai": "^4.58.2"
-	},
 	"engines": {
 		"npm": "10.8.2"
 	}

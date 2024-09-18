@@ -1,3 +1,39 @@
+const CHATGPT_API_KEY = 'your_chat_gpt_api_key'; // <- 절대 레포에 올리지 마세요
+const CHATGPT_MODEL = 'gpt-4o-mini';
+
+async function callChatGPT(question) {
+	try {
+		const response = await fetch(
+			'https://api.openai.com/v1/chat/completions',
+			{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${CHATGPT_API_KEY}`,
+				},
+				body: JSON.stringify({
+					model: CHATGPT_MODEL,
+					messages: [
+						{
+							role: 'user',
+							content: question,
+						},
+					],
+				}),
+			},
+		);
+
+		if (!response.ok) {
+			throw new Error('네트워크 응답이 좋지 않습니다');
+		}
+
+		const data = await response.json();
+		//TODO: do something with data
+	} catch (error) {
+		console.error(error.message);
+	}
+}
+
 function crawlContent() {
 	setTimeout(() => {
 		if (location.host == 'mail.naver.com') {

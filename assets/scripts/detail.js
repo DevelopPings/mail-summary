@@ -17,8 +17,6 @@ const editFooter = document.querySelector('.edit-footer');
 const footerSaveButton = editFooter.getElementsByClassName('save')[0];
 const footerResetButton = editFooter.getElementsByClassName('reset')[0];
 
-// const warning = document.querySelector('#warning');
-// const warningMessage = document.querySelector('#warning-message');
 const warning = document.querySelector('.warning-message');
 const warningMessage = document.querySelector('.warning-message-content');
 
@@ -113,7 +111,7 @@ checklistDeleteButtons.forEach((deleteButton) =>
 );
 
 footerSaveButton.addEventListener('click', saveSummary);
-footerResetButton.addEventListener('click', resetSummary);
+footerResetButton.addEventListener('click', controlResetSummary);
 
 // return & reset button event
 // returnIcon.addEventListener('click', returnMain);
@@ -149,6 +147,7 @@ function clickReturnButton(event) {
 		if (isContentEdited()) {
 			// 수정 후 그냥 돌아가기 > 경고 메세지
 			console.log('수정 후 그냥 돌아가기 > 경고 메세지');
+			alertMessage(event.target);
 		} else {
 			// 수정 안하고 돌아가기 > 내용 되돌리고 수정 모드 풀기
 			bodyClasses.remove(EDIT_MODE);
@@ -406,6 +405,10 @@ function saveSummary(event) {
 	// 요약 내용 파일에 저장
 }
 
+function controlResetSummary() {
+	alertMessage(this);
+}
+
 function resetSummary() {
 	const { title, summary, checklists, deleteCheckLists } = getContents();
 
@@ -474,39 +477,80 @@ function changeContent(target, provider) {
 }
 
 // 경고창 띄우기
-let clickCount = 0;
-let messageInterval;
+const alertTimer = {
+	clickCount: 0,
+	id: 0,
+	target: null,
+};
 
 function alertMessage(element) {
 	const bodyClasses = document.body.classList;
-	clickCount++;
-	warning.classList.toggle('active');
 
-	if (messageInterval) {
-		clearInterval(messageInterval);
-	}
-
-	if (element == returnButton && bodyClasses.contains(BEFORE_SAVE)) {
+	console.log(alertTimer);
+	// 메세지 내용 바꾸기
+	if (
+		element == returnButton &&
+		(bodyClasses.contains(BEFORE_SAVE) || bodyClasses.contains(EDIT_MODE))
+	) {
 		setElementValue(warningMessage, msg.beforeSave);
+	} else if (
+		element == footerResetButton &&
+		bodyClasses.contains(EDIT_MODE)
+	) {
+		setElementValue(warningMessage, msg.reset);
 	}
 
-	messageInterval = setInterval(() => {
-		if (clickCount === 0) {
-			clearInterval(messageInterval);
-			warning.classList.remove('active');
-		} else {
-			clickCount = 0;
+	// 한 번도 클릭한 적이 없거나 여러번 클릭 시
+	if (alertTimer.target == null || alertTimer.target == element) {
+		warning.classList.toggle('active');
+		alertTimer.clickCount++;
+		alertTimer.target = element;
+
+		if (alertTimer.id) {
+			clearTimeout(alertTimer.id);
 		}
-	}, 1000);
 
-	if (clickCount === 2) {
-		element.targetElement.remove();
-		clearInterval(messageInterval);
-		clickCount = 0;
-		warning.classList.remove('active');
-		clickCount = 0;
-		common.hideOptionMenu();
+		alertTimer.id = setTimeout(() => {
+			resetAlertTimer();
+			warning.classList.remove('active');
+		}, 1000);
 
-		//TODO: 2번 클릭 시 실행 로직
+		if (alertTimer.clickCount === 2) {
+			clearTimeout(alertTimer.id);
+			resetAlertTimer();
+			warning.classList.remove('active');
+
+			//TODO: 2번 클릭 시 실행 로직
+			if (element == returnButton) {
+				if (bodyClasses.contains(BEFORE_SAVE)) {
+					location.href = 'main.html';
+				} else if (bodyClasses.contains(EDIT_MODE)) {
+					toggleEditMode();
+					resetSummary();
+				}
+			} else if (
+				element == footerResetButton &&
+				bodyClasses.contains(EDIT_MODE)
+			) {
+				resetSummary();
+			}
+		}
+	} else {
+		// 다른 버튼을 클릭 시
+		clearTimeout(alertTimer.id);
+		resetAlertTimer();
+		alertTimer.clickCount = 1;
+		alertTimer.target = element;
+
+		alertTimer.id = setTimeout(() => {
+			resetAlertTimer();
+			warning.classList.remove('active');
+		}, 1000);
 	}
+}
+
+function resetAlertTimer() {
+	alertTimer.target = null;
+	alertTimer.id = 0;
+	alertTimer.clickCount = 0;
 }

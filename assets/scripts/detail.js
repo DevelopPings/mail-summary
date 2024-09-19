@@ -8,9 +8,10 @@ const NO_CHECK_LIST = 'no-check-list';
 
 const detailBody = document.querySelector('#detail-body');
 const returnButton = document.querySelector('#return');
-const textareas = document.querySelectorAll('textarea');
+const mailTitle = document.querySelector('#mail-title input');
+const mailSummary = document.querySelector('.summary-content textarea');
 
-const checkLists = document.querySelectorAll('#check-list > ul > li');
+const mainCheckLists = document.querySelectorAll('#check-list > ul > li');
 const checkListAddButton = document.querySelector('#check-list .add-button');
 const checkListDeleteButtons = document.querySelectorAll(
 	'#check-list .delete-button',
@@ -47,12 +48,14 @@ function getContents() {
 	const deleteCheckLists = document.querySelectorAll(
 		'#check-list ul li.delete',
 	);
+	const textareas = document.querySelectorAll('textarea');
 
 	return {
 		title: title,
 		summary: summary,
 		checkLists: checkLists,
 		deleteCheckLists: deleteCheckLists,
+		textareas: textareas,
 	};
 }
 
@@ -86,29 +89,41 @@ const hideWarningModal = () => {
 };
 
 window.addEventListener('load', () => {
-	autoResize(textareas);
+	const { textareas } = getContents();
+	autoResizeList(textareas);
+	textareas.forEach((textarea) =>
+		textarea.addEventListener('keyup', autoResize),
+	);
 });
 
 detailBody.addEventListener('click', controlDoubleClickToEditMode);
-textareas.forEach((textarea) => textarea.addEventListener('keyup', autoResize));
 
-checkLists.forEach((checkList, index) => {
+mailTitle.addEventListener('blur', controlFooterSaveButtonContent);
+mailSummary.addEventListener('blur', controlFooterSaveButtonContent);
+
+mainCheckLists.forEach((checkList, index) => {
 	checkList.addEventListener('click', toggleCheck);
 
-	if (index < checkLists.length - 1) {
+	if (index < mainCheckLists.length - 1) {
 		checkList
 			.querySelector('textarea')
 			.addEventListener('keydown', blockEnter);
 		checkList
 			.querySelector('textarea')
-			.addEventListener('blur', controlDeleteCheck);
+			.addEventListener('blur', (event) => {
+				controlDeleteCheck(event);
+				controlFooterSaveButtonContent();
+			});
 	}
 });
 
 checkListAddButton.addEventListener('click', addCheckList);
 
 checkListDeleteButtons.forEach((deleteButton) =>
-	deleteButton.addEventListener('click', deleteCheckList),
+	deleteButton.addEventListener('click', (event) => {
+		deleteCheckList(event);
+		controlFooterSaveButtonContent();
+	}),
 );
 
 // return & save & reset button event
@@ -144,7 +159,6 @@ function clickReturnButton(event) {
 	if (bodyClasses.contains(EDIT_MODE)) {
 		if (isContentEdited()) {
 			// 수정 후 그냥 돌아가기 > 경고 메세지
-			console.log('수정 후 그냥 돌아가기 > 경고 메세지');
 			alertMessage(event.target);
 		} else {
 			// 수정 안하고 돌아가기 > 내용 되돌리고 수정 모드 풀기
@@ -153,7 +167,6 @@ function clickReturnButton(event) {
 		}
 	} else if (bodyClasses.contains(BEFORE_SAVE)) {
 		// 저장 전 돌아가기 > 경고 메세지
-		console.log('저장 전 돌아가기 > 경고 메세지');
 		alertMessage(event.target);
 	} else {
 		// 목록으로 돌아가기
@@ -167,13 +180,16 @@ function blockEnter(event) {
 	}
 }
 
-function controlDeleteCheck() {
-	if (getElementValue(this).length == 0) {
-		if (isTwinsDifferent(this.parentNode)) {
-			deleteCheckList.call(this);
+function controlDeleteCheck(event) {
+	const target = event.target;
+
+	if (getElementValue(target).length == 0) {
+		if (isTwinsDifferent(target.parentNode)) {
+			deleteCheckList.call(target);
 		} else {
-			this.parentNode.parentNode.remove();
+			target.parentNode.parentNode.remove();
 		}
+		controlFooterSaveButtonContent();
 	}
 }
 
@@ -203,23 +219,28 @@ function controlDoubleClickToEditMode(event) {
 
 function toggleEditMode() {
 	const bodyClasses = getBodyClasses();
+	const { textareas } = getContents();
 
 	bodyClasses.toggle(EDIT_MODE);
 
 	if (bodyClasses.contains(EDIT_MODE)) {
-		autoResizeList();
+		autoResizeList(textareas);
 	}
+
+	controlDisplayContent();
 }
 
-function autoResizeList() {
+function autoResizeList(textareas) {
 	textareas.forEach((textarea) => {
 		autoResize.call(textarea);
 	});
 }
 
 function autoResize() {
-	this.style.height = '26px';
-	this.style.height = this.scrollHeight + 'px';
+	if (this) {
+		this.style.height = '26px';
+		this.style.height = this.scrollHeight + 'px';
+	}
 }
 
 function toggleCheck() {
@@ -243,9 +264,15 @@ function addCheckList() {
 
 	li.addEventListener('click', toggleCheck);
 	textarea.addEventListener('keyup', autoResize);
-	textarea.addEventListener('blur', controlDeleteCheck);
 	textarea.addEventListener('keydown', blockEnter);
-	deleteButton.addEventListener('click', deleteCheckList);
+	textarea.addEventListener('blur', (event) => {
+		controlDeleteCheck(event);
+		controlFooterSaveButtonContent();
+	});
+	deleteButton.addEventListener('click', (event) => {
+		deleteCheckList(event);
+		controlFooterSaveButtonContent();
+	});
 
 	contentArea.append(textarea);
 	contentArea.append(p);
@@ -319,6 +346,7 @@ function getElementValue(element) {
 			result = element.innerHTML.replace(/<br>/g, '\n');
 			break;
 		case 'H1':
+		case 'BUTTON':
 			result = element.textContent;
 			break;
 		default:
@@ -336,25 +364,31 @@ function addDeleteCheckList(element) {
 	}
 }
 
-function deleteCheckList() {
-	addDeleteCheckList(this);
+function deleteCheckList(event) {
+	addDeleteCheckList(event.target);
 }
 
-function saveSummary(event) {
-	const bodyClasses = getBodyClasses();
+function saveSummary() {
+	if (getElementValue(this) == '저장하기') {
+		// 요약 내용 파일에 저장
+		const bodyClasses = getBodyClasses();
 
-	if (bodyClasses.contains(EDIT_MODE)) {
-		// 수정모드 일 때
-		if (isContentEdited()) {
-			// 수정된 내용이 있으면 보여주는 내용에 붙여넣기
-			replaceWithEditContent();
+		if (bodyClasses.contains(EDIT_MODE)) {
+			// 수정모드 일 때
+			if (isContentEdited()) {
+				// 수정된 내용이 있으면 보여주는 내용에 붙여넣기
+				replaceWithEditContent();
+			}
+			// bodyClasses.remove(EDIT_MODE);
+			toggleEditMode();
+		} else if (bodyClasses.contains(BEFORE_SAVE)) {
+			// 메일 요약내용 처음 저장
+			bodyClasses.remove(BEFORE_SAVE);
 		}
-		bodyClasses.remove(EDIT_MODE);
-	} else if (bodyClasses.contains(BEFORE_SAVE)) {
-		// 메일 요약내용 처음 저장
-		bodyClasses.remove(BEFORE_SAVE);
+	} else if (getElementValue(this) == '삭제하기') {
+		// 모든 내용 삭제 시 삭제
+		showDeleteModal();
 	}
-	// 요약 내용 파일에 저장
 }
 
 function controlResetSummary() {
@@ -444,7 +478,6 @@ const alertTimer = {
 function alertMessage(element) {
 	const bodyClasses = getBodyClasses();
 
-	console.log(alertTimer);
 	// 메세지 내용 바꾸기
 	if (
 		element == returnButton &&
@@ -491,6 +524,7 @@ function alertMessage(element) {
 				bodyClasses.contains(EDIT_MODE)
 			) {
 				resetSummary();
+				controlFooterSaveButtonContent();
 			}
 		}
 	} else {
@@ -542,15 +576,29 @@ function controlDisplayContent() {
 	}
 }
 
+function isContentEmpty() {
+	const { checkLists } = getContents();
+
+	if (
+		isElementEmpty(mailTitle) &&
+		isElementEmpty(mailSummary) &&
+		checkLists.length == 0
+	) {
+		return true;
+	}
+
+	return false;
+}
+
 function isAreaEmpty(element) {
-	const { title, summary, checkLists } = getContents();
+	const { title, summary } = getContents();
 	if (element == title || element == summary) {
 		if (isElementEmpty(getViewElement(element))) {
 			return true;
 		} else {
 			return false;
 		}
-	} else if (element == checkLists) {
+	} else {
 		if (element.length > 0) {
 			return false;
 		} else {
@@ -573,4 +621,12 @@ function getEditElement(element) {
 
 function getViewElement(element) {
 	return element.children[1];
+}
+
+function controlFooterSaveButtonContent() {
+	if (isContentEmpty(this)) {
+		footerSaveButton.textContent = '삭제하기';
+	} else {
+		footerSaveButton.textContent = '저장하기';
+	}
 }

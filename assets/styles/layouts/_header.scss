@@ -94,7 +94,6 @@ header {
 		justify-content: space-between;
 		width: 267px;
 		height: 60px;
-		// background: rgba(86, 199, 111, 0.4);
 
 		#mail-title {
 			color: $primary-light;
@@ -108,13 +107,26 @@ header {
 			}
 
 			h1 {
-				// height: 100%;
 				font-size: 18px;
 				font-weight: bold;
 				overflow: hidden;
 				text-overflow: ellipsis;
 				white-space: nowrap;
 				padding: 3px 0;
+
+				&.no-content {
+					display: none;
+				}
+			}
+
+			.no-title & {
+				h1 {
+					display: none;
+
+					&.no-content {
+						display: block;
+					}
+				}
 			}
 		}
 

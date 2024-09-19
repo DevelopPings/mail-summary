@@ -34,8 +34,16 @@
 					width: 279px;
 					height: 100px;
 				}
+
 				p {
 					width: 279px;
+				}
+
+				.no-content {
+					display: none;
+					height: 50px;
+					line-height: 50px;
+					text-align: center;
 				}
 			}
 		}
@@ -225,5 +233,18 @@
 				}
 			}
 		}
+	}
+	// <element id="detail-body">
+	//   <element id="content">
+	// 	  <element id="summary">
+	// 		  <element class="summary-content">
+	// 			  <element class="no-content"
+
+	&.no-summary #content #summary .summary-content .no-content {
+		display: block;
+	}
+
+	&.no-check-list #check-list {
+		display: none;
 	}
 }

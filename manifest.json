@@ -2,33 +2,36 @@
 	"manifest_version": 3,
 	"name": "웨-일이 쉽지? (Whale Mail)",
 	"version": "1.0",
-	"minimum_chrome_version": "126",
+	"minimum_chrome_version": "125",
 	"description": "This is a mail summary service using AI",
 	"action": {
-		"default_popup": "public/main.html",
+		"default_popup": "public/detail.html",
 		"default_icon": "public/images/logo-light.png"
 	},
-	// 우클릭과 크롤링을 위한 코드
+
 	"permissions": [
 		"contextMenus",
 		"scripting",
 		"activeTab",
 		"nativeMessaging",
-		"tabs"
+		"tabs",
+		"action",
+		"storage"
 	],
-	// 우클릭을 위한 코드
+
 	"background": {
-		"service_worker": "assets/scripts/background.js"
+		"service_worker": "assets/scripts/background.js",
+		"persistent": true
 	},
 	"icons": {
 		"140": "public/images/logo-light.png"
 	},
-	// 메일 페이지에서만 크롤링하기위한 코드
+
 	"content_scripts": [
 		{
 			"matches": [
-				"https://*.mail.google.com/*",
-				"https://*.mail.naver.com/*"
+				"https://mail.google.com/*",
+				"https://mail.naver.com/*"
 			],
 			"js": ["assets/scripts/content.js"]
 		}

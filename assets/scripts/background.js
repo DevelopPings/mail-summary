@@ -1,30 +1,3 @@
-// Wrap in an onInstalled callback to avoid unnecessary work
-// every time the service worker is run
-chrome.runtime.onInstalled.addListener(() => {
-	// Page actions are disabled by default and enabled on select tabs
-	chrome.action.disable();
-
-	// Clear all rules to ensure only our expected rules are set
-	chrome.declarativeContent.onPageChanged.removeRules(undefined, () => {
-		// Declare a rule to enable the action on example.com pages
-		let exampleRule = {
-			conditions: [
-				new chrome.declarativeContent.PageStateMatcher({
-					pageUrl: [
-						{ hostSuffix: '.mail.google.com' },
-						{ hostSuffix: '.mail.naver.com' },
-					],
-				}),
-			],
-			actions: [new chrome.declarativeContent.ShowAction()],
-		};
-
-		// Finally, apply our new array of rules
-		let rules = [exampleRule];
-		chrome.declarativeContent.onPageChanged.addRules(rules);
-	});
-});
-
 // 우클릭 메뉴 생성
 const menuId = 'Whale-Mail';
 chrome.contextMenus.remove(menuId, () => {
@@ -42,20 +15,27 @@ chrome.action.onClicked.addListener((tab) => {
 	});
 });
 
-// // 크롤링 위한 코드
-// chrome.contextMenus.onClicked.addListener((info, tab) => {
-// 	if (info.menuItemId === 'Whale-Mail') {
-// 		chrome.scripting
-// 			.executeScript({
-// 				target: { tabId: tab.id },
-// 				files: ['assets/scripts/content.js'],
-// 			})
-// 			.then(() => {
-// 				chrome.tabs.sendMessage(tab.id, {
-// 					action: 'Whale-Mail',
-// 					selectedText: info.selectionText,
-// 				});
-// 			})
-// 			.catch((err) => console.warn('unexpected error', err));
-// 	}
-// });
+let chatGPTResponse = '';
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+	if (request.type === 'greeting') {
+		chatGPTResponse = request.payload.message;
+		console.log(
+			// chatgpt가 쓴거 나옴
+			chatGPTResponse,
+		);
+		// 후속 작업을 처리하는 함수 호출
+		handleMessage(chatGPTResponse);
+
+		const returnMessage = `방가워~ 이것은 contentScript의 메시지를 background에서 보내는 응답 메시지야~`;
+		sendResponse({
+			message: returnMessage,
+		});
+	}
+	return true; // 비동기로 작업 시 필요
+});
+
+function handleMessage(message) {
+	// message를 활용하는 후속 작업
+	console.log('Message for handling:', message);
+	document.querySelector('#test').innerHTML = chatGPTResponse;
+}

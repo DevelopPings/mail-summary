@@ -29,5 +29,9 @@
 	"engines": {
 		"npm": "10.8.2"
 	},
-	"keywords": []
+	"keywords": [],
+	"dependencies": {
+		"dotenv": "^16.4.5",
+		"openai": "^4.62.1"
+	}
 }

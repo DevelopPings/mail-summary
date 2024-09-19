@@ -7,9 +7,12 @@
 	<body class="main-body">
 		<header class="main-header">
 			<section class="main-header-left">
-				<h1 class="main-header-title">
-					<span class="extra-bold">웨-일</span>이 쉽지?
-				</h1>
+				<div class="main-header-title-wrap">
+					<h1 class="main-header-title">
+						<span class="extra-bold">웨-일</span>이 쉽지?
+					</h1>
+					<button class="main-header-settings"></button>
+				</div>
 				<time datetime="2024-09-01" class="today-date"
 					>September 1, 2024</time
 				>
@@ -290,6 +293,28 @@
 				</div>
 			</div>
 		</div>
+
+		<div class="settings-modal">
+			<div class="settings-modal-content">
+				<div class="settings-upper">
+					<div class="title-wrap">
+						<h1 class="title">OpenAI API Key</h1>
+
+						<p class="description">
+							해당 키는 유저의 로컬 환경에 저장됩니다.
+						</p>
+					</div>
+					<span class="settings-icon"></span>
+				</div>
+				<input class="settings-key-input" type="text" />
+				<div class="button-wrap">
+					<button class="save">저장</button>
+					<button class="cancel">취소</button>
+				</div>
+			</div>
+		</div>
+
+		<script src="script.js" type="module"></script>
 
 		<script src="../assets/scripts/common.js" type="module"></script>
 		<script src="../assets/scripts/main.js" type="module"></script>

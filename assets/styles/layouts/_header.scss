@@ -37,10 +37,21 @@ header {
 		flex-grow: 1;
 	}
 
+	&-title-wrap {
+		display: flex;
+		align-items: center;
+		margin-bottom: 10px;
+	}
+
 	&-title {
 		color: $primary-light;
 		font-size: 22px;
-		margin-bottom: 10px;
+		margin-right: 8px;
+	}
+
+	&-settings {
+		@include image($settings, 14px, 14px, block);
+		padding: 10px 0;
 	}
 
 	.today-date {
@@ -63,6 +74,10 @@ header {
 
 		&-title {
 			color: $primary-dark;
+		}
+
+		&-settings {
+			@include image($settings-dark, 14px, 14px, block);
 		}
 
 		.toggle-mode {
@@ -94,7 +109,6 @@ header {
 		justify-content: space-between;
 		width: 267px;
 		height: 60px;
-		// background: rgba(86, 199, 111, 0.4);
 
 		#mail-title {
 			color: $primary-light;
@@ -108,13 +122,26 @@ header {
 			}
 
 			h1 {
-				// height: 100%;
 				font-size: 18px;
 				font-weight: bold;
 				overflow: hidden;
 				text-overflow: ellipsis;
 				white-space: nowrap;
 				padding: 3px 0;
+
+				&.no-content {
+					display: none;
+				}
+			}
+
+			.no-title & {
+				h1 {
+					display: none;
+
+					&.no-content {
+						display: block;
+					}
+				}
 			}
 		}
 

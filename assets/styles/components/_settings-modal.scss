@@ -1,13 +1,9 @@
-.warning-modal {
+.settings-modal {
 	@include modal;
 
 	&.active {
 		display: flex;
 		opacity: 1;
-
-		#detail-body & {
-			top: 0;
-		}
 	}
 
 	&-content {
@@ -16,20 +12,24 @@
 		align-items: center;
 		flex-direction: column;
 		width: 230px;
-		height: 190px;
+		overflow: visible;
 
-		padding: 21px 11px 13px;
-		text-align: center;
+		padding: 18px 17px 16px;
 		background-color: $white;
 		border-radius: 7px;
 
-		.warning-icon {
-			@include image($warning, 55px, 55px, block);
-			margin-bottom: 9.63px;
+		.settings-upper {
+			display: flex;
+			width: 100%;
+			align-items: center;
+		}
+
+		.settings-icon {
+			@include image($settings-circle, 32px, 32px, block);
 		}
 
 		.title-wrap {
-			margin-bottom: 19px;
+			flex-grow: 1;
 
 			.title {
 				font-weight: 800;
@@ -38,8 +38,13 @@
 
 			.description {
 				font-weight: 300;
-				font-size: 12px;
+				font-size: 10px;
 			}
+		}
+
+		.settings-key-input {
+			width: 100%;
+			margin: 24px 0;
 		}
 
 		.button-wrap {
@@ -56,9 +61,10 @@
 				font-weight: 700;
 			}
 
-			.delete {
+			.save {
 				background-color: $secondary-light;
 				color: $white;
+				box-shadow: none;
 			}
 
 			.cancel {
@@ -76,8 +82,8 @@
 			background-color: $background-dark;
 			color: $white;
 
-			.warning-icon {
-				@include image($warning-dark, 55px, 55px, block);
+			.settings-icon {
+				@include image($settings-circle-dark, 32px, 32px, block);
 			}
 
 			.button-wrap {

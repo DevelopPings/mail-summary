@@ -37,10 +37,21 @@ header {
 		flex-grow: 1;
 	}
 
+	&-title-wrap {
+		display: flex;
+		align-items: center;
+		margin-bottom: 10px;
+	}
+
 	&-title {
 		color: $primary-light;
 		font-size: 22px;
-		margin-bottom: 10px;
+		margin-right: 8px;
+	}
+
+	&-settings {
+		@include image($settings, 14px, 14px, block);
+		padding: 10px 0;
 	}
 
 	.today-date {
@@ -63,6 +74,10 @@ header {
 
 		&-title {
 			color: $primary-dark;
+		}
+
+		&-settings {
+			@include image($settings-dark, 14px, 14px, block);
 		}
 
 		.toggle-mode {

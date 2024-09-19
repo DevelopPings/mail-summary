@@ -22,3 +22,17 @@
 @mixin shadow-dark {
 	box-shadow: 0 3px 3px rgba(0, 0, 0, 0.6);
 }
+
+@mixin modal {
+	position: fixed;
+	width: 320px;
+	height: 500px;
+	display: none;
+	justify-content: center;
+	align-items: center;
+	opacity: 0;
+	transition: opacity 0.5s ease;
+	z-index: 4;
+	background-color: rgba(0, 0, 0, 0.3);
+	cursor: pointer;
+}

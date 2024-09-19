@@ -5,12 +5,18 @@ const editFooterSpace = document.querySelector('.edit-footer-space');
 
 const warningModal = document.querySelector('.warning-modal');
 const warningModalContent = document.querySelector('.warning-modal-content');
-const modalDeleteButton = warningModal.getElementsByClassName('delete')[0];
-const modalCancelButton = warningModal.getElementsByClassName('cancel')[0];
+const warningModalDelete = warningModal.getElementsByClassName('delete')[0];
+const warningModalCancel = warningModal.getElementsByClassName('cancel')[0];
+
+const settingsButton = document.querySelector('.main-header-settings');
+const settingsModal = document.querySelector('.settings-modal');
+const settingsModalContent = document.querySelector('.settings-modal-content');
+const settingsModalSave = settingsModal.getElementsByClassName('save')[0];
+const settingsModalCancel = settingsModal.getElementsByClassName('cancel')[0];
 
 const editFooter = document.querySelector('.edit-footer');
-const footerSaveButton = editFooter.getElementsByClassName('save')[0];
-const footerResetButton = editFooter.getElementsByClassName('reset')[0];
+const footerSave = editFooter.getElementsByClassName('save')[0];
+const footerReset = editFooter.getElementsByClassName('reset')[0];
 
 const currentOption = {
 	targetElement: null,
@@ -91,12 +97,12 @@ warningModalContent.addEventListener('click', (event) => {
 	event.stopPropagation();
 });
 
-modalCancelButton.addEventListener('click', (event) => {
+warningModalCancel.addEventListener('click', (event) => {
 	event.stopPropagation();
 	hideWarningModal();
 });
 
-modalDeleteButton.addEventListener('click', (event) => {
+warningModalDelete.addEventListener('click', (event) => {
 	event.stopPropagation();
 	currentOption.targetElement.remove();
 	hideWarningModal();
@@ -121,14 +127,54 @@ const hideWarningModal = () => {
 	});
 };
 
+// 설정 모달
+settingsButton.addEventListener('click', (event) => {
+	event.stopPropagation();
+	showSettingsModal();
+});
+
+settingsModal.addEventListener('click', (event) => {
+	event.stopPropagation();
+	hideSettingsModal();
+});
+
+settingsModalContent.addEventListener('click', (event) => {
+	event.stopPropagation();
+});
+
+settingsModalCancel.addEventListener('click', (event) => {
+	event.stopPropagation();
+	hideSettingsModal();
+});
+
+settingsModalSave.addEventListener('click', (event) => {
+	event.stopPropagation();
+	//TODO: API KEY 저장하기
+	hideSettingsModal();
+});
+
+const showSettingsModal = () => {
+	settingsModal.style.display = 'flex';
+	setTimeout(() => {
+		settingsModal.classList.add('active');
+	});
+};
+
+const hideSettingsModal = () => {
+	settingsModal.style.display = 'none';
+	setTimeout(() => {
+		settingsModal.classList.remove('active');
+	});
+};
+
 // 수정 모드 푸터
-footerSaveButton.addEventListener('click', (event) => {
+footerSave.addEventListener('click', (event) => {
 	event.stopPropagation();
 	saveInput();
 	endEditMode();
 });
 
-footerResetButton.addEventListener('click', (event) => {
+footerReset.addEventListener('click', (event) => {
 	event.stopPropagation();
 	resetInput();
 });

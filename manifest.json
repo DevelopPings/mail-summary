@@ -5,7 +5,7 @@
 	"minimum_chrome_version": "125",
 	"description": "This is a mail summary service using AI",
 	"action": {
-		"default_popup": "public/detail.html",
+		"default_popup": "public/main.html",
 		"default_icon": "public/images/logo-light.png"
 	},
 
@@ -15,13 +15,11 @@
 		"activeTab",
 		"nativeMessaging",
 		"tabs",
-		"action",
 		"storage"
 	],
 
 	"background": {
-		"service_worker": "assets/scripts/background.js",
-		"persistent": true
+		"service_worker": "assets/scripts/background.js"
 	},
 	"icons": {
 		"140": "public/images/logo-light.png"

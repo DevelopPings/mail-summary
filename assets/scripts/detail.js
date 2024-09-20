@@ -150,7 +150,7 @@ modalDeleteButton.addEventListener('click', (event) => {
 	// 요약 삭제 이벤트 추가
 	event.stopPropagation();
 	hideWarningModal();
-	location.href = 'main.html';
+	moveToMain();
 });
 
 function clickReturnButton(event) {
@@ -164,13 +164,14 @@ function clickReturnButton(event) {
 			// 수정 안하고 돌아가기 > 내용 되돌리고 수정 모드 풀기
 			bodyClasses.remove(EDIT_MODE);
 			resetSummary();
+			controlDisplayContent();
 		}
 	} else if (bodyClasses.contains(BEFORE_SAVE)) {
 		// 저장 전 돌아가기 > 경고 메세지
 		alertMessage(event.target);
 	} else {
 		// 목록으로 돌아가기
-		location.href = 'main.html';
+		moveToMain();
 	}
 }
 
@@ -331,6 +332,7 @@ function setElementValue(element, value) {
 			element.innerHTML = value;
 			break;
 		case 'H1':
+		case 'BUTTON':
 			element.textContent = value;
 			break;
 		default:
@@ -514,10 +516,10 @@ function alertMessage(element) {
 			//TODO: 2번 클릭 시 실행 로직
 			if (element == returnButton) {
 				if (bodyClasses.contains(BEFORE_SAVE)) {
-					location.href = 'main.html';
+					moveToMain();
 				} else if (bodyClasses.contains(EDIT_MODE)) {
-					toggleEditMode();
 					resetSummary();
+					toggleEditMode();
 				}
 			} else if (
 				element == footerResetButton &&
@@ -625,8 +627,12 @@ function getViewElement(element) {
 
 function controlFooterSaveButtonContent() {
 	if (isContentEmpty(this)) {
-		footerSaveButton.textContent = '삭제하기';
+		setElementValue(footerSaveButton, '삭제하기');
 	} else {
-		footerSaveButton.textContent = '저장하기';
+		setElementValue(footerSaveButton, '저장하기');
 	}
+}
+
+function moveToMain() {
+	location.href = 'main.html';
 }

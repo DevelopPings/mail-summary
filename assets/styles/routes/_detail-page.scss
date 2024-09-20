@@ -2,6 +2,7 @@
 	#content {
 		padding: 10px 20px;
 		height: calc(100% - 90px);
+		color: $gray01;
 		overflow-y: auto;
 
 		section {
@@ -17,6 +18,8 @@
 		}
 
 		#summary {
+			margin-bottom: 26px;
+
 			h2 {
 				display: flex;
 
@@ -33,6 +36,7 @@
 					display: none;
 					width: 279px;
 					height: 100px;
+					padding: 8px;
 				}
 
 				p {
@@ -86,6 +90,7 @@
 							background: url($check-box) no-repeat center;
 						}
 						p {
+							color: $gray03;
 							text-decoration: line-through;
 						}
 					}
@@ -100,6 +105,7 @@
 							display: none;
 							width: 230.04px;
 							margin: 0 auto;
+							padding: 4px 8px;
 						}
 					}
 
@@ -204,12 +210,18 @@
 
 		#content {
 			#summary {
-				h2 span {
-					background-image: url($chat-bubble-dark);
+				color: $white;
+
+				h2 {
+					span {
+						background-image: url($chat-bubble-dark);
+					}
 				}
 			}
 
 			#check-list {
+				color: $white;
+
 				h2 span {
 					background-image: url($check-dark);
 				}

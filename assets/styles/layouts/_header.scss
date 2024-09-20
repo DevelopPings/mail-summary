@@ -90,7 +90,6 @@ header {
 
 .detail-header {
 	height: 90px;
-	// background: rgba(199, 206, 170, 0.4);
 	padding-top: 15px;
 	align-items: normal;
 
@@ -118,12 +117,12 @@ header {
 				width: 267px;
 				color: $primary-light;
 				font-size: 18px;
-				font-weight: bold;
+				font-weight: 500;
 			}
 
 			h1 {
 				font-size: 18px;
-				font-weight: bold;
+				font-weight: 500;
 				overflow: hidden;
 				text-overflow: ellipsis;
 				white-space: nowrap;
@@ -146,7 +145,7 @@ header {
 		}
 
 		#mail-disc {
-			// background: rgba(86, 107, 199, 0.4);
+			color: $gray03;
 			display: flex;
 			flex-direction: column;
 			justify-content: space-between;
@@ -155,13 +154,16 @@ header {
 			p {
 				font-size: 12px;
 			}
+
+			#mail-time {
+				font-weight: 300;
+			}
 		}
 	}
 
 	#mail-setting {
 		width: 20px;
 		align-self: baseline;
-		// background: rgba(86, 107, 199, 0.4);
 
 		button {
 			display: block;

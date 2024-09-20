@@ -1,5 +1,5 @@
 const CHATGPT_API_KEY =
-	'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'; // <- 절대 레포에 올리지 마세요
+	'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'; // <- 절대 레포에 올리지 마세요
 const CHATGPT_MODEL = 'gpt-4o-mini';
 const prompt =
 	'메일 내용을 최소 1개 ~ 최대 5줄로 요약하고 각 줄은 최소 10글자에서 최대 50글자로 요약해야 한다.' +
@@ -40,6 +40,7 @@ async function callChatGPT(question) {
 		console.error(error.message);
 	}
 }
+
 function crawlContent() {
 	return new Promise((resolve, reject) => {
 		let mail = {
@@ -48,27 +49,34 @@ function crawlContent() {
 			time: '',
 			content: '',
 		};
+
+		let mailTitle = '';
+		let mailSend = '';
+		let mailTime = '';
+		let mailContent = '';
+
 		setTimeout(() => {
 			try {
 				if (location.host == 'mail.naver.com') {
 					// 네이버
 					// 제목
-					const mailTitle = document.querySelectorAll(
+					mailTitle = document.querySelectorAll(
 						'.text > span > span:nth-child(2)',
 					)[0].innerHTML;
 
 					// 보낸 사람
-					const mailSend = document.querySelectorAll(
-						'.option_area > button',
-					)[0].innerHTML;
+					mailSend = document
+						.querySelectorAll('.option_area > button')[0]
+						.textContent.split(/<|>/g)[1];
 
 					// 시간
-					const mailTime =
-						document.querySelectorAll('.info_area > span')[0]
-							.innerHTML;
+					mailTime = document
+						.querySelectorAll('.info_area > span')[0]
+						.textContent.replace(/[^0-9]/g, ',')
+						.replace(/,+/g, ',');
 
 					// 내용
-					const mailContent = document
+					mailContent = document
 						.querySelectorAll('.mail_view_contents')[0]
 						.innerText.trim();
 
@@ -84,7 +92,6 @@ function crawlContent() {
 					document.querySelectorAll('.ajz')[0].click();
 					document.querySelectorAll('.ajz')[0].click();
 
-					let mailTitle;
 					const getTitle = () => {
 						mailTitle = document
 							.querySelectorAll('.ajv')[3]
@@ -92,8 +99,6 @@ function crawlContent() {
 					};
 
 					// 보낸 사람
-
-					let mailSend;
 					const getSend = () => {
 						mailSend = document
 							.querySelectorAll('.ajv')[0]
@@ -103,31 +108,28 @@ function crawlContent() {
 					};
 
 					// 시간
-					let mailTime;
 					const getTime = () => {
 						mailTime = document
 							.querySelectorAll('.ajv')[2]
-							.querySelectorAll('span')[1].innerHTML;
+							.querySelectorAll('span')[1]
+							.textContent.replace(/[^0-9]/g, ',')
+							.replace(/,+/g, ',');
 					};
 
 					// 내용
-					let mailContent;
 					const getContent = () => {
 						mailContent =
 							document.querySelectorAll('.a3s.aiL div div')[0]
 								.innerHTML;
-						// 전달받은 메세지 태그였음
-						// let mailContentArray = document
-						// 	.querySelectorAll('.Bk div div div div.gs div div div')[2]
-						// 	.querySelectorAll('div div div span');
-						// for (let i = 0; i < mailContentArray.length; i++) {
-						// 	mailContent += mailContentArray[i].innerHTML;
-						// }
+						mailContent = mailContent.replace(
+							/<\/?[^>]+(>|$)|\s+/g,
+							'',
+						);
 					};
 
 					getTitle();
 					getSend();
-					getTime();
+					getTime(); // 날짜랑 시분 가져오기
 					getContent();
 
 					mail = {
@@ -137,6 +139,19 @@ function crawlContent() {
 						content: mailContent,
 					};
 				}
+				// time 년,월,일,시,분 형태로
+				let timeArr = new Array();
+				timeArr = mail.time.split(',');
+				mail.time =
+					timeArr[0] +
+					'-' +
+					timeArr[1] +
+					'-' +
+					timeArr[2] +
+					' ' +
+					timeArr[3] +
+					':' +
+					timeArr[4];
 				resolve(mail);
 			} catch (error) {
 				reject(`Error occurred during crawling: ${error.message}`);
@@ -150,28 +165,36 @@ chrome.runtime.onMessage.addListener(async (message) => {
 		try {
 			const result = await crawlContent();
 			// 메일 크롤링 결과
+
 			console.log(result.title);
 			console.log(result.send);
 			console.log(result.time);
 			console.log(result.content);
+			// chrome.action.openPopup();
 			const chatGPTResponse = await callChatGPT(result.content);
+
+			const chatGPTResponseSummary = chatGPTResponse
+				.split('[todo]')[0]
+				.replace('[summary]', '');
+			const chatGPTResponseTodo = chatGPTResponse.split('[todo]')[1];
 			// AI 결과
-			console.log(chatGPTResponse);
+			console.log(chatGPTResponseSummary);
+			console.log(chatGPTResponseTodo);
 			chrome.runtime.sendMessage(
 				{
 					type: 'summaryMail',
 					payload: {
 						message:
-							'[제목]' +
+							'[[title]]' +
 							result.title +
-							',' +
-							'[보낸 사람]' +
+							'[[author]]' +
 							result.send +
-							',' +
-							'[보낸 시간]' +
+							'[[sendTime]]' +
 							result.time +
-							',' +
-							chatGPTResponse,
+							'[[summary]]' +
+							chatGPTResponseSummary +
+							'[[todo]]' +
+							chatGPTResponseTodo,
 					},
 				},
 				(response) => {

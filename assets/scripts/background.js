@@ -1,6 +1,5 @@
 // 우클릭 메뉴 생성
-// const menuId = 'Whale-Mail';
-// console.log(menuId);
+// console.log(document.querySelector('.item-title').textContent);
 chrome.runtime.onInstalled.addListener(() => {
 	chrome.contextMenus.create({
 		id: 'Whale-Mail',
@@ -8,21 +7,10 @@ chrome.runtime.onInstalled.addListener(() => {
 		contexts: ['all'],
 	});
 });
-// content.js로 크롤링
-// chrome.action.onClicked.addListener((tab) => {
-// 	console.log(tab.id);
-// 	chrome.scripting.executeScript({
-// 		target: { tabId: tab.id },
-// 		files: ['assets/scripts/content.js'],
-// 	});
-// });
-// 크롤링 관련 메시지 처리
-// chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-// 	if (message.action === 'crawlMail') {
-// 		chrome.tabs.sendMessage(sender.tab.id, { action: 'Whale-Mail' });
-// 	}
-// });
+
 chrome.contextMenus.onClicked.addListener((info, tab) => {
+	chrome.action.setPopup('public/main.html');
+	chrome.action.openPopup();
 	if (info.menuItemId === 'Whale-Mail') {
 		chrome.scripting
 			.executeScript({
@@ -40,12 +28,15 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 });
 let chatGPTResponse = '';
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+	chrome.action.setPopup('public/main.html');
+	chrome.action.openPopup();
 	if (request.type === 'summaryMail') {
 		chatGPTResponse = request.payload.message;
 		console.log(
 			// chatgpt가 쓴거 나옴
 			chatGPTResponse,
 		);
+		//alert();
 		// 후속 작업을 처리하는 함수 호출
 		todoMessage(chatGPTResponse);
 	}
@@ -56,6 +47,4 @@ function todoMessage(message) {
 	console.log(message);
 	const todo = document.querySelector('#test');
 	todo.innerHTML = message;
-
-	// 2개로 나누기
 }

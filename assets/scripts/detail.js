@@ -525,7 +525,10 @@ function alertMessage(element) {
 				element == footerResetButton &&
 				bodyClasses.contains(EDIT_MODE)
 			) {
+				const { textareas } = getContents();
+
 				resetSummary();
+				autoResizeList(textareas);
 				controlFooterSaveButtonContent();
 			}
 		}

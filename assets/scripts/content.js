@@ -163,13 +163,14 @@ function crawlContent() {
 chrome.runtime.onMessage.addListener(async (message) => {
 	if (message.action === 'Whale-Mail') {
 		try {
+			// console.log(message.windowid);
 			const result = await crawlContent();
 			// 메일 크롤링 결과
 
-			console.log(result.title);
-			console.log(result.send);
-			console.log(result.time);
-			console.log(result.content);
+			// console.log(result.title);
+			// console.log(result.send);
+			// console.log(result.time);
+			// console.log(result.content);
 			// chrome.action.openPopup();
 			const chatGPTResponse = await callChatGPT(result.content);
 
@@ -196,6 +197,7 @@ chrome.runtime.onMessage.addListener(async (message) => {
 							'[[todo]]' +
 							chatGPTResponseTodo,
 					},
+					windowID: message.windowid,
 				},
 				(response) => {
 					if (chrome.runtime.lastError) {

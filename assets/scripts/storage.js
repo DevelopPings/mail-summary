@@ -16,9 +16,46 @@ const KEY_LIST = {
 	STATUS: 'status',
 };
 const MAIL_KEY_SUFFIX = 'wm-';
-const DARK_MODE = 'dark_mode';
+const DARK_MODE = 'DARK_MODE';
 const API_KEY = 'API_KEY';
 const EOL = getLineBreak();
+
+function setItemInChromeStorage(key, value) {
+	return new Promise((resolve, reject) => {
+		chrome.storage.local.set({ [key]: value }, () => {
+			if (chrome.runtime.lastError) {
+				reject(chrome.runtime.lastError);
+			} else {
+				resolve(key);
+			}
+		});
+	});
+}
+
+function getItemInChromeStorage(key) {
+	return new Promise((resolve, reject) => {
+		chrome.storage.local.get(key, (result) => {
+			if (chrome.runtime.lastError) {
+				reject(chrome.runtime.lastError);
+			} else {
+				resolve(result[key]);
+			}
+		});
+	});
+}
+
+// chrome.storage.local에서 값을 제거하는 함수
+function removeItemInChromeStorage(key) {
+	return new Promise((resolve, reject) => {
+		chrome.storage.local.remove(key, () => {
+			if (chrome.runtime.lastError) {
+				reject(chrome.runtime.lastError);
+			} else {
+				resolve(key);
+			}
+		});
+	});
+}
 
 // GPT 분석 후 저장
 export async function generateDocument(text) {
@@ -42,17 +79,17 @@ export async function generateDocument(text) {
 	const keyName = MAIL_KEY_SUFFIX + hashHex.substring(0, MAIL_KEY_LENGTH);
 
 	// GPT 분석 결과를 JSON으로 변환
-	localStorage.setItem(keyName, parseTextToJSON(text, keyName));
-	console.log('로컬 스토리지에 ' + keyName + '이 생성되었습니다.');
+	await setItemInChromeStorage(keyName, parseTextToJSON(text, keyName));
+	console.log('로컬 스토리지에서 ' + keyName + '가 생성되었습니다.');
 	return keyName;
 }
 
 // generateDocument(EXAMPLE_INPUT_TEXT);
 
 // 문서 읽기
-export function readDocument(key) {
+export async function readDocument(key) {
 	try {
-		const data = localStorage.getItem(key);
+		const data = await getItemInChromeStorage(key);
 
 		if (!data) {
 			return console.error(
@@ -66,21 +103,29 @@ export function readDocument(key) {
 	}
 }
 
-// console.log(readDocument('wm-42b463218590'));
+// readDocument('wm-5a06e78aac6f').then((doc) => console.log(doc));
 
 // 문서 목록 읽기
-export function readDocumentList() {
+export async function readDocumentList() {
 	try {
 		const result = [];
 
-		for (let i = 0; i < localStorage.length; i++) {
-			const key = localStorage.key(i);
+		const items = await new Promise((resolve, reject) => {
+			chrome.storage.local.get(null, (items) => {
+				if (chrome.runtime.lastError) {
+					reject(chrome.runtime.lastError);
+				} else {
+					resolve(items);
+				}
+			});
+		});
 
+		for (const key in items) {
 			if (key === DARK_MODE || key === API_KEY) {
 				continue;
 			}
 
-			result.push(readDocument(key));
+			result.push(items[key]);
 		}
 
 		return result;
@@ -89,12 +134,12 @@ export function readDocumentList() {
 	}
 }
 
-// console.log(readDocumentList());
+// console.log(readDocumentList().then((result) => console.log(result)));
 
 // 문서 삭제
-export function deleteDocument(key) {
+export async function deleteDocument(key) {
 	try {
-		const data = localStorage.getItem(key);
+		const data = await getItemInChromeStorage(key);
 
 		if (!data) {
 			return console.error(
@@ -102,17 +147,17 @@ export function deleteDocument(key) {
 			);
 		}
 
-		localStorage.removeItem(key);
-		console.log('문서를 성공적으로 삭제하였습니다:' + key);
+		await removeItemInChromeStorage(key);
+		console.log('로컬 스토리지에서 ' + key + '가 제거되었습니다.');
 	} catch (error) {
 		console.error('[삭제 오류] ' + error);
 	}
 }
 
-// deleteDocument('wm-274e1f1c32e7');
+// deleteDocument('wm-67928c2d4f59');
 
 // 문서 수정
-export function editDocument(key, data) {
+export async function editDocument(key, data) {
 	try {
 		if (!data) {
 			return console.error(
@@ -120,14 +165,14 @@ export function editDocument(key, data) {
 			);
 		}
 
-		localStorage.setItem(key, JSON.stringify(data));
-		console.log('문서를 성공적으로 수정하였습니다:' + key);
+		await setItemInChromeStorage(key, JSON.stringify(data));
+		console.log('로컬 스토리지에서 ' + key + '가 수정되었습니다.');
 	} catch (error) {
 		console.error('[수정 오류] ' + error);
 	}
 }
 
-// editDocument('wm-de32342317b0', EXAMPLE_EDIT_DATA);
+// editDocument('wm-51443797e410', EXAMPLE_EDIT_DATA);
 
 // GPT 분석 결과를 JSON으로 변환
 export function parseTextToJSON(text, id) {
@@ -186,11 +231,11 @@ export function parseTextToJSON(text, id) {
 	return jsonString;
 }
 
-export function loadDarkMode() {
-	const isDarkMode = localStorage.getItem(DARK_MODE);
+export async function loadDarkMode() {
+	const isDarkMode = await getItemInChromeStorage(DARK_MODE);
 
 	if (isDarkMode === undefined) {
-		localStorage.setItem(DARK_MODE, false);
+		await setItemInChromeStorage(DARK_MODE, false);
 	}
 
 	if (isDarkMode === true) {
@@ -200,15 +245,19 @@ export function loadDarkMode() {
 	return false;
 }
 
-export function editDarkMode(value) {
-	localStorage.setItem(DARK_MODE, value ? true : false);
+// loadDarkMode().then((result) => console.log(result));
+
+export async function editDarkMode(value) {
+	await setItemInChromeStorage(DARK_MODE, value ? true : false);
 }
 
-export function loadApiKey() {
-	const apiKey = localStorage.getItem(API_KEY);
+// editDarkMode(true)
+
+export async function loadApiKey() {
+	const apiKey = await getItemInChromeStorage(API_KEY);
 
 	if (apiKey === undefined) {
-		localStorage.setItem(API_KEY, null);
+		await setItemInChromeStorage(API_KEY, null);
 	}
 
 	if (apiKey !== null) {
@@ -218,9 +267,13 @@ export function loadApiKey() {
 	return null;
 }
 
-export function editApiKey(value) {
-	localStorage.setItem(API_KEY, value ? value : null);
+// loadApiKey().then((result) => console.log(result));
+
+export async function editApiKey(value) {
+	await setItemInChromeStorage(API_KEY, value ? value : null);
 }
+
+// editApiKey('abcdefg12341234');
 
 function getOS() {
 	const userAgent = navigator.userAgent;

@@ -16,20 +16,37 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 				files: ['assets/scripts/content.js'],
 			})
 			.then(() => {
-				openPopup();
-				setTimeout(() => {
-					chrome.tabs.sendMessage(tab.id, {
-						action: 'Whale-Mail',
-						selectedText: info.selectionText,
-						windowid: popupWindowId,
-					});
-				}, 1000);
+				// openPopup();
+				// setTimeout(() => {
+				chrome.tabs.sendMessage(tab.id, {
+					action: 'Whale-Mail',
+					selectedText: info.selectionText,
+					// windowid: popupWindowId,
+				});
+				// }, 1000);
 
 				// chrome.tabs.sendMessage(tab.id, {
 				// 	action: 'Whale-Mail',
 				// 	selectedText: info.selectionText,
 				// 	windowid: popupWindowId,
 				// });
+
+				openPopupPromise({
+					/* options */
+				})
+					.then((result) => {
+						// document.getElementById('loading').style.display =
+						// 	'block';
+						console.log('팝업이 열렸습니다:', result);
+						console.log('info', info);
+						console.log('tab', tab);
+						chrome.action.getPopup(tab, (res) => {
+							console.log(res);
+						});
+					})
+					.catch((error) => {
+						console.error('팝업 열기 오류:', error);
+					});
 			})
 			.catch((err) => console.warn('unexpected error', err));
 	}
@@ -37,14 +54,14 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
 let chatGPTResponse = '';
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-	document.getElementById('loading').style.display = 'block';
+	// document.getElementById('loading').style.display = 'block';
 	if (request.type === 'summaryMail') {
 		chatGPTResponse = request.payload.message;
 
 		todoMessage(chatGPTResponse);
-		setTimeout(() => {
-			closePopup(request.windowID);
-		}, 2000);
+		// setTimeout(() => {
+		// 	closePopup(request.windowID);
+		// }, 2000);
 	}
 	return true; // 비동기로 작업 시 필요
 });
@@ -57,32 +74,32 @@ function todoMessage(message) {
 }
 
 // 팝업 창 열기 함수
-function openPopup() {
-	chrome.windows.create(
-		{
-			url: chrome.runtime.getURL('public/main.html'),
-			type: 'popup',
-			width: 330,
-			height: 504,
-		},
-		(popupWindow) => {
-			popupWindowId = popupWindow.id; // 팝업 창 ID 저장
-			console.log('팝업 창이 열렸습니다. ID:', popupWindowId); // 확인용 로그
-		},
-	);
-}
+// function openPopup() {
+// 	chrome.windows.create(
+// 		{
+// 			url: chrome.runtime.getURL('public/main.html'),
+// 			type: 'popup',
+// 			width: 330,
+// 			height: 504,
+// 		},
+// 		(popupWindow) => {
+// 			popupWindowId = popupWindow.id; // 팝업 창 ID 저장
+// 			console.log('팝업 창이 열렸습니다. ID:', popupWindowId); // 확인용 로그
+// 		},
+// 	);
+// }
 
-// 팝업 창 닫기 함수
-function closePopup(id) {
-	if (id) {
-		chrome.windows.remove(id, () => {
-			console.log('팝업 창이 닫혔습니다.');
-			id = null; // ID 초기화
-		});
-	} else {
-		console.log('팝업 창이 열려 있지 않습니다.'); // 팝업 창이 열려 있지 않을 때의 메시지
-	}
-}
+// // 팝업 창 닫기 함수
+// function closePopup(id) {
+// 	if (id) {
+// 		chrome.windows.remove(id, () => {
+// 			console.log('팝업 창이 닫혔습니다.');
+// 			id = null; // ID 초기화
+// 		});
+// 	} else {
+// 		console.log('팝업 창이 열려 있지 않습니다.'); // 팝업 창이 열려 있지 않을 때의 메시지
+// 	}
+// }
 
 // popupWindowId = chrome.windows.create({
 // 	url: chrome.runtime.getURL('public/main.html'),
@@ -171,3 +188,25 @@ function closePopup(id) {
 // });
 // console.log(document.querySelector('.item-title').textContent);
 // console.log(document.querySelector('#aitest').innerHTML);
+function openPopupPromise(options) {
+	return new Promise((resolve, reject) => {
+		chrome.action.openPopup(options, (result) => {
+			if (chrome.runtime.lastError) {
+				reject(chrome.runtime.lastError);
+			} else {
+				resolve(result);
+			}
+		});
+	});
+}
+
+// 사용 예시
+// openPopupPromise({
+// 	/* options */
+// })
+// 	.then((result) => {
+// 		console.log('팝업이 열렸습니다:', result);
+// 	})
+// 	.catch((error) => {
+// 		console.error('팝업 열기 오류:', error);
+// 	});

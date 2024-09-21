@@ -1,5 +1,4 @@
-const CHATGPT_API_KEY =
-	'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'; // <- 절대 레포에 올리지 마세요
+const CHATGPT_API_KEY = ''; // <- 절대 레포에 올리지 마세요
 const CHATGPT_MODEL = 'gpt-4o-mini';
 const prompt =
 	'메일 내용을 최소 1개 ~ 최대 5줄로 요약하고 각 줄은 최소 10글자에서 최대 50글자로 요약해야 한다.' +

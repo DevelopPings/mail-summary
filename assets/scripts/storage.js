@@ -18,7 +18,7 @@ const KEY_LIST = {
 const MAIL_KEY_SUFFIX = 'wm-';
 const DARK_MODE = 'DARK_MODE';
 const API_KEY = 'API_KEY';
-const EOL = getLineBreak();
+const EOL = '\n';
 
 function setItemInChromeStorage(key, value) {
 	return new Promise((resolve, reject) => {
@@ -275,31 +275,6 @@ export async function editApiKey(value) {
 }
 
 // editApiKey('abcdefg12341234');
-
-function getOS() {
-	const userAgent = navigator.userAgent;
-
-	if (userAgent.indexOf('Win') !== -1) return 'Windows';
-	if (userAgent.indexOf('Mac') !== -1) return 'macOS';
-	if (userAgent.indexOf('X11') !== -1 || userAgent.indexOf('Linux') !== -1)
-		return 'Linux';
-	return 'unknown';
-}
-
-// OS별 개행 문자
-function getLineBreak() {
-	const os = getOS();
-	switch (os) {
-		case 'Windows':
-			return '\r\n';
-		case 'macOS':
-			return '\n';
-		case 'Linux':
-			return '\n';
-		default:
-			return '\n';
-	}
-}
 
 export default {
 	readDocument,

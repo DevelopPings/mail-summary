@@ -5,7 +5,7 @@ const isDarkMode = () => document.body.classList.contains('dark-mode');
 const IMAGE_PATH = '../public/images/';
 
 const toggleNoContentLogo = () => {
-	const svgFile = IMAGE_PATH + `logo-${isDarkMode() ? 'dark' : 'light2'}.svg`;
+	const svgFile = IMAGE_PATH + `logo-${isDarkMode() ? 'dark' : 'light'}2.svg`;
 
 	fetch(svgFile)
 		.then((response) => {

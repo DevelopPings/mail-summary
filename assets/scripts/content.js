@@ -158,60 +158,45 @@ function crawlContent() {
 		}, 1000);
 	});
 }
+
 // 메시지 수신
 chrome.runtime.onMessage.addListener(async (message) => {
-	if (message.action === 'Whale-Mail') {
+	if (message.action === 'analyze') {
 		try {
-			// console.log(message.windowid);
 			const result = await crawlContent();
 			// 메일 크롤링 결과
-
 			// console.log(result.title);
 			// console.log(result.send);
 			// console.log(result.time);
 			// console.log(result.content);
-			// chrome.action.openPopup();
+
 			const chatGPTResponse = await callChatGPT(result.content);
 
 			const chatGPTResponseSummary = chatGPTResponse
 				.split('[todo]')[0]
 				.replace('[summary]', '');
 			const chatGPTResponseTodo = chatGPTResponse.split('[todo]')[1];
+
 			// AI 결과
 			console.log(chatGPTResponseSummary);
 			console.log(chatGPTResponseTodo);
-			chrome.runtime.sendMessage(
-				{
-					type: 'summaryMail',
-					payload: {
-						message:
-							'[[title]]' +
-							result.title +
-							'[[author]]' +
-							result.send +
-							'[[sendTime]]' +
-							result.time +
-							'[[summary]]' +
-							chatGPTResponseSummary +
-							'[[todo]]' +
-							chatGPTResponseTodo,
-					},
-					windowID: message.windowid,
+
+			chrome.runtime.sendMessage({
+				type: 'summarize',
+				payload: {
+					message:
+						'[[title]]' +
+						result.title +
+						'[[author]]' +
+						result.send +
+						'[[sendTime]]' +
+						result.time +
+						'[[summary]]' +
+						chatGPTResponseSummary +
+						'[[todo]]' +
+						chatGPTResponseTodo,
 				},
-				(response) => {
-					if (chrome.runtime.lastError) {
-						console.error(
-							'Error:',
-							chrome.runtime.lastError.message,
-						);
-					} else {
-						console.log(
-							'message received from sendResponse: ' +
-								response.message,
-						);
-					}
-				},
-			);
+			});
 		} catch (error) {
 			console.error(error);
 		}

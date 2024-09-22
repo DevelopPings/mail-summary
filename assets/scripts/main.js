@@ -38,11 +38,9 @@ storage
 	.then((result) => {
 		itemCount = Object.keys(result).length;
 		if (itemCount === 0) {
-			listElement.style.display = 'none';
-			noContent.style.display = 'flex';
+			showNoContent();
 		} else {
-			listElement.style.display = 'block';
-			noContent.style.display = 'none';
+			showContent();
 
 			for (const key in result) {
 				appendItem(result[key]);
@@ -56,7 +54,18 @@ storage
 	})
 	.catch((error) => console.error('[목록 로드 오류] ' + error));
 
-function appendItem(itemData) {
+const showNoContent = () => {
+	console.log('showNoContent');
+	listElement.style.display = 'none';
+	noContent.style.display = 'flex';
+};
+
+const showContent = () => {
+	listElement.style.display = 'block';
+	noContent.style.display = 'none';
+};
+
+const appendItem = (itemData) => {
 	const renderCheckCount = ({ done, todo }) => {
 		if (done === 0) {
 			return `<li class="unfinish-task">${todo}</li>`;
@@ -98,7 +107,7 @@ function appendItem(itemData) {
     `;
 
 	listElement.insertAdjacentHTML('beforeend', itemElement);
-}
+};
 
 // 이벤트 처리
 const currentOption = {
@@ -194,20 +203,29 @@ warningModalCancel.addEventListener('click', (event) => {
 	hideWarningModal();
 });
 
-warningModalDelete.addEventListener('click', async (event) => {
+warningModalDelete.addEventListener('click', (event) => {
 	event.stopPropagation();
 	try {
 		const id = currentOption.targetElement.dataset.id;
 		if (id) {
-			await deleteDocument(id);
-			currentOption.targetElement.remove();
-			await updateHeader();
+			handleDelete(id);
 			hideWarningModal();
 		}
 	} catch (error) {
 		console.error('[삭제 이벤트 오류] ' + error);
 	}
 });
+
+const handleDelete = async (id) => {
+	await deleteDocument(id);
+	currentOption.targetElement.remove();
+	const itemCount = await getItemCountInChromeStorage();
+	await updateHeader(itemCount);
+
+	if (itemCount === 0) {
+		showNoContent();
+	}
+};
 
 const showDeleteModal = (hideOptionMenu) => {
 	hideOptionMenu();
@@ -309,9 +327,7 @@ const saveInput = async () => {
 	}
 
 	if (currentOption.inputElement.value.length === 0) {
-		await deleteDocument(id);
-		currentOption.targetElement.remove();
-		await updateHeader();
+		handleDelete(id);
 	} else {
 		const currentData = await readDocument(id);
 		const inputValue = currentOption.inputElement.value;
@@ -337,11 +353,10 @@ const updateHeader = async (count) => {
 	const todayDate = document.querySelector('.today-date');
 
 	const currentTime = new Date();
-	const itemCount = count ? count : await getItemCountInChromeStorage();
 	const formattedDate = date(currentTime, 'month _d, yyyy');
 	const dateTime = date(currentTime, 'yyyy-mm-dd');
 
-	taskCount.innerText = itemCount;
+	taskCount.innerText = count;
 	todayDate.innerText = formattedDate;
 	todayDate.setAttribute('datetime', dateTime);
 };

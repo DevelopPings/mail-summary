@@ -44,7 +44,6 @@ function getItemInChromeStorage(key) {
 	});
 }
 
-// chrome.storage.local에서 값을 제거하는 함수
 function removeItemInChromeStorage(key) {
 	return new Promise((resolve, reject) => {
 		chrome.storage.local.remove(key, () => {
@@ -108,7 +107,7 @@ export async function readDocument(key) {
 // 문서 목록 읽기
 export async function readDocumentList() {
 	try {
-		const result = [];
+		const result = {};
 
 		const items = await new Promise((resolve, reject) => {
 			chrome.storage.local.get(null, (items) => {
@@ -125,7 +124,7 @@ export async function readDocumentList() {
 				continue;
 			}
 
-			result.push(items[key]);
+			result[key] = JSON.parse(items[key]);
 		}
 
 		return result;

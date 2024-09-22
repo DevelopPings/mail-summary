@@ -1,7 +1,13 @@
-import common from './common.js';
+import { EXAMPLE_INPUT_TEXT } from './dummies.js';
+import storage, {
+	deleteDocument,
+	editDocument,
+	readDocument,
+} from './storage.js';
+import { date } from './util.js';
+import optionMenu from './optionMenu.js';
 
 const inputFocusArea = document.querySelector('.focus-area');
-const editFooterSpace = document.querySelector('.edit-footer-space');
 
 const warningModal = document.querySelector('.warning-modal');
 const warningModalContent = document.querySelector('.warning-modal-content');
@@ -18,6 +24,74 @@ const editFooter = document.querySelector('.edit-footer');
 const footerSave = editFooter.getElementsByClassName('save')[0];
 const footerReset = editFooter.getElementsByClassName('reset')[0];
 
+const noContent = document.querySelector('.no-content');
+const listElement = document.querySelector('.list');
+
+storage
+	.readDocumentList()
+	.then((result) => {
+		if (result.length === 0) {
+			listElement.style.display = 'none';
+			noContent.style.display = 'flex';
+		} else {
+			listElement.style.display = 'block';
+			noContent.style.display = 'none';
+
+			for (const key in result) {
+				appendItem(result[key]);
+			}
+
+			const option = optionMenu();
+			handleOptionMenu(option);
+		}
+	})
+	.catch((error) => console.error('[목록 로드 오류] ' + error));
+
+function appendItem(itemData) {
+	const renderCheckCount = ({ done, todo }) => {
+		if (done === 0) {
+			return `<li class="unfinish-task">${todo}</li>`;
+		} else if (todo === 0) {
+			return `<li class="finish-task">${done}</li>`;
+		} else {
+			return `<li class="finish-task">${done}</li>
+                    <li class="unfinish-task">${todo}</li>`;
+		}
+	};
+
+	const renderDate = (dateString) => {
+		const inputDate = new Date(dateString);
+		const currentYear = new Date().getFullYear();
+
+		if (inputDate.getFullYear() < currentYear) {
+			return date(inputDate, 'yy.MM.dd');
+		}
+		return date(inputDate, 'MM.dd');
+	};
+
+	const itemElement = `
+        <li class="list-item" data-id="${itemData.id}">
+            <h2 class="item-title">${itemData.title}</h2>
+            <input
+                class="edit-title-input"
+                type="text"
+                name="title"
+                id="title" 
+            />
+            <div class="item-info">
+                <ul class="check-count">
+                    ${renderCheckCount(itemData.status)}
+                </ul>
+                <time class="send-time" datetime="${itemData.sendTime}">${renderDate(itemData.sendTime)}</time>
+                <button class="option-button"></button>
+            </div>
+        </li>
+    `;
+
+	listElement.insertAdjacentHTML('beforeend', itemElement);
+}
+
+// 이벤트 처리
 const currentOption = {
 	targetElement: null,
 	inputElement: null,
@@ -34,28 +108,33 @@ const setCurrentOption = (
 	currentOption.titleElement = titleElement;
 };
 
-// 옵션 메뉴
-common.onClickOptionMenu((targetElement) => {
-	setCurrentOption(
-		targetElement,
-		targetElement.getElementsByClassName('edit-title-input')[0],
-		targetElement.getElementsByClassName('item-title')[0],
-	);
-});
+const handleOptionMenu = (option) => {
+	option.onClickOptionMenu((targetElement) => {
+		setCurrentOption(
+			targetElement,
+			targetElement.getElementsByClassName('edit-title-input')[0],
+			targetElement.getElementsByClassName('item-title')[0],
+		);
+	});
 
-common.onClickEdit((hideOptionMenu) => {
-	resetInput();
-	startEditMode(hideOptionMenu);
-});
-common.onClickDelete(() => showDeleteModal());
-common.onClickOutOption(() => warningModal.classList.remove('active'));
+	option.onClickEdit((hideOptionMenu) => {
+		resetInput();
+		startEditMode(hideOptionMenu);
+	});
+
+	option.onClickDelete((hideOptionMenu) => showDeleteModal(hideOptionMenu));
+	option.onClickOutOption(() => warningModal.classList.remove('active'));
+};
 
 const startEditMode = (hideOptionMenu) => {
 	currentOption.titleElement.style.display = 'none';
 	currentOption.inputElement.style.display = 'block';
 	inputFocusArea.style.display = 'block';
 	editFooter.style.display = 'flex';
-	editFooterSpace.style.display = 'block';
+
+	const editFooterSpace = document.createElement('div');
+	editFooterSpace.className = 'edit-footer-space';
+	listElement.appendChild(editFooterSpace);
 
 	currentOption.inputElement.addEventListener('keydown', (event) => {
 		saveOnEnter(event);
@@ -72,10 +151,14 @@ const endEditMode = (hideOptionMenu) => {
 	currentOption.titleElement.style.display = 'block';
 	inputFocusArea.style.display = 'none';
 	editFooter.style.display = 'none';
-	editFooterSpace.style.display = 'none';
+
+	const editFooterSpace = document.querySelector('.edit-footer-space');
+
+	if (editFooterSpace) {
+		editFooterSpace.remove();
+	}
 
 	currentOption.inputElement.removeEventListener('keydown', saveOnEnter);
-
 	if (hideOptionMenu) hideOptionMenu();
 };
 
@@ -102,14 +185,22 @@ warningModalCancel.addEventListener('click', (event) => {
 	hideWarningModal();
 });
 
-warningModalDelete.addEventListener('click', (event) => {
+warningModalDelete.addEventListener('click', async (event) => {
 	event.stopPropagation();
-	currentOption.targetElement.remove();
-	hideWarningModal();
+	try {
+		const id = currentOption.targetElement.dataset.id;
+		if (id) {
+			await deleteDocument(id);
+			currentOption.targetElement.remove();
+			hideWarningModal();
+		}
+	} catch (error) {
+		console.error('[삭제 이벤트 오류] ' + error);
+	}
 });
 
-const showDeleteModal = () => {
-	common.hideOptionMenu();
+const showDeleteModal = (hideOptionMenu) => {
+	hideOptionMenu();
 	showWarningModal();
 };
 
@@ -182,12 +273,26 @@ footerReset.addEventListener('click', (event) => {
 const resetInput = () =>
 	(currentOption.inputElement.value = currentOption.titleElement.textContent);
 
-const saveInput = () => {
+const saveInput = async () => {
+	const id = currentOption.targetElement.dataset.id;
+
+	if (!id) {
+		console.error('[저장 이벤트 오류] ' + '해당 id의 요소가 없습니다.');
+		return;
+	}
+
 	if (currentOption.inputElement.value.length === 0) {
+		await deleteDocument(id);
 		currentOption.targetElement.remove();
 	} else {
-		currentOption.titleElement.textContent =
-			currentOption.inputElement.value;
+		const currentData = await readDocument(id);
+		const inputValue = currentOption.inputElement.value;
+
+		if (currentData) {
+			currentData.title = inputValue;
+			currentOption.titleElement.textContent = inputValue;
+			await editDocument(id, currentData);
+		}
 	}
 };
 

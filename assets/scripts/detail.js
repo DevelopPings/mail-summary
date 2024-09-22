@@ -1,4 +1,6 @@
 import common from './common.js';
+import { date } from './util.js';
+import { readDocument } from './storage.js';
 
 const BEFORE_SAVE = 'before-save';
 const EDIT_MODE = 'edit-mode';
@@ -39,8 +41,101 @@ const msg = {
 	reset: '초기화하려면 다시 클릭해주세요.',
 };
 
+const currentSummary = {
+	id: null,
+	content: {
+		title: null,
+		sendTime: null,
+		author: null,
+		createTime: null,
+		status: {
+			done: 0,
+			todo: 0,
+		},
+		todo: [],
+	},
+};
+
+const todo = {
+	content: null,
+	isDone: false,
+};
+
+function Summary(json) {
+	currentSummary.id = json.id;
+	currentSummary.content.title = json.title;
+	currentSummary.content.sendTime = json.sendTime;
+	currentSummary.content.author = json.author;
+	currentSummary.content.createTime = json.createTime;
+	currentSummary.content.status = json.status;
+	currentSummary.content.summary = json.summary;
+	currentSummary.content.todo = json.todo;
+
+	return currentSummary;
+}
+
+function setSummary(key, value) {
+	currentSummary.content[key] = value;
+}
+
+function loadDetail() {
+	const summaryId = new URLSearchParams(location.search).get('id');
+
+	if (summaryId != null) {
+		readDocument(summaryId).then((obj) => displayContents(obj));
+	} else {
+		alert('잘못된 접근입니다.');
+		moveToMain();
+	}
+}
+
+function displayContents(content) {
+	const { title, mailSender, mailTime, summary } = getContents();
+	const main = document.querySelector('main');
+
+	// display title
+	setElementValue(getEditElement(title), content.title);
+	setElementValue(getViewElement(title), content.title);
+
+	//display mailSender
+	setElementValue(mailSender, content.author);
+
+	// display mailTime
+	setElementValue(mailTime, date(content.sendTime, 'yy.MM.dd day HH:mm'));
+
+	// display summary
+	setElementValue(getEditElement(summary), content.summary);
+	setElementValue(getViewElement(summary), content.summary);
+
+	// display todo
+	for (let i = 0; i < content.todo.length; i++) {
+		checkListAddButton.click();
+		const previousCheckList =
+			checkListAddButton.parentNode.previousElementSibling;
+		const previousCheckListContent = previousCheckList.querySelector(
+			'.check-list-content',
+		);
+		setElementValue(
+			getEditElement(previousCheckListContent),
+			content.todo[i].content,
+		);
+		setElementValue(
+			getViewElement(previousCheckListContent),
+			content.todo[i].content,
+		);
+		if (content.todo[i].isDone) {
+			toggleCheck.call(previousCheckList);
+		}
+	}
+
+	main.scrollTo(top);
+}
+loadDetail();
+
 function getContents() {
 	const title = document.querySelector('#mail-title');
+	const mailSender = document.querySelector('#mail-sender');
+	const mailTime = document.querySelector('#mail-time');
 	const summary = document.querySelector('.summary-content');
 	const checkLists = document.querySelectorAll(
 		'#check-list ul li:not(:last-child, .delete) .check-list-content',
@@ -52,6 +147,8 @@ function getContents() {
 
 	return {
 		title: title,
+		mailSender: mailSender,
+		mailTime: mailTime,
 		summary: summary,
 		checkLists: checkLists,
 		deleteCheckLists: deleteCheckLists,
@@ -128,7 +225,7 @@ checkListDeleteButtons.forEach((deleteButton) =>
 
 // return & save & reset button event
 returnButton.addEventListener('click', clickReturnButton);
-footerSaveButton.addEventListener('click', saveSummary);
+footerSaveButton.addEventListener('click', controlSaveSummary);
 footerResetButton.addEventListener('click', controlResetSummary);
 
 // 삭제 확인 모달
@@ -329,11 +426,25 @@ function isValueDifferent(element1, element2) {
 function setElementValue(element, value) {
 	switch (element.tagName) {
 		case 'P':
-			element.innerHTML = value;
+			if (typeof value == 'object') {
+				element.innerHTML = value.join('<br>');
+			} else {
+				element.innerHTML = value;
+			}
 			break;
 		case 'H1':
+			element.textContent = value;
+			element.title = value;
+			break;
 		case 'BUTTON':
 			element.textContent = value;
+			break;
+		case 'TEXTAREA':
+			if (typeof value == 'object') {
+				element.innerHTML = value.join('\n');
+			} else {
+				element.innerHTML = value;
+			}
 			break;
 		default:
 			element.value = value;
@@ -346,6 +457,9 @@ function getElementValue(element) {
 	switch (element.tagName) {
 		case 'P':
 			result = element.innerHTML.replace(/<br>/g, '\n');
+			break;
+		case 'TEXTAREA':
+			result = element.innerHTML;
 			break;
 		case 'H1':
 		case 'BUTTON':
@@ -371,6 +485,12 @@ function deleteCheckList(event) {
 }
 
 function saveSummary() {
+	const { title, summary, checkLists } = getContents();
+	setSummary('title', getViewElement(title));
+	setSummary('summary', getViewElement(summary));
+}
+
+function controlSaveSummary() {
 	if (getElementValue(this) == '저장하기') {
 		// 요약 내용 파일에 저장
 		const bodyClasses = getBodyClasses();
@@ -457,17 +577,21 @@ function changeContent({ target, provider }) {
 	const providerTag = provider.tagName;
 
 	if (targetTag == 'P' && providerTag == 'TEXTAREA') {
-		provider.value = getElementValue(provider);
-		target.textContent = provider.value;
+		// provider.value = getElementValue(provider);
+		// target.textContent = provider.value;
+		setElementValue(provider, getElementValue(provider));
+		// setElementValue(target, getElementValue(provider));
 	} else if (targetTag == 'TEXTAREA' && providerTag == 'P') {
-		target.value = getElementValue(provider);
+		// target.value = getElementValue(provider);
 	} else if (targetTag == 'H1' && providerTag == 'INPUT') {
-		provider.textContent = getElementValue(provider);
-		target.textContent = provider.textContent;
-		target.title = provider.textContent;
+		// provider.textContent = getElementValue(provider);
+		// target.textContent = provider.textContent;
+		// target.title = provider.textContent;
+		setElementValue(provider, getElementValue(provider));
 	} else if (targetTag == 'INPUT' && providerTag == 'H1') {
-		target.value = getElementValue(provider);
+		// target.value = getElementValue(provider);
 	}
+	setElementValue(target, getElementValue(provider));
 }
 
 // 경고창 띄우기

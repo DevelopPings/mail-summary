@@ -197,3 +197,13 @@ const saveOnEnter = (event) => {
 		endEditMode();
 	}
 };
+
+// function test() {
+// 	const list = document.querySelector('.list-item');
+// 	list.dataset['id'] = 'wm-b7231e48c5c7';
+// 	list.addEventListener('click', () => {
+// 		location.href = 'detail.html?id=' + list.dataset['id'];
+// 	});
+// }
+
+// test();

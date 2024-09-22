@@ -15,10 +15,12 @@ const KEY_LIST = {
 	TODO: 'todo',
 	STATUS: 'status',
 };
+export const DARK_MODE_KEY = 'DARK_MODE';
+export const DARK_MODE_VALUE = 'dark-mode';
+
 const MAIL_KEY_SUFFIX = 'wm-';
-const DARK_MODE = 'DARK_MODE';
-const API_KEY = 'API_KEY';
 const EOL = '\n';
+const API_KEY = 'API_KEY';
 
 function setItemInChromeStorage(key, value) {
 	return new Promise((resolve, reject) => {
@@ -136,7 +138,7 @@ export async function readDocumentList() {
 		});
 
 		for (const key in items) {
-			if (key === DARK_MODE || key === API_KEY) {
+			if (!key.startsWith(MAIL_KEY_SUFFIX)) {
 				continue;
 			}
 
@@ -248,23 +250,23 @@ export function parseTextToJSON(text, id) {
 }
 
 export async function loadDarkMode() {
-	const isDarkMode = await getItemInChromeStorage(DARK_MODE);
+	const isDarkMode = await getItemInChromeStorage(DARK_MODE_KEY);
 
 	if (isDarkMode === undefined) {
-		await setItemInChromeStorage(DARK_MODE, false);
+		await setItemInChromeStorage(DARK_MODE_KEY, false);
 	}
 
 	if (isDarkMode === true) {
-		return true;
+		return document.body.classList.add(DARK_MODE_VALUE);
 	}
 
-	return false;
+	document.body.classList.remove(DARK_MODE_VALUE);
 }
 
 // loadDarkMode().then((result) => console.log(result));
 
 export async function editDarkMode(value) {
-	await setItemInChromeStorage(DARK_MODE, value ? true : false);
+	await setItemInChromeStorage(DARK_MODE_KEY, value ? true : false);
 }
 
 // editDarkMode(true)

@@ -91,6 +91,11 @@
 				@include image($settings-circle-dark, 32px, 32px, block);
 			}
 
+			.settings-key-input {
+				background-color: $background-dark;
+				color: $white;
+			}
+
 			.button-wrap {
 				.save {
 					background-color: $secondary-dark;

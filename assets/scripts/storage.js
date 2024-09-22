@@ -249,18 +249,24 @@ export function parseTextToJSON(text, id) {
 	return jsonString;
 }
 
+export async function getDarkModeState() {
+	return await getItemInChromeStorage(DARK_MODE_KEY);
+}
+
 export async function loadDarkMode() {
-	const isDarkMode = await getItemInChromeStorage(DARK_MODE_KEY);
+	const isDarkMode = await getDarkModeState();
 
 	if (isDarkMode === undefined) {
 		await setItemInChromeStorage(DARK_MODE_KEY, false);
 	}
 
 	if (isDarkMode === true) {
-		return document.body.classList.add(DARK_MODE_VALUE);
+		document.body.classList.add(DARK_MODE_VALUE);
+		return true;
 	}
 
 	document.body.classList.remove(DARK_MODE_VALUE);
+	return false;
 }
 
 // loadDarkMode().then((result) => console.log(result));

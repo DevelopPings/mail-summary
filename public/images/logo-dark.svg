@@ -6,7 +6,7 @@
 <path d="M248 114C261.5 109.5 289.5 102 276.5 73C249.3 83.8 246.167 104.833 248 114Z" fill="url(#paint4_radial_28_229)"/>
 <circle cx="7.5" cy="7.5" r="7.5" transform="matrix(-1 0 0 1 95.5 129)" fill="#1B1B1B"/>
 <circle cx="4" cy="4" r="4" transform="matrix(-1 0 0 1 94.5 131)" fill="white"/>
-<g filter="url(#filter0_d_28_229)">
+<g filter="url(#filter0_d_28_229)" id="logo">
 <g filter="url(#filter1_f_28_229)">
 <rect x="104.618" y="40.3624" width="30.5359" height="21.1604" transform="rotate(-15.9313 104.618 40.3624)" fill="#E9E9E9" stroke="#EBAF48"/>
 <path d="M105.58 40.8974L122.906 48.8043L133.856 32.8262" stroke="#EBAF48"/>

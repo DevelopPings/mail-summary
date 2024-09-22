@@ -1,5 +1,4 @@
-const CHATGPT_API_KEY = ''; // <- 절대 레포에 올리지 마세요
-const CHATGPT_MODEL = 'gpt-4o-mini';
+let CHATGPT_MODEL = 'gpt-4o-mini';
 const prompt =
 	'메일 내용을 최소 1개 ~ 최대 5줄로 요약하고 각 줄은 최소 10글자에서 최대 50글자로 요약해야 한다.' +
 	'메일을 todo로 만들어주는데 최소 0개에서 최대 10개로 만들어주고 최소 10글자에서 최대 50글자 이내로 요약해야한다.' +
@@ -7,7 +6,7 @@ const prompt =
 	'장소, 주소는 요약하지 말고 그대로 넣어서 요약해야한다. 요약은 [summary] 로 머릿말을 시작하고, todo는 [todo]로 머릿말을시작한다.' +
 	'각 줄 앞에는 숫자로 표시해서 출력한다.';
 
-async function callChatGPT(question) {
+async function callChatGPT(api, question) {
 	try {
 		const response = await fetch(
 			'https://api.openai.com/v1/chat/completions',
@@ -15,7 +14,7 @@ async function callChatGPT(question) {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-					Authorization: `Bearer ${CHATGPT_API_KEY}`,
+					Authorization: `Bearer ${api}`,
 				},
 				body: JSON.stringify({
 					model: CHATGPT_MODEL,
@@ -160,45 +159,105 @@ function crawlContent() {
 }
 
 // 메시지 수신
+console.log(123);
 chrome.runtime.onMessage.addListener(async (message) => {
 	if (message.action === 'analyze') {
 		try {
 			const result = await crawlContent();
-			// 메일 크롤링 결과
-			// console.log(result.title);
-			// console.log(result.send);
-			// console.log(result.time);
-			// console.log(result.content);
+			let api = '';
 
-			const chatGPTResponse = await callChatGPT(result.content);
+			api = request.apiKey;
+			console.log('3:' + api);
 
-			const chatGPTResponseSummary = chatGPTResponse
-				.split('[todo]')[0]
-				.replace('[summary]', '');
-			const chatGPTResponseTodo = chatGPTResponse.split('[todo]')[1];
-
-			// AI 결과
-			console.log(chatGPTResponseSummary);
-			console.log(chatGPTResponseTodo);
-
-			chrome.runtime.sendMessage({
-				type: 'summarize',
-				payload: {
-					message:
-						'[[title]]' +
-						result.title +
-						'[[author]]' +
-						result.send +
-						'[[sendTime]]' +
-						result.time +
-						'[[summary]]' +
-						chatGPTResponseSummary +
-						'[[todo]]' +
-						chatGPTResponseTodo,
-				},
-			});
+			const chatGPTResponse = callChatGPT(api, result.content);
+			airesult(chatGPTResponse);
+			console.log(chatGPTResponse + '1');
 		} catch (error) {
 			console.error(error);
 		}
 	}
 });
+console.log(456);
+function airesult(chatGPTResponse) {
+	const chatGPTResponseSummary = chatGPTResponse
+		.split('[todo]')[0]
+		.replace('[summary]', '');
+	const chatGPTResponseTodo = chatGPTResponse.split('[todo]')[1];
+
+	// AI 결과
+	console.log(chatGPTResponseSummary);
+	console.log(chatGPTResponseTodo);
+	chrome.runtime.sendMessage(
+		{
+			type: 'summaryMail',
+			payload: {
+				message:
+					'[[title]]' +
+					result.title +
+					'[[author]]' +
+					result.send +
+					'[[sendTime]]' +
+					result.time +
+					'[[summary]]' +
+					chatGPTResponseSummary +
+					'[[todo]]' +
+					chatGPTResponseTodo,
+			},
+			windowID: message.windowid,
+		},
+		(response) => {
+			if (chrome.runtime.lastError) {
+				console.error('Error:', chrome.runtime.lastError.message);
+			} else {
+				console.log(
+					'message received from sendResponse: ' + response.message,
+				);
+			}
+		},
+	);
+}
+
+// // 메일 크롤링 결과
+
+// const chatGPTResponse = await callChatGPT(api, result.content);
+
+// const chatGPTResponseSummary = chatGPTResponse
+// 	.split('[todo]')[0]
+// 	.replace('[summary]', '');
+// const chatGPTResponseTodo = chatGPTResponse.split('[todo]')[1];
+
+// // AI 결과
+// console.log(chatGPTResponseSummary);
+// console.log(chatGPTResponseTodo);
+// chrome.runtime.sendMessage(
+// 	{
+// 		type: 'summaryMail',
+// 		payload: {
+// 			message:
+// 				'[[title]]' +
+// 				result.title +
+// 				'[[author]]' +
+// 				result.send +
+// 				'[[sendTime]]' +
+// 				result.time +
+// 				'[[summary]]' +
+// 				chatGPTResponseSummary +
+// 				'[[todo]]' +
+// 				chatGPTResponseTodo,
+// 		},
+// 		windowID: message.windowid,
+// 	},
+// 	(response) => {
+// 		if (chrome.runtime.lastError) {
+// 			console.error(
+// 				'Error:',
+// 				chrome.runtime.lastError.message,
+// 			);
+// 		} else {
+// 			console.log(
+// 				'message received from sendResponse: ' +
+// 					response.message,
+// 			);
+// 		}
+// 	},
+// );

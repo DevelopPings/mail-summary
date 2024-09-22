@@ -5,12 +5,7 @@ chrome.runtime.onInstalled.addListener(() => {
 		contexts: ['all'],
 	});
 });
-
-// 아이콘 클릭 시, 사이드 패널 바로 열기
-chrome.sidePanel
-	.setPanelBehavior({ openPanelOnActionClick: true })
-	.catch((error) => console.error(error));
-
+let openAiApi = '';
 chrome.contextMenus.onClicked.addListener((info, tab) => {
 	if (info.menuItemId === 'Whale-Mail') {
 		openSidePanel();
@@ -21,30 +16,47 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 				files: ['assets/scripts/content.js'],
 			})
 			.then(() => {
-				chrome.tabs.sendMessage(tab.id, {
-					action: 'analyze',
-				});
+				chrome.runtime.onMessage.addListener(
+					(request, sender, sendResponse) => {
+						if (request.type === 'openai') {
+							openAiApi = request.text;
+							console.log('1 :' + openAiApi);
+						}
+						chrome.tabs.sendMessage(tab.id, {
+							action: 'analyze',
+							selectedText: info.selectionText,
+							apiKey: openAiApi,
+						});
+					},
+				);
 			})
 			.catch((err) => console.warn('unexpected error', err));
+
+		chrome.sidePanel.open({ tabId: tab.id });
 	}
 });
-
+console.log('2 :' + openAiApi);
 let chatGPTResponse = '';
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-	if (request.type === 'summarize') {
+	if (request.type === 'summaryMail') {
 		chatGPTResponse = request.payload.message;
-		todoMessage(chatGPTResponse);
+		chrome.runtime.sendMessage({
+			type: 'summarizeTo',
+			text: chatGPTResponse,
+		});
+
+		// todoMessage(chatGPTResponse);
 	}
 });
 
-function todoMessage(message) {
-	const todo = document.querySelector('#test');
+// function todoMessage(message) {
+// 	const todo = document.querySelector('#test');
 
-	if (todo) {
-		todo.innerHTML = message;
-	}
-}
+// 	if (todo) {
+// 		todo.innerHTML = message;
+// 	}
+// }
 
 function openSidePanel() {
 	chrome.tabs.query({ active: true }, (tabs) => {

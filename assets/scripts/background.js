@@ -6,7 +6,8 @@ chrome.runtime.onInstalled.addListener(() => {
 	});
 });
 let openAiApi = '';
-
+// let n = 1;
+// console.log('background1 : ' + n);
 chrome.contextMenus.onClicked.addListener((info, tab) => {
 	if (info.menuItemId === 'Whale-Mail') {
 		openSidePanel();
@@ -21,12 +22,10 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 					(request, sender, sendResponse) => {
 						if (request.type === 'openai') {
 							openAiApi = request.text;
+							console.log('background1' + request.test);
+							console.log(openAiApi);
+							test3(openAiApi, tab.id);
 						}
-						chrome.tabs.sendMessage(tab.id, {
-							action: 'analyze',
-							selectedText: info.selectionText,
-							apiKey: openAiApi,
-						});
 					},
 				);
 			})
@@ -37,17 +36,31 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 });
 let chatGPTResponse = '';
 
+function test3(res, tab) {
+	chrome.tabs.sendMessage(tab, {
+		action: 'analyze',
+		apiKey: res,
+		test: 'error2',
+	});
+}
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 	if (request.type === 'summaryMail') {
+		console.log(request.test);
+		console.log(request.payload.message);
 		chatGPTResponse = request.payload.message;
-		console.log(chatGPTResponse);
-		chrome.runtime.sendMessage({
-			type: 'summarizeTo',
-			text: chatGPTResponse,
-			flag: false,
-		});
+		test(chatGPTResponse);
 	}
 });
+function test(response) {
+	console.log(response);
+	chrome.runtime.sendMessage({
+		type: 'summarizeTo',
+		text: response,
+		flag: false,
+		test: 'error4',
+	});
+}
 
 function openSidePanel() {
 	chrome.tabs.query({ active: true }, (tabs) => {
@@ -62,3 +75,5 @@ function openSidePanel() {
 		chrome.sidePanel.open({ tabId });
 	});
 }
+// n++;
+// console.log('background2 : ' + n);

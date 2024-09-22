@@ -77,19 +77,23 @@ function loading(flag) {
 }
 let flag = true;
 loading(flag);
-console.log(document.querySelector('#test').innerText);
+// 여기가 문제는 아님
+// let n = 1;
+// console.log('popup1 : ' + n);
 chrome.runtime.sendMessage({
 	type: 'openai',
 	text: document.querySelector('#test').innerText,
+	test: 'error1',
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 	if (request.type === 'summarizeTo') {
+		console.log('popup :' + request.test);
 		const todo = document.querySelector('#result');
 		todo.innerHTML = request.text;
 	}
-	// document.querySelector('#test').innerText = ''; //여기가 문제는 아냐
-	console.log(request.flag);
 	loading(request.flag);
-	return true; // 비동기로 작업 시 필요
+	// return true; // 비동기로 작업 시 필요
 });
+// n++;
+// console.log('popup2 : ' + n);

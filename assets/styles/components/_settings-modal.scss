@@ -65,6 +65,11 @@
 				background-color: $secondary-light;
 				color: $white;
 				box-shadow: none;
+
+				&:disabled {
+					background-color: $gray04;
+					cursor: not-allowed;
+				}
 			}
 
 			.cancel {
@@ -87,8 +92,12 @@
 			}
 
 			.button-wrap {
-				.delete {
+				.save {
 					background-color: $secondary-dark;
+
+					&:disabled {
+						background-color: $gray03;
+					}
 				}
 
 				.cancel {

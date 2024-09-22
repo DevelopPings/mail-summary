@@ -1,8 +1,10 @@
 import { EXAMPLE_INPUT_TEXT } from './dummies.js';
 import storage, {
 	deleteDocument,
+	editApiKey,
 	editDocument,
 	getItemCountInChromeStorage,
+	loadApiKey,
 	readDocument,
 } from './storage.js';
 import { date } from './util.js';
@@ -18,6 +20,7 @@ const warningModalCancel = warningModal.getElementsByClassName('cancel')[0];
 const settingsButton = document.querySelector('.main-header-settings');
 const settingsModal = document.querySelector('.settings-modal');
 const settingsModalContent = document.querySelector('.settings-modal-content');
+const settingsModalInput = document.querySelector('.settings-key-input');
 const settingsModalSave = settingsModal.getElementsByClassName('save')[0];
 const settingsModalCancel = settingsModal.getElementsByClassName('cancel')[0];
 
@@ -226,10 +229,19 @@ const hideWarningModal = () => {
 };
 
 // 설정 모달
-settingsButton.addEventListener('click', (event) => {
+const updateSaveButtonState = () => {
+	settingsModalSave.disabled = settingsModalInput.value.length < 1;
+};
+
+settingsButton.addEventListener('click', async (event) => {
 	event.stopPropagation();
+	const apiKeyValue = await loadApiKey();
+	settingsModalInput.value = apiKeyValue !== null ? apiKeyValue : '';
+	updateSaveButtonState();
 	showSettingsModal();
 });
+
+settingsModalInput.addEventListener('input', updateSaveButtonState);
 
 settingsModal.addEventListener('click', (event) => {
 	event.stopPropagation();
@@ -247,8 +259,16 @@ settingsModalCancel.addEventListener('click', (event) => {
 
 settingsModalSave.addEventListener('click', (event) => {
 	event.stopPropagation();
-	//TODO: API KEY 저장하기
+	editApiKey(settingsModalInput.value);
 	hideSettingsModal();
+});
+
+settingsModalInput.addEventListener('input', () => {
+	if (settingsModalInput.value.length >= 1) {
+		settingsModalSave.disabled = false;
+	} else {
+		settingsModalSave.disabled = true;
+	}
 });
 
 const showSettingsModal = () => {

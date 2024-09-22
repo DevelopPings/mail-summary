@@ -1,6 +1,4 @@
 export default function optionMenu() {
-	const VIEW_PORT_HEIGHT = 500;
-
 	const optionButtons = document.querySelectorAll('.option-button');
 	const optionMenuBackground = document.querySelector('.option-menu');
 	const [optionEdit, optionDelete] =
@@ -37,9 +35,11 @@ export default function optionMenu() {
 			optionMenuButton.style.left = `${centerX - buttonWidth}px`;
 
 			// 메뉴창이 뷰포트 밑으로 나갈시, 위로 출력
+			const clientHeight = document.documentElement.clientHeight;
+
 			if (
 				parseFloat(optionMenuButton.style.top) + buttonHeight >
-				VIEW_PORT_HEIGHT
+				clientHeight
 			) {
 				optionMenuButton.style.top = `${centerY - buttonHeight}px`;
 			}

@@ -56,6 +56,22 @@ function removeItemInChromeStorage(key) {
 	});
 }
 
+export async function getItemCountInChromeStorage() {
+	return new Promise((resolve, reject) => {
+		chrome.storage.local.get(null, (items) => {
+			if (chrome.runtime.lastError) {
+				reject(chrome.runtime.lastError);
+			} else {
+				const count = Object.keys(items).filter((key) =>
+					key.startsWith(MAIL_KEY_SUFFIX),
+				).length;
+
+				resolve(count);
+			}
+		});
+	});
+}
+
 // GPT 분석 후 저장
 export async function generateDocument(text) {
 	const characters =
@@ -110,11 +126,11 @@ export async function readDocumentList() {
 		const result = {};
 
 		const items = await new Promise((resolve, reject) => {
-			chrome.storage.local.get(null, (items) => {
+			chrome.storage.local.get(null, (documents) => {
 				if (chrome.runtime.lastError) {
 					reject(chrome.runtime.lastError);
 				} else {
-					resolve(items);
+					resolve(documents);
 				}
 			});
 		});
@@ -282,4 +298,5 @@ export default {
 	editDocument,
 	generateDocument,
 	parseTextToJSON,
+	getItemCountInChromeStorage,
 };

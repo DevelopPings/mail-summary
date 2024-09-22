@@ -1,11 +1,13 @@
-const noContentLogo = document.querySelector('.no-content-logo');
-const darkModeButton = document.querySelector('.toggle-mode');
-
-const isDarkMode = () => document.body.classList.contains('dark-mode');
 const IMAGE_PATH = '../public/images/';
 
-const toggleNoContentLogo = () => {
-	const svgFile = IMAGE_PATH + `logo-${isDarkMode() ? 'dark' : 'light'}2.svg`;
+export const toggleNoContentLogo = (isDarkMode) => {
+	const noContentLogo = document.querySelector('.no-content-logo');
+
+	if (!noContentLogo) {
+		return;
+	}
+
+	const svgFile = IMAGE_PATH + `logo-${isDarkMode ? 'dark' : 'light'}2.svg`;
 
 	fetch(svgFile)
 		.then((response) => {
@@ -34,9 +36,3 @@ const toggleNoContentLogo = () => {
 			console.error('Error :', error);
 		});
 };
-
-toggleNoContentLogo();
-
-darkModeButton.addEventListener('click', () => {
-	toggleNoContentLogo();
-});

@@ -26,7 +26,7 @@
 
 	.no-content {
 		height: 100%;
-		display: flex;
+		display: none;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
@@ -80,6 +80,7 @@
 	}
 
 	.list {
+		display: none;
 		position: relative;
 
 		&-item {
@@ -94,6 +95,10 @@
 		.item-title {
 			color: $gray01;
 			flex-grow: 1;
+			margin-right: 6px;
+			text-wrap: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 
 			&.finished {
 				color: $gray03;

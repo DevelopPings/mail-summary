@@ -1,7 +1,21 @@
-function loading() {
+function loading(flag) {
+	if (!flag) {
+		const noContentLogo = document.querySelector('.loading');
+		noContentLogo.style.display = 'none';
+
+		document
+			.querySelectorAll(
+				'.main-content, .edit-footer, .option-menu , .warning-modal, .settings-modal',
+			)
+			.forEach((element) => {
+				element.style.display = '';
+			});
+
+		return;
+	}
+
 	const noContentLogo = document.querySelector('.loading');
-	noContentLogo.style.display = 'block';
-	noContentLogo.style.margin = 'auto';
+	noContentLogo.style.display = 'flex';
 
 	document
 		.querySelectorAll(
@@ -61,22 +75,19 @@ function loading() {
 		}, 2);
 	});
 }
+let flag = true;
+loading(flag);
 
-if (true) {
-	loading();
-}
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-	if (request.type === 'summarizeTo') {
-		const todo = document.querySelector('#test');
-		todo.innerHTML = request.message;
-	}
-	if (false) {
-		loading();
-	}
-	return true; // 비동기로 작업 시 필요
-});
-console.log(document.querySelector('#test').innerText);
 chrome.runtime.sendMessage({
 	type: 'openai',
 	text: document.querySelector('#test').innerText,
+});
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+	if (request.type === 'summarizeTo') {
+		const todo = document.querySelector('#result');
+		todo.innerHTML = request.text;
+	}
+	loading(request.flag);
+	return true;
 });

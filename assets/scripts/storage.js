@@ -15,10 +15,12 @@ const KEY_LIST = {
 	TODO: 'todo',
 	STATUS: 'status',
 };
+export const DARK_MODE_KEY = 'DARK_MODE';
+export const DARK_MODE_VALUE = 'dark-mode';
+
 const MAIL_KEY_SUFFIX = 'wm-';
-const DARK_MODE = 'DARK_MODE';
-const API_KEY = 'API_KEY';
 const EOL = '\n';
+const API_KEY = 'API_KEY';
 
 function setItemInChromeStorage(key, value) {
 	return new Promise((resolve, reject) => {
@@ -44,7 +46,6 @@ function getItemInChromeStorage(key) {
 	});
 }
 
-// chrome.storage.local에서 값을 제거하는 함수
 function removeItemInChromeStorage(key) {
 	return new Promise((resolve, reject) => {
 		chrome.storage.local.remove(key, () => {
@@ -52,6 +53,22 @@ function removeItemInChromeStorage(key) {
 				reject(chrome.runtime.lastError);
 			} else {
 				resolve(key);
+			}
+		});
+	});
+}
+
+export async function getItemCountInChromeStorage() {
+	return new Promise((resolve, reject) => {
+		chrome.storage.local.get(null, (items) => {
+			if (chrome.runtime.lastError) {
+				reject(chrome.runtime.lastError);
+			} else {
+				const count = Object.keys(items).filter((key) =>
+					key.startsWith(MAIL_KEY_SUFFIX),
+				).length;
+
+				resolve(count);
 			}
 		});
 	});
@@ -108,24 +125,24 @@ export async function readDocument(key) {
 // 문서 목록 읽기
 export async function readDocumentList() {
 	try {
-		const result = [];
+		const result = {};
 
 		const items = await new Promise((resolve, reject) => {
-			chrome.storage.local.get(null, (items) => {
+			chrome.storage.local.get(null, (documents) => {
 				if (chrome.runtime.lastError) {
 					reject(chrome.runtime.lastError);
 				} else {
-					resolve(items);
+					resolve(documents);
 				}
 			});
 		});
 
 		for (const key in items) {
-			if (key === DARK_MODE || key === API_KEY) {
+			if (!key.startsWith(MAIL_KEY_SUFFIX)) {
 				continue;
 			}
 
-			result.push(items[key]);
+			result[key] = JSON.parse(items[key]);
 		}
 
 		return result;
@@ -232,24 +249,30 @@ export function parseTextToJSON(text, id) {
 	return jsonString;
 }
 
+export async function getDarkModeState() {
+	return await getItemInChromeStorage(DARK_MODE_KEY);
+}
+
 export async function loadDarkMode() {
-	const isDarkMode = await getItemInChromeStorage(DARK_MODE);
+	const isDarkMode = await getDarkModeState();
 
 	if (isDarkMode === undefined) {
-		await setItemInChromeStorage(DARK_MODE, false);
+		await setItemInChromeStorage(DARK_MODE_KEY, false);
 	}
 
 	if (isDarkMode === true) {
+		document.body.classList.add(DARK_MODE_VALUE);
 		return true;
 	}
 
+	document.body.classList.remove(DARK_MODE_VALUE);
 	return false;
 }
 
 // loadDarkMode().then((result) => console.log(result));
 
 export async function editDarkMode(value) {
-	await setItemInChromeStorage(DARK_MODE, value ? true : false);
+	await setItemInChromeStorage(DARK_MODE_KEY, value ? true : false);
 }
 
 // editDarkMode(true)
@@ -283,4 +306,5 @@ export default {
 	editDocument,
 	generateDocument,
 	parseTextToJSON,
+	getItemCountInChromeStorage,
 };

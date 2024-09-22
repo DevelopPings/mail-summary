@@ -10,64 +10,60 @@
 // 	if (info.menuItemId === 'Whale-Mail') {
 // 		openSidePanel();
 
-// 		chrome.scripting
-// 			.executeScript({
-// 				target: { tabId: tab.id },
-// 				files: ['assets/scripts/content.js'],
-// 			})
-// 			.then(() => {
-// 				chrome.runtime.onMessage.addListener(
-// 					(request, sender, sendResponse) => {
-// 						if (request.type === 'openai') {
-// 							openAiApi = request.text;
-// 							console.log('1 :' + openAiApi);
-// 						}
-// 						chrome.tabs.sendMessage(tab.id, {
-// 							action: 'analyze',
-// 							selectedText: info.selectionText,
-// 							apiKey: openAiApi,
-// 						});
-// 					},
-// 				);
-// 			})
-// 			.catch((err) => console.warn('unexpected error', err));
 
-// 		chrome.sidePanel.open({ tabId: tab.id });
-// 	}
-// });
-// console.log('2 :' + openAiApi);
-// let chatGPTResponse = '';
+		chrome.scripting
+			.executeScript({
+				target: { tabId: tab.id },
+				files: ['assets/scripts/content.js'],
+			})
+			.then(() => {
+				chrome.runtime.onMessage.addListener(
+					(request, sender, sendResponse) => {
+						if (request.type === 'openai') {
+							openAiApi = request.text;
+							analyze(openAiApi, tab.id);
+						}
+					},
+				);
+			})
+			.catch((err) => console.warn('unexpected error', err));
 
-// chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-// 	if (request.type === 'summaryMail') {
-// 		chatGPTResponse = request.payload.message;
-// 		chrome.runtime.sendMessage({
-// 			type: 'summarizeTo',
-// 			text: chatGPTResponse,
-// 		});
+		chrome.sidePanel.open({ tabId: tab.id });
+	}
+});
+let chatGPTResponse = '';
 
-// 		// todoMessage(chatGPTResponse);
-// 	}
-// });
+function analyze(res, tab) {
+	chrome.tabs.sendMessage(tab, {
+		action: 'analyze',
+		apiKey: res,
+	});
+}
 
-// // function todoMessage(message) {
-// // 	const todo = document.querySelector('#test');
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+	if (request.type === 'summaryMail') {
+		chatGPTResponse = request.payload.message;
+		summarizeTo(chatGPTResponse);
+	}
+});
+function summarizeTo(response) {
+	chrome.runtime.sendMessage({
+		type: 'summarizeTo',
+		text: response,
+		flag: false,
+	});
+}
 
-// // 	if (todo) {
-// // 		todo.innerHTML = message;
-// // 	}
-// // }
+function openSidePanel() {
+	chrome.tabs.query({ active: true }, (tabs) => {
+		const tabId = tabs[0]?.id;
+		if (!tabId) console.error('active tab does not exist');
+		chrome.sidePanel.setOptions({
+			tabId,
+			path: 'public/main.html',
+			enabled: true,
+		});
 
-// function openSidePanel() {
-// 	chrome.tabs.query({ active: true }, (tabs) => {
-// 		const tabId = tabs[0]?.id;
-// 		if (!tabId) console.error('active tab does not exist');
-// 		chrome.sidePanel.setOptions({
-// 			tabId,
-// 			path: 'public/main.html',
-// 			enabled: true,
-// 		});
-
-// 		chrome.sidePanel.open({ tabId });
-// 	});
-// }
+		chrome.sidePanel.open({ tabId });
+	});
+}

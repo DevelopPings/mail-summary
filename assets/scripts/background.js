@@ -6,6 +6,7 @@ chrome.runtime.onInstalled.addListener(() => {
 	});
 });
 let openAiApi = '';
+
 chrome.contextMenus.onClicked.addListener((info, tab) => {
 	if (info.menuItemId === 'Whale-Mail') {
 		openSidePanel();
@@ -20,7 +21,6 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 					(request, sender, sendResponse) => {
 						if (request.type === 'openai') {
 							openAiApi = request.text;
-							console.log('1 :' + openAiApi);
 						}
 						chrome.tabs.sendMessage(tab.id, {
 							action: 'analyze',
@@ -35,28 +35,19 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 		chrome.sidePanel.open({ tabId: tab.id });
 	}
 });
-console.log('2 :' + openAiApi);
 let chatGPTResponse = '';
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 	if (request.type === 'summaryMail') {
 		chatGPTResponse = request.payload.message;
+		console.log(chatGPTResponse);
 		chrome.runtime.sendMessage({
 			type: 'summarizeTo',
 			text: chatGPTResponse,
+			flag: false,
 		});
-
-		// todoMessage(chatGPTResponse);
 	}
 });
-
-// function todoMessage(message) {
-// 	const todo = document.querySelector('#test');
-
-// 	if (todo) {
-// 		todo.innerHTML = message;
-// 	}
-// }
 
 function openSidePanel() {
 	chrome.tabs.query({ active: true }, (tabs) => {

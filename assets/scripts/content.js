@@ -159,105 +159,75 @@ function crawlContent() {
 }
 
 // 메시지 수신
-console.log(123);
+let api = '';
+// let chatGPTResponseSummary = '';
+// let chatGPTResponseTodo = '';
+// let n = 1;
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+	if (request.action === 'analyze') {
+		// api = request.apiKey; // api 안받게 해둠
+	}
+});
 chrome.runtime.onMessage.addListener(async (message) => {
 	if (message.action === 'analyze') {
 		try {
 			const result = await crawlContent();
-			let api = '';
+			// 메일 크롤링 결과
+			// console.log(n);
+			// if (n == 2) {
+			// let messageProcessed = true; // 플래그 추가
+			// if (messageProcessed) {.
+			// 리스너가 중복으로 등록되지 않도록 확인
+			const chatGPTResponse = await callChatGPT(api, result.content);
+			// 	messageProcessed = false; // 메시지 처리됨 플래그 설정
+			// }
 
-			api = request.apiKey;
-			console.log('3:' + api);
+			let chatGPTResponseSummary = chatGPTResponse
+				.split('[todo]')[0]
+				.replace('[summary]', '');
+			let chatGPTResponseTodo = chatGPTResponse.split('[todo]')[1];
 
-			const chatGPTResponse = callChatGPT(api, result.content);
-			airesult(chatGPTResponse);
-			console.log(chatGPTResponse + '1');
+			// AI 결과
+			console.log(chatGPTResponseSummary);
+			console.log(chatGPTResponseTodo);
+			chrome.runtime.sendMessage(
+				{
+					type: 'summaryMail',
+					payload: {
+						message:
+							'[[title]]' +
+							result.title +
+							'[[author]]' +
+							result.send +
+							'[[sendTime]]' +
+							result.time +
+							'[[summary]]' +
+							chatGPTResponseSummary +
+							'[[todo]]' +
+							chatGPTResponseTodo,
+					},
+					windowID: message.windowid,
+				},
+				(response) => {
+					if (chrome.runtime.lastError) {
+						console.error(
+							'Error:',
+							chrome.runtime.lastError.message,
+						);
+					} else {
+						console.log(
+							'message received from sendResponse: ' +
+								response.message,
+						);
+					}
+				},
+			);
+			// } else {
+			// 	return;
+			// }
 		} catch (error) {
 			console.error(error);
 		}
 	}
 });
-console.log(456);
-function airesult(chatGPTResponse) {
-	const chatGPTResponseSummary = chatGPTResponse
-		.split('[todo]')[0]
-		.replace('[summary]', '');
-	const chatGPTResponseTodo = chatGPTResponse.split('[todo]')[1];
-
-	// AI 결과
-	console.log(chatGPTResponseSummary);
-	console.log(chatGPTResponseTodo);
-	chrome.runtime.sendMessage(
-		{
-			type: 'summaryMail',
-			payload: {
-				message:
-					'[[title]]' +
-					result.title +
-					'[[author]]' +
-					result.send +
-					'[[sendTime]]' +
-					result.time +
-					'[[summary]]' +
-					chatGPTResponseSummary +
-					'[[todo]]' +
-					chatGPTResponseTodo,
-			},
-			windowID: message.windowid,
-		},
-		(response) => {
-			if (chrome.runtime.lastError) {
-				console.error('Error:', chrome.runtime.lastError.message);
-			} else {
-				console.log(
-					'message received from sendResponse: ' + response.message,
-				);
-			}
-		},
-	);
-}
-
-// // 메일 크롤링 결과
-
-// const chatGPTResponse = await callChatGPT(api, result.content);
-
-// const chatGPTResponseSummary = chatGPTResponse
-// 	.split('[todo]')[0]
-// 	.replace('[summary]', '');
-// const chatGPTResponseTodo = chatGPTResponse.split('[todo]')[1];
-
-// // AI 결과
-// console.log(chatGPTResponseSummary);
-// console.log(chatGPTResponseTodo);
-// chrome.runtime.sendMessage(
-// 	{
-// 		type: 'summaryMail',
-// 		payload: {
-// 			message:
-// 				'[[title]]' +
-// 				result.title +
-// 				'[[author]]' +
-// 				result.send +
-// 				'[[sendTime]]' +
-// 				result.time +
-// 				'[[summary]]' +
-// 				chatGPTResponseSummary +
-// 				'[[todo]]' +
-// 				chatGPTResponseTodo,
-// 		},
-// 		windowID: message.windowid,
-// 	},
-// 	(response) => {
-// 		if (chrome.runtime.lastError) {
-// 			console.error(
-// 				'Error:',
-// 				chrome.runtime.lastError.message,
-// 			);
-// 		} else {
-// 			console.log(
-// 				'message received from sendResponse: ' +
-// 					response.message,
-// 			);
-// 		}
-// 	},
-// );
+// n++;

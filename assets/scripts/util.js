@@ -20,6 +20,7 @@ export const date = (data, pattern) => {
 	const dateObject = {
 		yyyy: yyyy,
 		MM: attachZero(temp.getMonth() + 1),
+		_d: temp.getDate(),
 		dd: attachZero(temp.getDate()),
 		yy: yyyy.toString().substr(2, 4),
 		HH: attachZero(HH),

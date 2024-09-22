@@ -2,6 +2,7 @@ import { EXAMPLE_INPUT_TEXT } from './dummies.js';
 import storage, {
 	deleteDocument,
 	editDocument,
+	getItemCountInChromeStorage,
 	readDocument,
 } from './storage.js';
 import { date } from './util.js';
@@ -27,10 +28,13 @@ const footerReset = editFooter.getElementsByClassName('reset')[0];
 const noContent = document.querySelector('.no-content');
 const listElement = document.querySelector('.list');
 
+let itemCount = 0;
+
 storage
 	.readDocumentList()
 	.then((result) => {
-		if (result.length === 0) {
+		itemCount = Object.keys(result).length;
+		if (itemCount === 0) {
 			listElement.style.display = 'none';
 			noContent.style.display = 'flex';
 		} else {
@@ -44,6 +48,8 @@ storage
 			const option = optionMenu();
 			handleOptionMenu(option);
 		}
+
+		updateHeader(itemCount);
 	})
 	.catch((error) => console.error('[목록 로드 오류] ' + error));
 
@@ -192,6 +198,7 @@ warningModalDelete.addEventListener('click', async (event) => {
 		if (id) {
 			await deleteDocument(id);
 			currentOption.targetElement.remove();
+			await updateHeader();
 			hideWarningModal();
 		}
 	} catch (error) {
@@ -284,6 +291,7 @@ const saveInput = async () => {
 	if (currentOption.inputElement.value.length === 0) {
 		await deleteDocument(id);
 		currentOption.targetElement.remove();
+		await updateHeader();
 	} else {
 		const currentData = await readDocument(id);
 		const inputValue = currentOption.inputElement.value;
@@ -301,4 +309,19 @@ const saveOnEnter = (event) => {
 		saveInput();
 		endEditMode();
 	}
+};
+
+// 헤더 업데이트
+const updateHeader = async (count) => {
+	const taskCount = document.querySelector('.task-count').firstElementChild;
+	const todayDate = document.querySelector('.today-date');
+
+	const currentTime = new Date();
+	const itemCount = count ? count : await getItemCountInChromeStorage();
+	const formattedDate = date(currentTime, 'month _d, yyyy');
+	const dateTime = date(currentTime, 'yyyy-mm-dd');
+
+	taskCount.innerText = itemCount;
+	todayDate.innerText = formattedDate;
+	todayDate.setAttribute('datetime', dateTime);
 };

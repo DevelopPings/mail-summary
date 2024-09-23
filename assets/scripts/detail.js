@@ -8,29 +8,6 @@ const NO_TITLE = 'no-title';
 const NO_SUMMARY = 'no-summary';
 const NO_CHECK_LIST = 'no-check-list';
 
-const detailBody = document.querySelector('#detail-body');
-const returnButton = document.querySelector('#return');
-const mailTitle = document.querySelector('#mail-title input');
-const mailSummary = document.querySelector('.summary-content textarea');
-
-const mainCheckLists = document.querySelectorAll('#check-list > ul > li');
-const checkListAddButton = document.querySelector('#check-list .add-button');
-const checkListDeleteButtons = document.querySelectorAll(
-	'#check-list .delete-button',
-);
-
-const editFooter = document.querySelector('.edit-footer');
-const footerSaveButton = editFooter.getElementsByClassName('save')[0];
-const footerResetButton = editFooter.getElementsByClassName('reset')[0];
-
-const warning = document.querySelector('.warning-message');
-const warningMessage = document.querySelector('.warning-message-content');
-
-const warningModal = document.querySelector('.warning-modal');
-const warningModalContent = document.querySelector('.warning-modal-content');
-const modalDeleteButton = warningModal.getElementsByClassName('delete')[0];
-const modalCancelButton = warningModal.getElementsByClassName('cancel')[0];
-
 const editModeTimer = {
 	id: 0,
 	target: null,
@@ -56,10 +33,12 @@ const currentSummary = {
 	},
 };
 
-const todo = {
-	content: null,
-	isDone: false,
-};
+function Todo(content, isDone) {
+	return {
+		content: content,
+		isDone: isDone,
+	};
+}
 
 function Summary(json) {
 	currentSummary.id = json.id;
@@ -72,6 +51,10 @@ function Summary(json) {
 	currentSummary.content.todo = json.todo;
 
 	return currentSummary;
+}
+
+function setSummaryId(value) {
+	currentSummary.id = value;
 }
 
 function setSummary(key, value) {
@@ -130,7 +113,6 @@ function displayContents(content) {
 
 	main.scrollTo(top);
 }
-loadDetail();
 
 function getContents() {
 	const title = document.querySelector('#mail-title');
@@ -156,16 +138,6 @@ function getContents() {
 	};
 }
 
-common.onClickOptionMenu();
-common.onClickOutOption();
-common.onClickEdit((hideOptionMenu) => {
-	// 수정모드
-	toggleEditMode();
-	if (hideOptionMenu) hideOptionMenu();
-});
-
-common.onClickDelete(() => showDeleteModal());
-
 const showDeleteModal = () => {
 	common.hideOptionMenu();
 	showWarningModal();
@@ -186,68 +158,105 @@ const hideWarningModal = () => {
 };
 
 window.addEventListener('load', () => {
+	const detailBody = document.querySelector('#detail-body');
+	const returnButton = document.querySelector('#return');
+	const mailTitle = document.querySelector('#mail-title input');
+	const mailSummary = document.querySelector('.summary-content textarea');
+
+	const mainCheckLists = document.querySelectorAll('#check-list > ul > li');
+	const checkListAddButton = document.querySelector(
+		'#check-list .add-button',
+	);
+	const checkListDeleteButtons = document.querySelectorAll(
+		'#check-list .delete-button',
+	);
+
+	const editFooter = document.querySelector('.edit-footer');
+	const footerSaveButton = editFooter.getElementsByClassName('save')[0];
+	const footerResetButton = editFooter.getElementsByClassName('reset')[0];
+
+	const warning = document.querySelector('.warning-message');
+	const warningMessage = document.querySelector('.warning-message-content');
+
+	const warningModal = document.querySelector('.warning-modal');
+	const warningModalContent = document.querySelector(
+		'.warning-modal-content',
+	);
+	const modalDeleteButton = warningModal.getElementsByClassName('delete')[0];
+	const modalCancelButton = warningModal.getElementsByClassName('cancel')[0];
 	const { textareas } = getContents();
+
+	common.onClickOptionMenu();
+	common.onClickOutOption();
+	common.onClickEdit((hideOptionMenu) => {
+		// 수정모드
+		toggleEditMode();
+		if (hideOptionMenu) hideOptionMenu();
+	});
+
+	common.onClickDelete(() => showDeleteModal());
+
 	autoResizeList(textareas);
 	textareas.forEach((textarea) =>
 		textarea.addEventListener('keyup', autoResize),
 	);
-});
 
-detailBody.addEventListener('click', controlDoubleClickToEditMode);
+	detailBody.addEventListener('click', controlDoubleClickToEditMode);
 
-mailTitle.addEventListener('blur', controlFooterSaveButtonContent);
-mailSummary.addEventListener('blur', controlFooterSaveButtonContent);
+	mailTitle.addEventListener('blur', controlFooterSaveButtonContent);
+	mailSummary.addEventListener('blur', controlFooterSaveButtonContent);
 
-mainCheckLists.forEach((checkList, index) => {
-	checkList.addEventListener('click', toggleCheck);
+	mainCheckLists.forEach((checkList, index) => {
+		checkList.addEventListener('click', toggleCheck);
 
-	if (index < mainCheckLists.length - 1) {
-		checkList
-			.querySelector('textarea')
-			.addEventListener('keydown', blockEnter);
-		checkList
-			.querySelector('textarea')
-			.addEventListener('blur', (event) => {
-				controlDeleteCheck(event);
-				controlFooterSaveButtonContent();
-			});
-	}
-});
+		if (index < mainCheckLists.length - 1) {
+			checkList
+				.querySelector('textarea')
+				.addEventListener('keydown', blockEnter);
+			checkList
+				.querySelector('textarea')
+				.addEventListener('blur', (event) => {
+					controlDeleteCheck(event);
+					controlFooterSaveButtonContent();
+				});
+		}
+	});
 
-checkListAddButton.addEventListener('click', addCheckList);
+	checkListAddButton.addEventListener('click', addCheckList);
 
-checkListDeleteButtons.forEach((deleteButton) =>
-	deleteButton.addEventListener('click', (event) => {
-		deleteCheckList(event);
-		controlFooterSaveButtonContent();
-	}),
-);
+	checkListDeleteButtons.forEach((deleteButton) =>
+		deleteButton.addEventListener('click', (event) => {
+			deleteCheckList(event);
+			controlFooterSaveButtonContent();
+		}),
+	);
 
-// return & save & reset button event
-returnButton.addEventListener('click', clickReturnButton);
-footerSaveButton.addEventListener('click', controlSaveSummary);
-footerResetButton.addEventListener('click', controlResetSummary);
+	// return & save & reset button event
+	returnButton.addEventListener('click', clickReturnButton);
+	footerSaveButton.addEventListener('click', controlSaveSummary);
+	footerResetButton.addEventListener('click', controlResetSummary);
 
-// 삭제 확인 모달
-warningModal.addEventListener('click', (event) => {
-	event.stopPropagation();
-	hideWarningModal();
-});
+	// 삭제 확인 모달
+	warningModal.addEventListener('click', (event) => {
+		event.stopPropagation();
+		hideWarningModal();
+	});
 
-warningModalContent.addEventListener('click', (event) => {
-	event.stopPropagation();
-});
+	warningModalContent.addEventListener('click', (event) => {
+		event.stopPropagation();
+	});
 
-modalCancelButton.addEventListener('click', (event) => {
-	event.stopPropagation();
-	hideWarningModal();
-});
+	modalCancelButton.addEventListener('click', (event) => {
+		event.stopPropagation();
+		hideWarningModal();
+	});
 
-modalDeleteButton.addEventListener('click', (event) => {
-	// 요약 삭제 이벤트 추가
-	event.stopPropagation();
-	hideWarningModal();
-	moveToMain();
+	modalDeleteButton.addEventListener('click', (event) => {
+		// 요약 삭제 이벤트 추가
+		event.stopPropagation();
+		hideWarningModal();
+		moveToMain();
+	});
 });
 
 function clickReturnButton(event) {
@@ -488,6 +497,10 @@ function saveSummary() {
 	const { title, summary, checkLists } = getContents();
 	setSummary('title', getViewElement(title));
 	setSummary('summary', getViewElement(summary));
+
+	for (let i = 0; i < checkLists.length; i++) {
+		new Todo(checkLists[i]);
+	}
 }
 
 function controlSaveSummary() {

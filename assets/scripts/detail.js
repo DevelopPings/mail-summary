@@ -1,5 +1,5 @@
 import { date } from './util.js';
-import { readDocument } from './storage.js';
+import { readDocument, editDocument } from './storage.js';
 import optionMenu from './optionMenu.js';
 
 const BEFORE_SAVE = 'before-save';
@@ -72,11 +72,13 @@ function Status() {
 
 function Todo(element) {
 	let checked = false;
-	if (element.parentNode.classList.contain('checked')) {
+
+	if (element.parentNode.classList.contains('checked')) {
 		checked = true;
 	}
+
 	return {
-		content: getViewElement(element),
+		content: getElementValue(getViewElement(element)),
 		isDone: checked,
 	};
 }
@@ -118,8 +120,9 @@ function loadDetail() {
 	}
 
 	readDocument(summaryId).then((obj) => {
-		console.log(summaryId, obj);
+		Summary(obj);
 		displayContents(obj);
+		console.log(currentSummary);
 	});
 }
 
@@ -422,7 +425,6 @@ function addCheckList(content) {
 
 function isContentEdited() {
 	const { title, summary, checkLists, deleteCheckLists } = getContents();
-
 	if (
 		isTwinsDifferent(title) ||
 		isTwinsDifferent(summary) ||
@@ -494,7 +496,8 @@ function getElementValue(element) {
 			result = element.innerHTML.replace(/<br>/g, '\n');
 			break;
 		case 'TEXTAREA':
-			result = element.innerHTML;
+			// result = element.innerHTML;
+			result = element.value;
 			break;
 		case 'H1':
 		case 'BUTTON':
@@ -523,15 +526,27 @@ function saveSummary() {
 	const { title, summary, checkLists } = getContents();
 	let status = new Status();
 	const arr = [];
-	setSummary('title', getViewElement(title));
-	setSummary('summary', getViewElement(summary));
+	if (currentSummary.id == 'SUMMARY_RESULT') {
+		// 랜덤 아이디 생성
+	}
+	setSummary('title', getElementValue(getViewElement(title)));
+	setSummary('summary', getElementValue(getViewElement(summary)).split(/\n/));
 
 	for (let i = 0; i < checkLists.length; i++) {
 		const todo = new Todo(checkLists[i]);
-		console.log(todo);
+
+		if (todo.isDone) {
+			status.done++;
+		} else {
+			status.todo++;
+		}
+
 		arr.push(todo);
 	}
 	setSummary('status', status);
+	setSummary('todo', arr);
+
+	editDocument(currentSummary.id, currentSummary);
 }
 
 function controlSaveSummary() {
@@ -547,6 +562,7 @@ function controlSaveSummary() {
 			}
 			// bodyClasses.remove(EDIT_MODE);
 			toggleEditMode();
+			saveSummary();
 		} else if (bodyClasses.contains(BEFORE_SAVE)) {
 			// 메일 요약내용 처음 저장
 			bodyClasses.remove(BEFORE_SAVE);

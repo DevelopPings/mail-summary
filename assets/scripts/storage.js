@@ -202,7 +202,7 @@ export function parseTextToJSON(text, id) {
 		.filter((line) => line);
 
 	const data = {
-		id,
+		...(id ? { id } : {}),
 		title: '',
 		author: '',
 		sendTime: '',
@@ -243,7 +243,9 @@ export function parseTextToJSON(text, id) {
 		}
 	});
 
-	data.id = id;
+	if (id) {
+		data.id = id;
+	}
 	data.status.todo = data.todo.length;
 	data.createTime = date(new Date(), 'yyyy-MM-dd HH:mm');
 

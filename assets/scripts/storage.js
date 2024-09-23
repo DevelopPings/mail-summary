@@ -22,7 +22,7 @@ const MAIL_KEY_SUFFIX = 'wm-';
 const EOL = '\n';
 const API_KEY = 'API_KEY';
 
-function setItemInChromeStorage(key, value) {
+export function setItemInChromeStorage(key, value) {
 	return new Promise((resolve, reject) => {
 		chrome.storage.local.set({ [key]: value }, () => {
 			if (chrome.runtime.lastError) {
@@ -312,4 +312,5 @@ export default {
 	generateDocument,
 	parseTextToJSON,
 	getItemCountInChromeStorage,
+	setItemInChromeStorage,
 };

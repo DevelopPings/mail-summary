@@ -12,48 +12,26 @@ chrome.runtime.onInstalled.addListener(() => {
 	});
 });
 
-chrome.contextMenus.onClicked.addListener((info, tab) => {
+chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 	if (info.menuItemId === 'Whale-Mail') {
-		openSidePanel('public/loading.html');
+		try {
+			openSidePanel('public/loading.html');
 
-		chrome.scripting
-			.executeScript({
+			await chrome.scripting.executeScript({
 				target: { tabId: tab.id },
 				files: ['assets/scripts/content.js'],
-			})
-			.then(() => {
-				chrome.runtime.onMessage.addListener(
-					(request, sender, sendResponse) => {
-						if (request.type === 'openai') {
-							openAiApi = request.text;
-							analyze(openAiApi, tab.id);
-						}
-					},
-				);
-			})
-			.catch((err) => console.warn('unexpected error', err));
+			});
+
+			handleData(tab.id);
+		} catch (error) {
+			console.error('[contextMenu 이벤트 오류] ' + error);
+		}
 	}
 });
-let chatGPTResponse = '';
 
-function analyze(res, tab) {
-	chrome.tabs.sendMessage(tab, {
-		action: 'analyze',
-		apiKey: res,
-	});
-}
-
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-	if (request.type === 'summaryMail') {
-		chatGPTResponse = request.payload.message;
-		summarizeTo(chatGPTResponse);
-	}
-});
-function summarizeTo(response) {
-	chrome.runtime.sendMessage({
-		type: 'summarizeTo',
-		text: response,
-		flag: false,
+function handleData(tabId) {
+	chrome.tabs.sendMessage(tabId, {
+		message: '(1) handleData',
 	});
 }
 

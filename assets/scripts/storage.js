@@ -101,7 +101,7 @@ export async function generateDocument(text) {
 	return keyName;
 }
 
-// generateDocument(EXAMPLE_INPUT_TEXT);
+//generateDocument(EXAMPLE_INPUT_TEXT);
 
 // 문서 읽기
 export async function readDocument(key) {

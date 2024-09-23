@@ -359,3 +359,7 @@ const updateHeader = async (count) => {
 	todayDate.innerText = formattedDate;
 	todayDate.setAttribute('datetime', dateTime);
 };
+
+listElement.addEventListener('click', (event) => {
+	location.href = 'detail.html?id=' + event.target.dataset.id;
+});

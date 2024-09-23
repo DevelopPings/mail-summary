@@ -1,6 +1,7 @@
-import common from './common.js';
+// import common from './common.js';
 import { date } from './util.js';
 import { readDocument } from './storage.js';
+import optionMenu from './optionMenu.js';
 
 const BEFORE_SAVE = 'before-save';
 const EDIT_MODE = 'edit-mode';
@@ -64,12 +65,13 @@ function setSummary(key, value) {
 function loadDetail() {
 	const summaryId = new URLSearchParams(location.search).get('id');
 
-	if (summaryId != null) {
-		readDocument(summaryId).then((obj) => displayContents(obj));
-	} else {
-		alert('잘못된 접근입니다.');
-		moveToMain();
+	if (summaryId == null) {
+		summaryId = 'SUMMARY-RESULT';
 	}
+
+	readDocument(summaryId).then((obj) => {
+		displayContents(obj);
+	});
 }
 
 function displayContents(content) {
@@ -167,9 +169,9 @@ window.addEventListener('load', () => {
 	const checkListAddButton = document.querySelector(
 		'#check-list .add-button',
 	);
-	const checkListDeleteButtons = document.querySelectorAll(
-		'#check-list .delete-button',
-	);
+	// const checkListDeleteButtons = document.querySelectorAll(
+	// 	'#check-list .delete-button',
+	// );
 
 	const editFooter = document.querySelector('.edit-footer');
 	const footerSaveButton = editFooter.getElementsByClassName('save')[0];
@@ -206,30 +208,30 @@ window.addEventListener('load', () => {
 	mailTitle.addEventListener('blur', controlFooterSaveButtonContent);
 	mailSummary.addEventListener('blur', controlFooterSaveButtonContent);
 
-	mainCheckLists.forEach((checkList, index) => {
-		checkList.addEventListener('click', toggleCheck);
+	// mainCheckLists.forEach((checkList, index) => {
+	// 	checkList.addEventListener('click', toggleCheck);
 
-		if (index < mainCheckLists.length - 1) {
-			checkList
-				.querySelector('textarea')
-				.addEventListener('keydown', blockEnter);
-			checkList
-				.querySelector('textarea')
-				.addEventListener('blur', (event) => {
-					controlDeleteCheck(event);
-					controlFooterSaveButtonContent();
-				});
-		}
-	});
+	// 	if (index < mainCheckLists.length - 1) {
+	// 		checkList
+	// 			.querySelector('textarea')
+	// 			.addEventListener('keydown', blockEnter);
+	// 		checkList
+	// 			.querySelector('textarea')
+	// 			.addEventListener('blur', (event) => {
+	// 				controlDeleteCheck(event);
+	// 				controlFooterSaveButtonContent();
+	// 			});
+	// 	}
+	// });
 
 	checkListAddButton.addEventListener('click', addCheckList);
 
-	checkListDeleteButtons.forEach((deleteButton) =>
-		deleteButton.addEventListener('click', (event) => {
-			deleteCheckList(event);
-			controlFooterSaveButtonContent();
-		}),
-	);
+	// checkListDeleteButtons.forEach((deleteButton) =>
+	// 	deleteButton.addEventListener('click', (event) => {
+	// 		deleteCheckList(event);
+	// 		controlFooterSaveButtonContent();
+	// 	}),
+	// );
 
 	// return & save & reset button event
 	returnButton.addEventListener('click', clickReturnButton);
@@ -257,6 +259,8 @@ window.addEventListener('load', () => {
 		hideWarningModal();
 		moveToMain();
 	});
+	const option = optionMenu();
+	loadDetail();
 });
 
 function clickReturnButton(event) {

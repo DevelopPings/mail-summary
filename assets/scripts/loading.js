@@ -1,26 +1,13 @@
-// // 익명함수라고 오류라고 뜸
-// let mode = null;
-// if (document.body.classList.contains('dark-mode')) {
-// 	mode = '../public/images/logo-dark.svg';
-// } else {
-// 	mode = '../public/images/logo-light.svg';
-// }
+import { date } from './util.js';
 
-// fetch(mode)
-// 	.then((response) => response.text())
-// 	.then((svgData) => {
-// 		document.getElementById('loading').innerHTML = svgData;
+const todayDate = document.querySelector('.today-date');
+const noContent = document.querySelector('.no-content');
 
-// 		const logo = document.querySelector('#logo');
-// 		const number = [3, 4, 1, 0, 2, 2, 0, 1, 4];
-// 		number.forEach((num, index) => {
-// 			setTimeout(() => {
-// 				let x = 0;
-// 				x += 0.05;
-// 				logo.children[num].animate([{ opacity: x }], {
-// 					duration: 1200,
-// 					iterations: Infinity,
-// 				});
-// 			}, index * 500);
-// 		});
-// 	});
+noContent.style.display = 'flex';
+
+const currentTime = new Date();
+const formattedDate = date(currentTime, 'month _d, yyyy');
+const dateTime = date(currentTime, 'yyyy-mm-dd');
+
+todayDate.innerText = formattedDate;
+todayDate.setAttribute('datetime', dateTime);

@@ -55,7 +55,6 @@ storage
 	.catch((error) => console.error('[목록 로드 오류] ' + error));
 
 const showNoContent = () => {
-	console.log('showNoContent');
 	listElement.style.display = 'none';
 	noContent.style.display = 'flex';
 };

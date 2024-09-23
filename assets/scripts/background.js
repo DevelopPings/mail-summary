@@ -1,15 +1,20 @@
-// chrome.runtime.onInstalled.addListener(() => {
-// 	chrome.contextMenus.create({
-// 		id: 'Whale-Mail',
-// 		title: '웨-일이 쉽지? (Whale Mail)',
-// 		contexts: ['all'],
-// 	});
-// });
-// let openAiApi = '';
-// chrome.contextMenus.onClicked.addListener((info, tab) => {
-// 	if (info.menuItemId === 'Whale-Mail') {
-// 		openSidePanel();
+const ALLOWED_DOMAINS = [
+	'https://mail.google.com/*',
+	'https://mail.naver.com/*',
+];
 
+chrome.runtime.onInstalled.addListener(() => {
+	chrome.contextMenus.create({
+		id: 'Whale-Mail',
+		title: '웨-일이 쉽지? (Whale Mail)',
+		contexts: ['all'],
+		documentUrlPatterns: ALLOWED_DOMAINS,
+	});
+});
+
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+	if (info.menuItemId === 'Whale-Mail') {
+		openSidePanel('public/loading.html');
 
 		chrome.scripting
 			.executeScript({
@@ -27,8 +32,6 @@
 				);
 			})
 			.catch((err) => console.warn('unexpected error', err));
-
-		chrome.sidePanel.open({ tabId: tab.id });
 	}
 });
 let chatGPTResponse = '';
@@ -54,13 +57,14 @@ function summarizeTo(response) {
 	});
 }
 
-function openSidePanel() {
+function openSidePanel(path) {
 	chrome.tabs.query({ active: true }, (tabs) => {
 		const tabId = tabs[0]?.id;
 		if (!tabId) console.error('active tab does not exist');
+
 		chrome.sidePanel.setOptions({
 			tabId,
-			path: 'public/main.html',
+			path,
 			enabled: true,
 		});
 

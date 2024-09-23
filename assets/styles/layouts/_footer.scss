@@ -1,31 +1,10 @@
-// footer {
-// 	height: 60px;
-// 	display: flex;
-
-// 	section {
-// 		display: flex;
-// 		align-items: center;
-// 		input {
-// 			width: 239px;
-// 			height: 43px;
-// 		}
-
-// 		button {
-// 			width: 43px;
-// 			height: 43px;
-// 			background: url($reset) no-repeat center;
-// 			border-radius: 7px;
-// 		}
-// 	}
-// }
-
 .edit-footer {
 	display: none;
 	position: fixed;
 	left: 0;
 	right: 0;
 	bottom: 0;
-	width: 320px;
+	width: 100%;
 	align-items: center;
 	padding: 0 15px 14.56px;
 	gap: 8px;

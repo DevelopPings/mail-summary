@@ -107,6 +107,10 @@ const appendItem = (itemData) => {
     `;
 
 	listElement.insertAdjacentHTML('beforeend', itemElement);
+	listElement.lastElementChild.addEventListener('click', (event) => {
+		event.stopPropagation();
+		location.href = 'detail.html?id=' + itemData.id;
+	});
 };
 
 // 이벤트 처리

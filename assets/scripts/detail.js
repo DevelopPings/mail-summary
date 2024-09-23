@@ -18,6 +18,24 @@ const msg = {
 	reset: '초기화하려면 다시 클릭해주세요.',
 };
 
+const detailBody = document.querySelector('#detail-body');
+const returnButton = document.querySelector('#return');
+
+const checkListAddButton = document.querySelector('#check-list .add-button');
+
+const editFooter = document.querySelector('.edit-footer');
+const footerSaveButton = editFooter.getElementsByClassName('save')[0];
+const footerResetButton = editFooter.getElementsByClassName('reset')[0];
+
+const warning = document.querySelector('.warning-message');
+const warningMessage = document.querySelector('.warning-message-content');
+
+const warningModal = document.querySelector('.warning-modal');
+const warningModalContent = document.querySelector('.warning-modal-content');
+
+const modalDeleteButton = warningModal.getElementsByClassName('delete')[0];
+const modalCancelButton = warningModal.getElementsByClassName('cancel')[0];
+
 const option = optionMenu();
 
 option.onClickOptionMenu();
@@ -30,53 +48,66 @@ option.onClickEdit((hideOptionMenu) => {
 
 option.onClickDelete(() => showDeleteModal());
 
-const warningModal = document.querySelector('.warning-modal');
-const warningModalContent = document.querySelector('.warning-modal-content');
-
-const modalDeleteButton = warningModal.getElementsByClassName('delete')[0];
-const modalCancelButton = warningModal.getElementsByClassName('cancel')[0];
-
 const currentSummary = {
 	id: null,
-	content: {
-		title: null,
-		sendTime: null,
-		author: null,
-		createTime: null,
-		status: {
-			done: 0,
-			todo: 0,
-		},
-		todo: [],
+	// content: {
+	title: null,
+	sendTime: null,
+	author: null,
+	createTime: null,
+	status: {
+		done: 0,
+		todo: 0,
 	},
+	todo: [],
+	// },
 };
 
-function Todo(content, isDone) {
+function Status() {
 	return {
-		content: content,
-		isDone: isDone,
+		done: 0,
+		todo: 0,
+	};
+}
+
+function Todo(element) {
+	let checked = false;
+	if (element.parentNode.classList.contain('checked')) {
+		checked = true;
+	}
+	return {
+		content: getViewElement(element),
+		isDone: checked,
 	};
 }
 
 function Summary(json) {
 	currentSummary.id = json.id;
-	currentSummary.content.title = json.title;
-	currentSummary.content.sendTime = json.sendTime;
-	currentSummary.content.author = json.author;
-	currentSummary.content.createTime = json.createTime;
-	currentSummary.content.status = json.status;
-	currentSummary.content.summary = json.summary;
-	currentSummary.content.todo = json.todo;
+	// currentSummary.content.title = json.title;
+	// currentSummary.content.sendTime = json.sendTime;
+	// currentSummary.content.author = json.author;
+	// currentSummary.content.createTime = json.createTime;
+	// currentSummary.content.status = json.status;
+	// currentSummary.content.summary = json.summary;
+	// currentSummary.content.todo = json.todo;
+	currentSummary.title = json.title;
+	currentSummary.sendTime = json.sendTime;
+	currentSummary.author = json.author;
+	currentSummary.createTime = json.createTime;
+	currentSummary.status = json.status;
+	currentSummary.summary = json.summary;
+	currentSummary.todo = json.todo;
 
 	return currentSummary;
 }
 
-function setSummaryId(value) {
-	currentSummary.id = value;
-}
+// function setSummaryId(value) {
+// 	currentSummary.id = value;
+// }
 
 function setSummary(key, value) {
-	currentSummary.content[key] = value;
+	// currentSummary.content[key] = value;
+	currentSummary[key] = value;
 }
 
 function loadDetail() {
@@ -178,25 +209,14 @@ const hideWarningModal = () => {
 };
 
 window.addEventListener('load', () => {
-	const detailBody = document.querySelector('#detail-body');
-	const returnButton = document.querySelector('#return');
 	const mailTitle = document.querySelector('#mail-title input');
 	const mailSummary = document.querySelector('.summary-content textarea');
 
 	const mainCheckLists = document.querySelectorAll('#check-list > ul > li');
-	const checkListAddButton = document.querySelector(
-		'#check-list .add-button',
-	);
+
 	// const checkListDeleteButtons = document.querySelectorAll(
 	// 	'#check-list .delete-button',
 	// );
-
-	const editFooter = document.querySelector('.edit-footer');
-	const footerSaveButton = editFooter.getElementsByClassName('save')[0];
-	const footerResetButton = editFooter.getElementsByClassName('reset')[0];
-
-	const warning = document.querySelector('.warning-message');
-	const warningMessage = document.querySelector('.warning-message-content');
 
 	const { textareas } = getContents();
 
@@ -362,7 +382,7 @@ function toggleCheck() {
 	}
 }
 
-function addCheckList() {
+function addCheckList(content) {
 	const li = document.createElement('li');
 	const checkboxButton = document.createElement('button');
 	const contentArea = document.createElement('div');
@@ -394,7 +414,7 @@ function addCheckList() {
 	li.append(contentArea);
 	li.append(deleteButton);
 
-	this.parentNode.insertAdjacentElement('beforebegin', li);
+	checkListAddButton.parentNode.insertAdjacentElement('beforebegin', li);
 
 	main.scrollTo(0, main.scrollHeight);
 	textarea.focus();
@@ -501,12 +521,17 @@ function deleteCheckList(event) {
 
 function saveSummary() {
 	const { title, summary, checkLists } = getContents();
+	let status = new Status();
+	const arr = [];
 	setSummary('title', getViewElement(title));
 	setSummary('summary', getViewElement(summary));
 
 	for (let i = 0; i < checkLists.length; i++) {
-		new Todo(checkLists[i]);
+		const todo = new Todo(checkLists[i]);
+		console.log(todo);
+		arr.push(todo);
 	}
+	setSummary('status', status);
 }
 
 function controlSaveSummary() {

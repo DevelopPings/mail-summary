@@ -106,7 +106,7 @@ header {
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
-		width: 267px;
+		width: calc(100% - 55px);
 		height: 60px;
 
 		#mail-title {
@@ -114,7 +114,7 @@ header {
 
 			input {
 				display: none;
-				width: 267px;
+				width: 100%;
 				color: $primary-light;
 				font-size: 18px;
 				font-weight: 500;

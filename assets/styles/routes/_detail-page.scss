@@ -35,13 +35,13 @@
 			.summary-content {
 				textarea {
 					display: none;
-					width: 279px;
+					width: 100%;
 					height: 100px;
 					padding: 8px;
 				}
 
 				p {
-					width: 279px;
+					width: 100%;
 				}
 
 				.no-content {
@@ -73,9 +73,10 @@
 
 			ul {
 				li {
-					margin-bottom: 6px;
 					display: flex;
 					justify-content: space-between;
+					margin-bottom: 6px;
+					width: 100%;
 
 					.checkbox {
 						display: inline-block;
@@ -103,11 +104,11 @@
 					}
 
 					.check-list-content {
-						width: 260px;
+						width: calc(100% - 20px);
 
 						textarea {
 							display: none;
-							width: 230.04px;
+							width: 100%;
 							margin: 0 auto;
 							padding: 4px 8px;
 						}
@@ -124,9 +125,9 @@
 
 					.add-button {
 						display: none;
-						width: 230.04px;
+						width: calc(100% - 52px);
 						height: 26px;
-						margin-left: 21px;
+						margin-left: 22px;
 						border: 1px solid $gray04;
 						border-radius: 7px;
 						background: url($plus) no-repeat center;
@@ -150,8 +151,6 @@
 				margin-bottom: 70px;
 
 				ul li {
-					width: 280px;
-
 					.checkbox {
 						margin-top: 6px;
 						cursor: default;
@@ -163,6 +162,7 @@
 
 					textarea {
 						display: block;
+						width: calc(100% - 20px);
 					}
 
 					.delete-button {

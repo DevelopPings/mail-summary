@@ -74,8 +74,7 @@ export async function getItemCountInChromeStorage() {
 	});
 }
 
-// GPT 분석 후 저장
-export async function generateDocument(text) {
+export async function createHashKey() {
 	const characters =
 		'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 	let randomString = '';
@@ -93,8 +92,12 @@ export async function generateDocument(text) {
 		.map((b) => b.toString(16).padStart(2, '0'))
 		.join('');
 
-	const keyName = MAIL_KEY_SUFFIX + hashHex.substring(0, MAIL_KEY_LENGTH);
+	return MAIL_KEY_SUFFIX + hashHex.substring(0, MAIL_KEY_LENGTH);
+}
 
+// GPT 분석 후 저장
+export async function generateDocument(text) {
+	const keyName = await createHashKey();
 	// GPT 분석 결과를 JSON으로 변환
 	await setItemInChromeStorage(keyName, parseTextToJSON(text, keyName));
 	console.log('로컬 스토리지에서 ' + keyName + '가 생성되었습니다.');

@@ -1,4 +1,3 @@
-// import common from './common.js';
 import { date } from './util.js';
 import { readDocument } from './storage.js';
 import optionMenu from './optionMenu.js';
@@ -18,6 +17,18 @@ const msg = {
 	beforeSave: '아직 저장되지 않았습니다. <br>돌아가려면 다시 클릭해주세요.',
 	reset: '초기화하려면 다시 클릭해주세요.',
 };
+
+const option = optionMenu();
+
+option.onClickOptionMenu();
+option.onClickOutOption();
+option.onClickEdit((hideOptionMenu) => {
+	// 수정모드
+	toggleEditMode();
+	if (hideOptionMenu) hideOptionMenu();
+});
+
+option.onClickDelete(() => showDeleteModal());
 
 const currentSummary = {
 	id: null,
@@ -141,7 +152,7 @@ function getContents() {
 }
 
 const showDeleteModal = () => {
-	common.hideOptionMenu();
+	option.hideOptionMenu();
 	showWarningModal();
 };
 
@@ -187,16 +198,6 @@ window.addEventListener('load', () => {
 	const modalDeleteButton = warningModal.getElementsByClassName('delete')[0];
 	const modalCancelButton = warningModal.getElementsByClassName('cancel')[0];
 	const { textareas } = getContents();
-
-	common.onClickOptionMenu();
-	common.onClickOutOption();
-	common.onClickEdit((hideOptionMenu) => {
-		// 수정모드
-		toggleEditMode();
-		if (hideOptionMenu) hideOptionMenu();
-	});
-
-	common.onClickDelete(() => showDeleteModal());
 
 	autoResizeList(textareas);
 	textareas.forEach((textarea) =>
@@ -259,7 +260,7 @@ window.addEventListener('load', () => {
 		hideWarningModal();
 		moveToMain();
 	});
-	const option = optionMenu();
+
 	loadDetail();
 });
 

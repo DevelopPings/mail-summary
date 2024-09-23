@@ -76,5 +76,6 @@ export default function optionMenu() {
 		onClickEdit,
 		onClickDelete,
 		onClickOutOption,
+		hideOptionMenu,
 	};
 }

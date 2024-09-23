@@ -30,6 +30,12 @@ option.onClickEdit((hideOptionMenu) => {
 
 option.onClickDelete(() => showDeleteModal());
 
+const warningModal = document.querySelector('.warning-modal');
+const warningModalContent = document.querySelector('.warning-modal-content');
+
+const modalDeleteButton = warningModal.getElementsByClassName('delete')[0];
+const modalCancelButton = warningModal.getElementsByClassName('cancel')[0];
+
 const currentSummary = {
 	id: null,
 	content: {
@@ -76,11 +82,12 @@ function setSummary(key, value) {
 function loadDetail() {
 	const summaryId = new URLSearchParams(location.search).get('id');
 
-	if (summaryId == null) {
+	if (summaryId == undefined) {
 		summaryId = 'SUMMARY-RESULT';
 	}
 
 	readDocument(summaryId).then((obj) => {
+		console.log(summaryId, obj);
 		displayContents(obj);
 	});
 }
@@ -191,12 +198,6 @@ window.addEventListener('load', () => {
 	const warning = document.querySelector('.warning-message');
 	const warningMessage = document.querySelector('.warning-message-content');
 
-	const warningModal = document.querySelector('.warning-modal');
-	const warningModalContent = document.querySelector(
-		'.warning-modal-content',
-	);
-	const modalDeleteButton = warningModal.getElementsByClassName('delete')[0];
-	const modalCancelButton = warningModal.getElementsByClassName('cancel')[0];
 	const { textareas } = getContents();
 
 	autoResizeList(textareas);

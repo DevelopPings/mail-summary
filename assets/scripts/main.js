@@ -30,6 +30,7 @@ const footerReset = editFooter.getElementsByClassName('reset')[0];
 
 const noContent = document.querySelector('.no-content');
 const listElement = document.querySelector('.list');
+const listItems = document.querySelectorAll('.list-item');
 
 let itemCount = 0;
 
@@ -359,7 +360,3 @@ const updateHeader = async (count) => {
 	todayDate.innerText = formattedDate;
 	todayDate.setAttribute('datetime', dateTime);
 };
-
-listElement.addEventListener('click', (event) => {
-	location.href = 'detail.html?id=' + event.target.dataset.id;
-});

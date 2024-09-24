@@ -1,5 +1,5 @@
 import { date } from './util.js';
-import { readDocument, editDocument } from './storage.js';
+import { readDocument, editDocument, deleteDocument } from './storage.js';
 import optionMenu from './optionMenu.js';
 
 const BEFORE_SAVE = 'before-save';
@@ -20,6 +20,9 @@ const msg = {
 
 const detailBody = document.querySelector('#detail-body');
 const returnButton = document.querySelector('#return');
+
+const mailTitle = document.querySelector('#mail-title input');
+const mailSummary = document.querySelector('.summary-content textarea');
 
 const checkListAddButton = document.querySelector('#check-list .add-button');
 
@@ -198,9 +201,6 @@ const hideWarningModal = () => {
 };
 
 window.addEventListener('load', () => {
-	const mailTitle = document.querySelector('#mail-title input');
-	const mailSummary = document.querySelector('.summary-content textarea');
-
 	const mainCheckLists = document.querySelectorAll('#check-list > ul > li');
 
 	// const checkListDeleteButtons = document.querySelectorAll(
@@ -268,6 +268,7 @@ window.addEventListener('load', () => {
 		// 요약 삭제 이벤트 추가
 		event.stopPropagation();
 		hideWarningModal();
+		deleteDocument(currentSummary.id);
 		moveToMain();
 	});
 
@@ -499,9 +500,11 @@ function setElementValue(element, value) {
 			break;
 		case 'TEXTAREA':
 			if (typeof value == 'object') {
-				element.innerHTML = value.join('\n');
+				// element.innerHTML = value.join('\n');
+				element.value = value.join('\n');
 			} else {
-				element.innerHTML = value;
+				// element.innerHTML = value;
+				element.value = value;
 			}
 			break;
 		default:
@@ -605,21 +608,28 @@ function controlResetSummary() {
 function resetSummary() {
 	const { title, summary, checkLists, deleteCheckLists } = getContents();
 
+	// update title
 	pasteToEditor(title);
+
+	// update summary
 	pasteToEditor(summary);
+
+	// update checklist
 	checkLists.forEach((item) => {
 		pasteToEditor(item);
+
 		if (isElementEmpty(getEditElement(item))) {
 			item.parentNode.remove();
 		}
 	});
+
+	// delete checklist
 	deleteCheckLists.forEach((item) => {
-		pasteToEditor(item.querySelector('.check-list-content'));
-		if (
-			isElementEmpty(
-				getViewElement(item.querySelector('.check-list-content')),
-			)
-		) {
+		const itemContent = item.querySelector('.check-list-content');
+
+		pasteToEditor(itemContent);
+
+		if (isElementEmpty(getViewElement(itemContent))) {
 			item.remove();
 		} else {
 			item.classList.remove('delete');
@@ -676,7 +686,20 @@ function changeContent({ target, provider }) {
 	} else if (targetTag == 'INPUT' && providerTag == 'H1') {
 		// target.value = getElementValue(provider);
 	}
+
+	console.log('바뀌기 전');
+	console.log('provider', getElementValue(provider));
+	console.log(provider);
+	console.log('target', getElementValue(target));
+	console.log(target);
+
 	setElementValue(target, getElementValue(provider));
+
+	console.log('바뀐 후');
+	console.log('provider', getElementValue(provider));
+	console.log(provider);
+	console.log('target', getElementValue(target));
+	console.log(target);
 }
 
 // 경고창 띄우기
@@ -724,6 +747,7 @@ function alertMessage(element) {
 
 			//TODO: 2번 클릭 시 실행 로직
 			if (element == returnButton) {
+				// 돌아가기 버튼 클릭 시
 				if (bodyClasses.contains(BEFORE_SAVE)) {
 					moveToMain();
 				} else if (bodyClasses.contains(EDIT_MODE)) {
@@ -734,6 +758,7 @@ function alertMessage(element) {
 				element == footerResetButton &&
 				bodyClasses.contains(EDIT_MODE)
 			) {
+				// 초기화 버튼 클릭 시
 				const { textareas } = getContents();
 
 				resetSummary();

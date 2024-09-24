@@ -12,6 +12,11 @@ chrome.runtime.onInstalled.addListener(() => {
 	});
 });
 
+chrome.action.onClicked.addListener(() => {
+	chrome.sidePanel.setOptions({ path: 'public/main.html' });
+	chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+});
+
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 	if (info.menuItemId === 'Whale-Mail') {
 		try {

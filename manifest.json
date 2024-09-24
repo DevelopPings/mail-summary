@@ -37,5 +37,6 @@
 	"side_panel": {
 		"default_path": "public/main.html",
 		"default_icon": "public/images/logo-light.png"
-	}
+	},
+	"action": {}
 }

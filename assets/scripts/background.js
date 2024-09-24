@@ -12,9 +12,20 @@ chrome.runtime.onInstalled.addListener(() => {
 	});
 });
 
+const mainPage = 'public/main.html';
+const detailPage = 'public/detail.html';
+const loadingPage = 'public/loading.html';
+
 chrome.action.onClicked.addListener(() => {
-	chrome.sidePanel.setOptions({ path: 'public/main.html' });
+	chrome.sidePanel.setOptions({ path: mainPage });
 	chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+});
+
+chrome.tabs.onActivated.addListener(async ({ tabId }) => {
+	const { path } = await chrome.sidePanel.getOptions({ tabId });
+	if (path === mainPage) {
+		chrome.sidePanel.setOptions({ path: mainPage });
+	}
 });
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {

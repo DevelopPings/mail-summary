@@ -10,6 +10,8 @@ import storage, {
 import { date } from './util.js';
 import optionMenu from './optionMenu.js';
 
+const NO_TITLE_TEXT = '제목 없음';
+
 const inputFocusArea = document.querySelector('.focus-area');
 
 const warningModal = document.querySelector('.warning-modal');
@@ -110,13 +112,14 @@ const appendItem = (itemData) => {
 
 	const titleElement = document.createElement('h2');
 	titleElement.className = 'item-title';
-	titleElement.textContent = itemData.title;
+	titleElement.textContent = itemData.title || NO_TITLE_TEXT;
 
 	const editInput = document.createElement('input');
 	editInput.className = 'edit-title-input';
 	editInput.type = 'text';
 	editInput.name = 'title';
 	editInput.id = 'title';
+	editInput.value = itemData.title || '';
 
 	const itemInfo = document.createElement('div');
 	itemInfo.className = 'item-info';
@@ -176,12 +179,17 @@ const handleOptionMenu = (option) => {
 	});
 
 	option.onClickEdit((hideOptionMenu) => {
-		resetInput();
 		startEditMode(hideOptionMenu);
 	});
 
 	option.onClickDelete((hideOptionMenu) => showDeleteModal(hideOptionMenu));
 	option.onClickOutOption(() => warningModal.classList.remove('active'));
+};
+
+const focusLastCharInput = () => {
+	const end = currentOption.inputElement.value.length;
+	currentOption.inputElement.setSelectionRange(end, end);
+	currentOption.inputElement.focus();
 };
 
 const startEditMode = (hideOptionMenu) => {
@@ -198,9 +206,7 @@ const startEditMode = (hideOptionMenu) => {
 		saveOnEnter(event);
 	});
 
-	const end = currentOption.inputElement.value.length;
-	currentOption.inputElement.setSelectionRange(end, end);
-	currentOption.inputElement.focus();
+	focusLastCharInput();
 	if (hideOptionMenu) hideOptionMenu();
 };
 
@@ -355,10 +361,7 @@ footerReset.addEventListener('click', (event) => {
 	resetInput();
 });
 
-const resetInput = () =>
-	(currentOption.inputElement.value = currentOption.titleElement.textContent);
-
-const saveInput = async () => {
+const getSavedData = async () => {
 	const id = currentOption.targetElement.dataset.id;
 
 	if (!id) {
@@ -366,18 +369,25 @@ const saveInput = async () => {
 		return;
 	}
 
-	if (currentOption.inputElement.value.length === 0) {
-		handleDelete(id);
-	} else {
-		const currentData = await readDocument(id);
-		const inputValue = currentOption.inputElement.value;
+	return await readDocument(id);
+};
 
-		if (currentData) {
-			currentData.title = inputValue;
-			currentOption.titleElement.textContent = inputValue;
-			await editDocument(id, currentData);
-		}
-	}
+const resetInput = async () => {
+	const savedData = await getSavedData();
+	currentOption.inputElement.value = savedData.title || '';
+	focusLastCharInput();
+};
+
+const saveInput = async () => {
+	const id = currentOption.targetElement.dataset.id;
+	const inputValue = currentOption.inputElement.value;
+
+	const savedData = await getSavedData();
+
+	savedData.title = inputValue;
+	currentOption.titleElement.textContent = inputValue || NO_TITLE_TEXT;
+
+	await editDocument(id, savedData);
 };
 
 const saveOnEnter = (event) => {

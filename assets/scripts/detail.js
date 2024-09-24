@@ -579,6 +579,7 @@ function controlSaveSummary() {
 			// 메일 요약내용 처음 저장
 			bodyClasses.remove(BEFORE_SAVE);
 			saveSummary();
+			location.href = 'detail.html?id=' + currentSummary.id;
 		}
 	} else if (getElementValue(this) == '삭제하기') {
 		// 모든 내용 삭제 시 삭제

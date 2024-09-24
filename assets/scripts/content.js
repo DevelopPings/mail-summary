@@ -73,16 +73,7 @@ function crawlNaverMail(mail) {
 		.textContent.split(/<|>/g)[1];
 
 	const timeContent = document.querySelector('.info_area > span').textContent;
-	const isAfternoon = timeContent.includes('오후');
-
-	const timeParts = timeContent
-		.replace(/[^0-9]/g, ',')
-		.replace(/,+/g, ',')
-		.split(',')
-		.map(Number);
-
-	const [year, month, day, hour, minute] = timeParts;
-	mail.time = `${year}-${month}-${day} ${hour + (isAfternoon ? 12 : 0)}:${minute}`;
+	mail.time = convertTime(timeContent);
 
 	mail.content = document
 		.querySelector('.mail_view_contents')
@@ -102,13 +93,33 @@ function crawlGoogleMail(mail) {
 		.querySelector('span.qu span.gD')
 		.getAttribute('email');
 
-	mail.time = document
+	const timeContent = document
 		.querySelectorAll('.ajv')[2]
 		.querySelectorAll('span')[1].textContent;
+
+	mail.time = convertTime(timeContent);
 
 	mail.content = document
 		.querySelector('.a3s.aiL div div')
 		.innerHTML.replace(/<\/?[^>]+(>|$)|\s+/g, '');
+}
+
+function convertTime(timeString) {
+	const isAfternoon = timeString.includes('오후');
+	const isMorning = timeString.includes('오전');
+
+	if (!isAfternoon && !isMorning) {
+		return timeString;
+	}
+
+	const timeParts = timeContent
+		.replace(/[^0-9]/g, ',')
+		.replace(/,+/g, ',')
+		.split(',')
+		.map(Number);
+
+	const [year, month, day, hour, minute] = timeParts;
+	return `${year}-${month}-${day} ${hour + (isAfternoon ? 12 : 0)}:${minute}`;
 }
 
 async function callChatGPT(api, question) {

@@ -67,14 +67,31 @@ const showContent = () => {
 
 const appendItem = (itemData) => {
 	const renderCheckCount = ({ done, todo }) => {
+		const checkCountFragment = document.createDocumentFragment();
+
 		if (done === 0) {
-			return `<li class="unfinish-task">${todo}</li>`;
+			const li = document.createElement('li');
+			li.className = 'unfinish-task';
+			li.textContent = todo;
+			checkCountFragment.appendChild(li);
 		} else if (todo === 0) {
-			return `<li class="finish-task">${done}</li>`;
+			const li = document.createElement('li');
+			li.className = 'finish-task';
+			li.textContent = done;
+			checkCountFragment.appendChild(li);
 		} else {
-			return `<li class="finish-task">${done}</li>
-                    <li class="unfinish-task">${todo}</li>`;
+			const finishLi = document.createElement('li');
+			finishLi.className = 'finish-task';
+			finishLi.textContent = done;
+			checkCountFragment.appendChild(finishLi);
+
+			const unfinishLi = document.createElement('li');
+			unfinishLi.className = 'unfinish-task';
+			unfinishLi.textContent = todo;
+			checkCountFragment.appendChild(unfinishLi);
 		}
+
+		return checkCountFragment;
 	};
 
 	const renderDate = (dateString) => {
@@ -87,30 +104,49 @@ const appendItem = (itemData) => {
 		return date(inputDate, 'MM.dd');
 	};
 
-	const itemElement = `
-        <li class="list-item" data-id="${itemData.id}">
-            <h2 class="item-title">${itemData.title}</h2>
-            <input
-                class="edit-title-input"
-                type="text"
-                name="title"
-                id="title" 
-            />
-            <div class="item-info">
-                <ul class="check-count">
-                    ${renderCheckCount(itemData.status)}
-                </ul>
-                <time class="send-time" datetime="${itemData.sendTime}">${renderDate(itemData.sendTime)}</time>
-                <button class="option-button"></button>
-            </div>
-        </li>
-    `;
+	const listItem = document.createElement('li');
+	listItem.className = 'list-item';
+	listItem.setAttribute('data-id', itemData.id);
 
-	listElement.insertAdjacentHTML('beforeend', itemElement);
-	listElement.lastElementChild.addEventListener('click', (event) => {
+	const titleElement = document.createElement('h2');
+	titleElement.className = 'item-title';
+	titleElement.textContent = itemData.title;
+
+	const editInput = document.createElement('input');
+	editInput.className = 'edit-title-input';
+	editInput.type = 'text';
+	editInput.name = 'title';
+	editInput.id = 'title';
+
+	const itemInfo = document.createElement('div');
+	itemInfo.className = 'item-info';
+
+	const checkCountList = document.createElement('ul');
+	checkCountList.className = 'check-count';
+	checkCountList.appendChild(renderCheckCount(itemData.status));
+
+	const timeElement = document.createElement('time');
+	timeElement.className = 'send-time';
+	timeElement.setAttribute('datetime', itemData.sendTime);
+	timeElement.textContent = renderDate(itemData.sendTime);
+
+	const optionButton = document.createElement('button');
+	optionButton.className = 'option-button';
+
+	itemInfo.appendChild(checkCountList);
+	itemInfo.appendChild(timeElement);
+	itemInfo.appendChild(optionButton);
+
+	listItem.appendChild(titleElement);
+	listItem.appendChild(editInput);
+	listItem.appendChild(itemInfo);
+
+	listItem.addEventListener('click', (event) => {
 		event.stopPropagation();
 		location.href = 'detail.html?id=' + itemData.id;
 	});
+
+	listElement.insertAdjacentElement('beforeend', listItem);
 };
 
 // 이벤트 처리

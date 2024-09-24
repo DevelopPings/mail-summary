@@ -9,5 +9,8 @@ loadDarkMode().then((initValue) => toggleNoContentLogo(initValue));
 darkModeButton.addEventListener('click', async () => {
 	const isDarkMode = document.body.classList.toggle(DARK_MODE_VALUE);
 	await editDarkMode(isDarkMode);
+	document.documentElement.style.backgroundColor = isDarkMode
+		? '#404040'
+		: '#fff';
 	toggleNoContentLogo(isDarkMode);
 });

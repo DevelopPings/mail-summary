@@ -12,6 +12,7 @@
 	font-size: 14px;
 	letter-spacing: -0.32px;
 	outline: none;
+	cursor: default;
 }
 
 html {
@@ -37,6 +38,7 @@ textarea {
 	font-size: 14px;
 	border-radius: 7px;
 	color: $gray01;
+	cursor: text;
 }
 
 textarea {

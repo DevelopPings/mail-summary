@@ -19,13 +19,17 @@ const loadingPage = 'public/loading.html';
 chrome.action.onClicked.addListener(() => {
 	chrome.sidePanel.setOptions({ path: mainPage });
 	chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+	console.log(123);
 });
+console.log(456);
 
 chrome.tabs.onActivated.addListener(async ({ tabId }) => {
 	const { path } = await chrome.sidePanel.getOptions({ tabId });
-	if (path === mainPage) {
-		chrome.sidePanel.setOptions({ path: mainPage });
+	console.log(path);
+	if (path == mainPage || path.startsWith(detailPage)) {
+		chrome.sidePanel.setOptions({ path: loadingPage });
 	}
+	// chrome.sidePanel.setOptions({ path: mainPage });
 });
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {

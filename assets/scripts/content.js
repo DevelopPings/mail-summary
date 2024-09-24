@@ -112,7 +112,7 @@ function convertTime(timeString) {
 		return timeString;
 	}
 
-	const timeParts = timeContent
+	const timeParts = timeString
 		.replace(/[^0-9]/g, ',')
 		.replace(/,+/g, ',')
 		.split(',')

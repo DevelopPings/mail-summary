@@ -2,21 +2,23 @@ chrome.runtime.onMessage.addListener(async (request) => {
 	if (request.message === '(1) handleData') {
 		try {
 			const crawlResult = await crawlContent();
-
 			const apiKey = await chrome.storage.local.get('API_KEY');
-
 			if (!apiKey) {
-				return console.error(
+				console.error(
 					'[API KEY 오류] API KEY가 등록되어 있지 않습니다.',
 				);
 			}
-
-			const chatGPTResponse = await callChatGPT(
+			const data = await callChatGPT(
 				apiKey['API_KEY'],
 				crawlResult.content,
 			);
 
-			present(crawlResult, chatGPTResponse);
+			if (data.error) {
+				error(data.error);
+				return;
+			}
+
+			present(crawlResult, data.choices[0].message.content);
 		} catch (error) {
 			console.error(error);
 		}
@@ -37,6 +39,18 @@ function present(result, response) {
 	chrome.runtime.sendMessage({
 		type: '(2) present',
 		data,
+	});
+}
+
+function error(error) {
+	if (error.code === 'invalid_api_key') {
+		error.code = 'ChatGPT API 키 오류';
+		error.message = '환경 설정에서 올바른 API 키를 입력해주세요';
+	}
+
+	chrome.runtime.sendMessage({
+		type: 'error',
+		error,
 	});
 }
 
@@ -146,12 +160,7 @@ async function callChatGPT(api, question) {
 			},
 		);
 
-		if (!response.ok) {
-			throw new Error('네트워크 응답이 좋지 않습니다');
-		}
-
-		const data = await response.json();
-		return data.choices[0].message.content;
+		return await response.json();
 	} catch (error) {
 		console.error(error.message);
 	}

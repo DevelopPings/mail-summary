@@ -10,6 +10,9 @@ const SUMMARY_RESULT_KEY = 'SUMMARY_RESULT';
 const todayDate = document.querySelector('.today-date');
 const noContent = document.querySelector('.no-content');
 
+const errorModal = document.querySelector('.warning-modal');
+const errorModalOk = errorModal.getElementsByClassName('delete')[0];
+
 noContent.style.display = 'flex';
 
 const currentTime = new Date();
@@ -18,6 +21,21 @@ const dateTime = date(currentTime, 'yyyy-mm-dd');
 
 todayDate.innerText = formattedDate;
 todayDate.setAttribute('datetime', dateTime);
+
+errorModalOk.addEventListener('click', (event) => {
+	event.stopPropagation();
+	location.href = 'main.html';
+});
+
+const showErrorModal = (title, message) => {
+	errorModal.getElementsByClassName('title')[0].innerText = title;
+	errorModal.getElementsByClassName('description')[0].innerText = message;
+
+	errorModal.style.display = 'flex';
+	setTimeout(() => {
+		errorModal.classList.add('active');
+	});
+};
 
 chrome.runtime.onMessage.addListener(async (response) => {
 	if (response.type === '(2) present') {
@@ -36,5 +54,10 @@ chrome.runtime.onMessage.addListener(async (response) => {
 		const summaryJson = parseTextToJSON(text, id);
 		await setItemInChromeStorage(SUMMARY_RESULT_KEY, summaryJson);
 		location.href = 'detail.html';
+	}
+
+	if (response.type === 'error') {
+		const { code, message } = response.error;
+		showErrorModal(code, message);
 	}
 });

@@ -7,6 +7,7 @@ const EDIT_MODE = 'edit-mode';
 const NO_TITLE = 'no-title';
 const NO_SUMMARY = 'no-summary';
 const NO_CHECK_LIST = 'no-check-list';
+const FIX_ID = 'SUMMARY_RESULT';
 
 const editModeTimer = {
 	id: 0,
@@ -105,7 +106,7 @@ function loadDetail() {
 	let summaryId = new URLSearchParams(location.search).get('id');
 
 	if (summaryId == undefined) {
-		summaryId = 'SUMMARY-RESULT';
+		summaryId = FIX_ID;
 	}
 
 	readDocument(summaryId).then((obj) => {

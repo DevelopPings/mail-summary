@@ -98,9 +98,7 @@ function crawlGoogleMail(mail) {
 	document.querySelectorAll('.ajz')[0].click();
 	document.querySelectorAll('.ajz')[0].click();
 
-	mail.title = document
-		.querySelectorAll('.ajv')[3]
-		.querySelectorAll('td')[1].innerText;
+	mail.title = document.querySelector('.ha h2').innerHTML;
 
 	mail.send = document
 		.querySelectorAll('.ajv')[0]

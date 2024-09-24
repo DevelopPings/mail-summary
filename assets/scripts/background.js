@@ -26,7 +26,7 @@ chrome.tabs.onActivated.addListener(async ({ tabId }) => {
 	console.log(path);
 
 	if (path == loadingPage) {
-		chrome.sidePanel.setOptions({ path: mainPage });
+		chrome.sidePanel.setOptions({ path: detailPage });
 	} else {
 		chrome.sidePanel.setOptions({ path: path });
 	}

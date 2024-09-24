@@ -82,6 +82,7 @@
 	.list {
 		display: none;
 		position: relative;
+		min-height: 100%;
 
 		&-item {
 			height: 75px;
@@ -176,6 +177,7 @@
 		right: 0;
 		bottom: 0;
 		z-index: 1;
+		height: 100%;
 	}
 
 	&.dark-mode {

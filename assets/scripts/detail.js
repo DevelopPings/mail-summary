@@ -50,7 +50,6 @@ option.onClickDelete(() => showDeleteModal());
 
 const currentSummary = {
 	id: null,
-	// content: {
 	title: null,
 	sendTime: null,
 	author: null,
@@ -60,7 +59,6 @@ const currentSummary = {
 		todo: 0,
 	},
 	todo: [],
-	// },
 };
 
 function Status() {
@@ -85,13 +83,6 @@ function Todo(element) {
 
 function Summary(json) {
 	currentSummary.id = json.id;
-	// currentSummary.content.title = json.title;
-	// currentSummary.content.sendTime = json.sendTime;
-	// currentSummary.content.author = json.author;
-	// currentSummary.content.createTime = json.createTime;
-	// currentSummary.content.status = json.status;
-	// currentSummary.content.summary = json.summary;
-	// currentSummary.content.todo = json.todo;
 	currentSummary.title = json.title;
 	currentSummary.sendTime = json.sendTime;
 	currentSummary.author = json.author;
@@ -103,12 +94,7 @@ function Summary(json) {
 	return currentSummary;
 }
 
-// function setSummaryId(value) {
-// 	currentSummary.id = value;
-// }
-
 function setSummary(key, value) {
-	// currentSummary.content[key] = value;
 	currentSummary[key] = value;
 }
 
@@ -122,7 +108,7 @@ function loadDetail() {
 	readDocument(summaryId).then((obj) => {
 		Summary(obj);
 		displayContents(obj);
-		console.log(currentSummary);
+		console.log('currentSummary', currentSummary);
 	});
 }
 
@@ -373,6 +359,7 @@ function autoResizeList(textareas) {
 }
 
 function autoResize() {
+	console.log(this);
 	if (this) {
 		this.style.height = '26px';
 		this.style.height = this.scrollHeight + 'px';
@@ -380,9 +367,43 @@ function autoResize() {
 }
 
 function toggleCheck() {
+	const checkListClasses = this.classList;
+
 	if (!detailBody.classList.contains(EDIT_MODE)) {
-		this.classList.toggle('checked');
+		checkListClasses.toggle('checked');
 	}
+}
+
+function saveToggleCheckStatus() {
+	const checkListClasses = this.classList;
+
+	if (!detailBody.classList.contains(EDIT_MODE)) {
+		const status = currentSummary.status;
+		const todo = currentSummary.todo;
+		const index = getElementIndex(this);
+		console.log(status);
+
+		if (!checkListClasses.contains('checked')) {
+			status.done++;
+			status.todo--;
+			todo[index].isDone = true;
+		} else {
+			status.done--;
+			status.todo++;
+			todo[index].isDone = false;
+		}
+		console.log(status);
+		setSummary('status', status);
+		setSummary('todo', todo);
+
+		saveCurrentSummary();
+
+		toggleCheck.call(this);
+	}
+}
+function getElementIndex(element) {
+	// 부모 요소의 자식 목록에서 해당 요소의 인덱스를 찾음
+	return Array.prototype.indexOf.call(element.parentNode.children, element);
 }
 
 function addCheckList(content) {
@@ -398,7 +419,7 @@ function addCheckList(content) {
 	contentArea.classList.add('check-list-content');
 	deleteButton.classList.add('delete-button');
 
-	li.addEventListener('click', toggleCheck);
+	li.addEventListener('click', saveToggleCheckStatus);
 	textarea.addEventListener('keyup', autoResize);
 	textarea.addEventListener('keydown', blockEnter);
 	textarea.addEventListener('blur', (event) => {
@@ -546,6 +567,10 @@ function saveSummary() {
 	setSummary('status', status);
 	setSummary('todo', arr);
 
+	saveCurrentSummary();
+}
+
+function saveCurrentSummary() {
 	editDocument(currentSummary.id, currentSummary);
 }
 

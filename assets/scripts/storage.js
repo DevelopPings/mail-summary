@@ -267,10 +267,14 @@ export async function loadDarkMode() {
 
 	if (isDarkMode === true) {
 		document.body.classList.add(DARK_MODE_VALUE);
+		document.documentElement.style.backgroundColor = '#404040';
+		document.body.style.visibility = 'visible';
 		return true;
 	}
 
 	document.body.classList.remove(DARK_MODE_VALUE);
+	document.documentElement.style.backgroundColor = '#fff';
+	document.body.style.visibility = 'visible';
 	return false;
 }
 

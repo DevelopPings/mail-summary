@@ -558,7 +558,11 @@ function saveSummary() {
 }
 
 function saveCurrentSummary() {
-	editDocument(currentSummary.id, currentSummary);
+	const bodyClasses = getBodyClasses();
+
+	if (!bodyClasses.contains(BEFORE_SAVE)) {
+		editDocument(currentSummary.id, currentSummary);
+	}
 }
 
 function controlSaveSummary() {

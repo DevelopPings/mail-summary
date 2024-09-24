@@ -104,9 +104,11 @@ function setSummary(key, value) {
 
 function loadDetail() {
 	let summaryId = new URLSearchParams(location.search).get('id');
+	const bodyClasses = getBodyClasses();
 
 	if (summaryId == undefined) {
 		summaryId = FIX_ID;
+		bodyClasses.add(BEFORE_SAVE);
 	}
 
 	readDocument(summaryId).then((obj) => {
@@ -392,12 +394,14 @@ function addCheckList(content) {
 	deleteButton.classList.add('delete-button');
 
 	li.addEventListener('click', saveToggleCheckStatus);
+
 	textarea.addEventListener('keyup', autoResize);
 	textarea.addEventListener('keydown', blockEnter);
 	textarea.addEventListener('blur', (event) => {
 		controlDeleteCheck(event);
 		controlFooterSaveButtonContent();
 	});
+
 	deleteButton.addEventListener('click', (event) => {
 		deleteCheckList(event);
 		controlFooterSaveButtonContent();
@@ -565,6 +569,7 @@ function controlSaveSummary() {
 		} else if (bodyClasses.contains(BEFORE_SAVE)) {
 			// 메일 요약내용 처음 저장
 			bodyClasses.remove(BEFORE_SAVE);
+			saveSummary();
 		}
 	} else if (getElementValue(this) == '삭제하기') {
 		// 모든 내용 삭제 시 삭제
@@ -658,19 +663,7 @@ function changeContent({ target, provider }) {
 		// target.value = getElementValue(provider);
 	}
 
-	console.log('바뀌기 전');
-	console.log('provider', getElementValue(provider));
-	console.log(provider);
-	console.log('target', getElementValue(target));
-	console.log(target);
-
 	setElementValue(target, getElementValue(provider));
-
-	console.log('바뀐 후');
-	console.log('provider', getElementValue(provider));
-	console.log(provider);
-	console.log('target', getElementValue(target));
-	console.log(target);
 }
 
 // 경고창 띄우기

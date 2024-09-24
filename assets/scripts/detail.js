@@ -102,7 +102,7 @@ function setSummary(key, value) {
 }
 
 function loadDetail() {
-	const summaryId = new URLSearchParams(location.search).get('id');
+	let summaryId = new URLSearchParams(location.search).get('id');
 
 	if (summaryId == undefined) {
 		summaryId = 'SUMMARY-RESULT';

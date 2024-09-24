@@ -203,6 +203,10 @@ const startEditMode = (hideOptionMenu) => {
 	editFooterSpace.className = 'edit-footer-space';
 	listElement.appendChild(editFooterSpace);
 
+	currentOption.inputElement.addEventListener('click', (event) => {
+		event.stopPropagation();
+	});
+
 	currentOption.inputElement.addEventListener('keydown', (event) => {
 		saveOnEnter(event);
 	});

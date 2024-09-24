@@ -211,6 +211,12 @@ window.addEventListener('load', () => {
 		textarea.addEventListener('keyup', autoResize),
 	);
 
+	window.addEventListener('resize', () => {
+		const { textareas } = getContents();
+
+		autoResizeList(textareas);
+	});
+
 	detailBody.addEventListener('click', controlDoubleClickToEditMode);
 
 	mailTitle.addEventListener('blur', controlFooterSaveButtonContent);
@@ -401,6 +407,9 @@ function addCheckList(content) {
 		controlDeleteCheck(event);
 		controlFooterSaveButtonContent();
 	});
+	textarea.addEventListener('resize', () => {
+		console.log('사이즈가 변경됩니다요');
+	});
 
 	deleteButton.addEventListener('click', (event) => {
 		deleteCheckList(event);
@@ -463,7 +472,7 @@ function setElementValue(element, value) {
 			if (typeof value == 'object') {
 				element.innerHTML = value.join('<br>');
 			} else {
-				element.innerHTML = value;
+				element.innerHTML = value.replace(/\n/g, '<br>');
 			}
 			break;
 		case 'H1':

@@ -9,7 +9,8 @@ export default function optionMenu() {
 	// 옵션 메뉴 클릭
 	const onClickOptionMenu = (callback) => {
 		optionButtons.forEach((el) =>
-			el.addEventListener('click', () => {
+			el.addEventListener('click', (event) => {
+				event.stopPropagation();
 				showOptionMenu(
 					el.getBoundingClientRect(),
 					el.parentElement.parentElement,

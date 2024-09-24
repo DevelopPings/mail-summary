@@ -1,4 +1,3 @@
-import { EXAMPLE_INPUT_TEXT } from './dummies.js';
 import storage, {
 	deleteDocument,
 	editApiKey,
@@ -32,7 +31,6 @@ const footerReset = editFooter.getElementsByClassName('reset')[0];
 
 const noContent = document.querySelector('.no-content');
 const listElement = document.querySelector('.list');
-const listItems = document.querySelectorAll('.list-item');
 
 let itemCount = 0;
 
@@ -67,37 +65,39 @@ const showContent = () => {
 	noContent.style.display = 'none';
 };
 
-const appendItem = (itemData) => {
-	const renderCheckCount = ({ done, todo }) => {
+const appendItem = ({ id, title, sendTime, status: { done, todo } }) => {
+	const renderCheckCount = () => {
 		const checkCountFragment = document.createDocumentFragment();
 
-		if (done === 0) {
-			const li = document.createElement('li');
-			li.className = 'unfinish-task';
-			li.textContent = todo;
-			checkCountFragment.appendChild(li);
-		} else if (todo === 0) {
-			const li = document.createElement('li');
-			li.className = 'finish-task';
-			li.textContent = done;
-			checkCountFragment.appendChild(li);
-		} else {
-			const finishLi = document.createElement('li');
-			finishLi.className = 'finish-task';
-			finishLi.textContent = done;
-			checkCountFragment.appendChild(finishLi);
+		if (done === 0 && todo === 0) {
+			return checkCountFragment;
+		}
 
-			const unfinishLi = document.createElement('li');
-			unfinishLi.className = 'unfinish-task';
-			unfinishLi.textContent = todo;
-			checkCountFragment.appendChild(unfinishLi);
+		const createListItem = (className, count) => {
+			const li = document.createElement('li');
+			li.className = className;
+			li.textContent = count;
+			return li;
+		};
+
+		if (done === 0) {
+			checkCountFragment.appendChild(
+				createListItem('unfinish-task', todo),
+			);
+		} else if (todo === 0) {
+			checkCountFragment.appendChild(createListItem('finish-task', done));
+		} else {
+			checkCountFragment.appendChild(createListItem('finish-task', done));
+			checkCountFragment.appendChild(
+				createListItem('unfinish-task', todo),
+			);
 		}
 
 		return checkCountFragment;
 	};
 
-	const renderDate = (dateString) => {
-		const inputDate = new Date(dateString);
+	const renderDate = () => {
+		const inputDate = new Date(sendTime);
 		const currentYear = new Date().getFullYear();
 
 		if (inputDate.getFullYear() < currentYear) {
@@ -108,30 +108,31 @@ const appendItem = (itemData) => {
 
 	const listItem = document.createElement('li');
 	listItem.className = 'list-item';
-	listItem.setAttribute('data-id', itemData.id);
+	listItem.setAttribute('data-id', id);
 
 	const titleElement = document.createElement('h2');
-	titleElement.className = 'item-title';
-	titleElement.textContent = itemData.title || NO_TITLE_TEXT;
+	titleElement.className =
+		done > 0 && todo === 0 ? 'item-title finished' : 'item-title';
+	titleElement.textContent = title || NO_TITLE_TEXT;
 
 	const editInput = document.createElement('input');
 	editInput.className = 'edit-title-input';
 	editInput.type = 'text';
 	editInput.name = 'title';
 	editInput.id = 'title';
-	editInput.value = itemData.title || '';
+	editInput.value = title || '';
 
 	const itemInfo = document.createElement('div');
 	itemInfo.className = 'item-info';
 
 	const checkCountList = document.createElement('ul');
 	checkCountList.className = 'check-count';
-	checkCountList.appendChild(renderCheckCount(itemData.status));
+	checkCountList.appendChild(renderCheckCount());
 
 	const timeElement = document.createElement('time');
 	timeElement.className = 'send-time';
-	timeElement.setAttribute('datetime', itemData.sendTime);
-	timeElement.textContent = renderDate(itemData.sendTime);
+	timeElement.setAttribute('datetime', sendTime);
+	timeElement.textContent = renderDate(sendTime);
 
 	const optionButton = document.createElement('button');
 	optionButton.className = 'option-button';
@@ -146,7 +147,7 @@ const appendItem = (itemData) => {
 
 	listItem.addEventListener('click', (event) => {
 		event.stopPropagation();
-		location.href = 'detail.html?id=' + itemData.id;
+		location.href = 'detail.html?id=' + id;
 	});
 
 	listElement.insertAdjacentElement('beforeend', listItem);

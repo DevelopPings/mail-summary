@@ -111,7 +111,7 @@ function loadDetail() {
 	readDocument(summaryId).then((obj) => {
 		Summary(obj);
 		displayContents(obj);
-		console.log('currentSummary', currentSummary);
+		controlDisplayContent();
 	});
 }
 
@@ -201,12 +201,6 @@ const hideWarningModal = () => {
 };
 
 window.addEventListener('load', () => {
-	const mainCheckLists = document.querySelectorAll('#check-list > ul > li');
-
-	// const checkListDeleteButtons = document.querySelectorAll(
-	// 	'#check-list .delete-button',
-	// );
-
 	const { textareas } = getContents();
 
 	autoResizeList(textareas);
@@ -219,30 +213,7 @@ window.addEventListener('load', () => {
 	mailTitle.addEventListener('blur', controlFooterSaveButtonContent);
 	mailSummary.addEventListener('blur', controlFooterSaveButtonContent);
 
-	// mainCheckLists.forEach((checkList, index) => {
-	// 	checkList.addEventListener('click', toggleCheck);
-
-	// 	if (index < mainCheckLists.length - 1) {
-	// 		checkList
-	// 			.querySelector('textarea')
-	// 			.addEventListener('keydown', blockEnter);
-	// 		checkList
-	// 			.querySelector('textarea')
-	// 			.addEventListener('blur', (event) => {
-	// 				controlDeleteCheck(event);
-	// 				controlFooterSaveButtonContent();
-	// 			});
-	// 	}
-	// });
-
 	checkListAddButton.addEventListener('click', addCheckList);
-
-	// checkListDeleteButtons.forEach((deleteButton) =>
-	// 	deleteButton.addEventListener('click', (event) => {
-	// 		deleteCheckList(event);
-	// 		controlFooterSaveButtonContent();
-	// 	}),
-	// );
 
 	// return & save & reset button event
 	returnButton.addEventListener('click', clickReturnButton);
@@ -260,12 +231,13 @@ window.addEventListener('load', () => {
 	});
 
 	modalCancelButton.addEventListener('click', (event) => {
+		// 요약 삭제 취소
 		event.stopPropagation();
 		hideWarningModal();
 	});
 
 	modalDeleteButton.addEventListener('click', (event) => {
-		// 요약 삭제 이벤트 추가
+		// 요약 삭제
 		event.stopPropagation();
 		hideWarningModal();
 		deleteDocument(currentSummary.id);
@@ -382,7 +354,6 @@ function saveToggleCheckStatus() {
 		const status = currentSummary.status;
 		const todo = currentSummary.todo;
 		const index = getElementIndex(this);
-		console.log(status);
 
 		if (!checkListClasses.contains('checked')) {
 			status.done++;
@@ -393,7 +364,6 @@ function saveToggleCheckStatus() {
 			status.todo++;
 			todo[index].isDone = false;
 		}
-		console.log(status);
 		setSummary('status', status);
 		setSummary('todo', todo);
 

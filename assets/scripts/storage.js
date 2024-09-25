@@ -128,7 +128,7 @@ export async function readDocument(key) {
 // 문서 목록 읽기
 export async function readDocumentList() {
 	try {
-		const result = {};
+		const result = [];
 
 		const items = await new Promise((resolve, reject) => {
 			chrome.storage.local.get(null, (documents) => {
@@ -145,8 +145,10 @@ export async function readDocumentList() {
 				continue;
 			}
 
-			result[key] = JSON.parse(items[key]);
+			result.push(JSON.parse(items[key]));
 		}
+
+		result.sort((a, b) => new Date(b.createTime) - new Date(a.createTime));
 
 		return result;
 	} catch (error) {

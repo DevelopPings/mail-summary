@@ -37,15 +37,14 @@ let itemCount = 0;
 storage
 	.readDocumentList()
 	.then((result) => {
-		itemCount = Object.keys(result).length;
+		itemCount = result.length;
+
 		if (itemCount === 0) {
 			showNoContent();
 		} else {
 			showContent();
 
-			for (const key in result) {
-				appendItem(result[key]);
-			}
+			result.forEach((item) => appendItem(item));
 
 			const option = optionMenu();
 			handleOptionMenu(option);
@@ -65,7 +64,7 @@ const showContent = () => {
 	noContent.style.display = 'none';
 };
 
-const appendItem = ({ id, title, sendTime, status: { done, todo } }) => {
+const appendItem = ({ id, title, createTime, status: { done, todo } }) => {
 	const renderCheckCount = () => {
 		const checkCountFragment = document.createDocumentFragment();
 
@@ -97,7 +96,7 @@ const appendItem = ({ id, title, sendTime, status: { done, todo } }) => {
 	};
 
 	const renderDate = () => {
-		const inputDate = new Date(sendTime);
+		const inputDate = new Date(createTime);
 		const currentYear = new Date().getFullYear();
 
 		if (inputDate.getFullYear() < currentYear) {
@@ -131,8 +130,8 @@ const appendItem = ({ id, title, sendTime, status: { done, todo } }) => {
 
 	const timeElement = document.createElement('time');
 	timeElement.className = 'send-time';
-	timeElement.setAttribute('datetime', sendTime);
-	timeElement.textContent = renderDate(sendTime);
+	timeElement.setAttribute('datetime', createTime);
+	timeElement.textContent = renderDate(createTime);
 
 	const optionButton = document.createElement('button');
 	optionButton.className = 'option-button';

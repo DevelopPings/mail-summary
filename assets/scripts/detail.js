@@ -138,7 +138,7 @@ function displayContents(content) {
 
 	// display todo
 	for (let i = 0; i < content.todo.length; i++) {
-		checkListAddButton.click();
+		createCheckList();
 		const previousCheckList =
 			checkListAddButton.parentNode.previousElementSibling;
 		const previousCheckListContent = previousCheckList.querySelector(
@@ -172,6 +172,11 @@ function getContents() {
 		'#check-list ul li.delete',
 	);
 	const textareas = document.querySelectorAll('textarea');
+	let lastList = null;
+
+	if (checkLists.length > 0) {
+		lastList = checkLists[checkLists.length - 1].parentElement;
+	}
 
 	return {
 		title: title,
@@ -181,6 +186,7 @@ function getContents() {
 		checkLists: checkLists,
 		deleteCheckLists: deleteCheckLists,
 		textareas: textareas,
+		lastList: lastList,
 	};
 }
 
@@ -222,7 +228,7 @@ window.addEventListener('load', () => {
 	mailTitle.addEventListener('blur', controlFooterSaveButtonContent);
 	mailSummary.addEventListener('blur', controlFooterSaveButtonContent);
 
-	checkListAddButton.addEventListener('click', addCheckList);
+	checkListAddButton.addEventListener('click', createNewCheckList);
 
 	// return & save & reset button event
 	returnButton.addEventListener('click', clickReturnButton);
@@ -284,13 +290,13 @@ function blockEnter(event) {
 	}
 }
 
-function controlDeleteCheck(event) {
-	const target = event.target;
-
+function controlDeleteCheck(target) {
 	if (getElementValue(target).length == 0) {
 		if (isTwinsDifferent(target.parentNode)) {
-			deleteCheckList.call(target);
+			// 내용이 다르므로 기존에 있던 체크리스트
+			deleteCheckList(target);
 		} else {
+			// 새롭게 생성된 체크리스트
 			target.parentNode.parentNode.remove();
 		}
 		controlFooterSaveButtonContent();
@@ -341,7 +347,6 @@ function autoResizeList(textareas) {
 }
 
 function autoResize() {
-	console.log(this);
 	if (this) {
 		this.style.height = '26px';
 		this.style.height = this.scrollHeight + 'px';
@@ -386,35 +391,37 @@ function getElementIndex(element) {
 	return Array.prototype.indexOf.call(element.parentNode.children, element);
 }
 
-function addCheckList(content) {
+// 체크리스트 추가
+function createCheckList() {
+	addCheckList();
+	addEventLastCheckList();
+}
+
+// 새 체크리스트 추가
+function createNewCheckList() {
+	createCheckList();
+	moveToScrollTop();
+	focusOnLastCheckList();
+}
+
+function focusOnLastCheckList() {
+	const { lastList } = getContents();
+	const textarea = lastList.querySelector('textarea');
+
+	textarea.focus();
+}
+
+function addCheckList() {
 	const li = document.createElement('li');
 	const checkboxButton = document.createElement('button');
 	const contentArea = document.createElement('div');
 	const textarea = document.createElement('textarea');
 	const p = document.createElement('p');
 	const deleteButton = document.createElement('button');
-	const main = document.querySelector('main');
 
 	checkboxButton.classList.add('checkbox');
 	contentArea.classList.add('check-list-content');
 	deleteButton.classList.add('delete-button');
-
-	li.addEventListener('click', saveToggleCheckStatus);
-
-	textarea.addEventListener('keyup', autoResize);
-	textarea.addEventListener('keydown', blockEnter);
-	textarea.addEventListener('blur', (event) => {
-		controlDeleteCheck(event);
-		controlFooterSaveButtonContent();
-	});
-	textarea.addEventListener('resize', () => {
-		console.log('사이즈가 변경됩니다요');
-	});
-
-	deleteButton.addEventListener('click', (event) => {
-		deleteCheckList(event);
-		controlFooterSaveButtonContent();
-	});
 
 	contentArea.append(textarea);
 	contentArea.append(p);
@@ -424,10 +431,73 @@ function addCheckList(content) {
 	li.append(deleteButton);
 
 	checkListAddButton.parentNode.insertAdjacentElement('beforebegin', li);
-
-	main.scrollTo(0, main.scrollHeight);
-	textarea.focus();
 }
+
+function addEventLastCheckList() {
+	const { lastList } = getContents();
+	const li = lastList;
+	const textarea = li.querySelector('textarea');
+	const deleteButton = li.querySelector('.delete-button');
+
+	li.addEventListener('click', saveToggleCheckStatus);
+
+	textarea.addEventListener('keyup', autoResize);
+	textarea.addEventListener('keydown', blockEnter);
+	textarea.addEventListener('blur', (event) => {
+		controlDeleteCheck(event.target);
+		controlFooterSaveButtonContent();
+	});
+
+	deleteButton.addEventListener('click', (event) => {
+		deleteCheckList(event.target);
+		controlFooterSaveButtonContent();
+	});
+}
+
+function moveToScrollTop() {
+	const main = document.querySelector('main');
+	main.scrollTo(0, main.scrollHeight);
+}
+
+// function addEventLastCheckList() {
+// 	const li = document.createElement('li');
+// 	const checkboxButton = document.createElement('button');
+// 	const contentArea = document.createElement('div');
+// 	const textarea = document.createElement('textarea');
+// 	const p = document.createElement('p');
+// 	const deleteButton = document.createElement('button');
+// 	const main = document.querySelector('main');
+
+// 	checkboxButton.classList.add('checkbox');
+// 	contentArea.classList.add('check-list-content');
+// 	deleteButton.classList.add('delete-button');
+
+// 	li.addEventListener('click', saveToggleCheckStatus);
+
+// 	textarea.addEventListener('keyup', autoResize);
+// 	textarea.addEventListener('keydown', blockEnter);
+// 	textarea.addEventListener('blur', (event) => {
+// 		controlDeleteCheck(event);
+// 		controlFooterSaveButtonContent();
+// 	});
+
+// 	deleteButton.addEventListener('click', (event) => {
+// 		deleteCheckList(event);
+// 		controlFooterSaveButtonContent();
+// 	});
+
+// 	contentArea.append(textarea);
+// 	contentArea.append(p);
+
+// 	li.append(checkboxButton);
+// 	li.append(contentArea);
+// 	li.append(deleteButton);
+
+// 	checkListAddButton.parentNode.insertAdjacentElement('beforebegin', li);
+
+// 	main.scrollTo(0, main.scrollHeight);
+// 	textarea.focus();
+// }
 
 function isContentEdited() {
 	const { title, summary, checkLists, deleteCheckLists } = getContents();
@@ -526,8 +596,8 @@ function addDeleteCheckList(element) {
 	}
 }
 
-function deleteCheckList(event) {
-	addDeleteCheckList(event.target);
+function deleteCheckList(target) {
+	addDeleteCheckList(target);
 }
 
 function saveSummary() {

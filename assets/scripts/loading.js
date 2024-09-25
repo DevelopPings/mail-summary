@@ -2,8 +2,10 @@ import { date } from './util.js';
 import {
 	createHashKey,
 	parseTextToJSON,
+	resetClickSummaryId,
 	setItemInChromeStorage,
 } from './storage.js';
+import { navigate } from './common.js';
 
 const SUMMARY_RESULT_KEY = 'SUMMARY_RESULT';
 
@@ -22,9 +24,13 @@ const dateTime = date(currentTime, 'yyyy-mm-dd');
 todayDate.innerText = formattedDate;
 todayDate.setAttribute('datetime', dateTime);
 
+document.addEventListener('DOMContentLoaded', () => {
+	chrome.runtime.sendMessage({ message: '(1) loading complete' });
+});
+
 errorModalOk.addEventListener('click', (event) => {
 	event.stopPropagation();
-	location.href = 'main.html';
+	navigate('public/main.html');
 });
 
 const showErrorModal = (title, message) => {
@@ -38,10 +44,10 @@ const showErrorModal = (title, message) => {
 };
 
 chrome.runtime.onMessage.addListener(async (response) => {
-	if (response.type === '(2) present') {
+	if (response.type === '(3) show result') {
 		if (!response.data) {
 			return console.error(
-				'[present 이벤트 오류] 메일 요약이 존재하지 않습니다.',
+				'[show result 이벤트 오류] 메일 요약이 존재하지 않습니다.',
 			);
 		}
 
@@ -53,7 +59,19 @@ chrome.runtime.onMessage.addListener(async (response) => {
 
 		const summaryJson = parseTextToJSON(text, id);
 		await setItemInChromeStorage(SUMMARY_RESULT_KEY, summaryJson);
-		location.href = 'detail.html';
+
+		chrome.tabs.query({ active: true }, (tabs) => {
+			const tabId = tabs[0]?.id;
+			if (!tabId) {
+				console.error('[tabs query 오류] 활성화 된 탭이 없습니다.');
+			}
+
+			chrome.sidePanel.setOptions({
+				tabId,
+				path: '../public/detail.html',
+				enabled: true,
+			});
+		});
 	}
 
 	if (response.type === 'error') {

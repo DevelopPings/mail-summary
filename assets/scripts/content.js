@@ -1,5 +1,5 @@
-chrome.runtime.onMessage.addListener(async (request) => {
-	if (request.message === '(1) handleData') {
+async function onHandleData(request) {
+	if (request.message === '(2) handle data') {
 		try {
 			const crawlResult = await crawlContent();
 			const apiKey = await chrome.storage.local.get('API_KEY');
@@ -12,20 +12,23 @@ chrome.runtime.onMessage.addListener(async (request) => {
 				apiKey['API_KEY'],
 				crawlResult.content,
 			);
-
 			if (data.error) {
-				error(data.error);
+				showError(data.error);
 				return;
 			}
-
-			present(crawlResult, data.choices[0].message.content);
+			showResult(crawlResult, data.choices[0].message.content);
+			showResult();
 		} catch (error) {
 			console.error(error);
 		}
 	}
-});
 
-function present(result, response) {
+	chrome.runtime.onMessage.removeListener(onHandleData);
+}
+
+chrome.runtime.onMessage.addListener(onHandleData);
+
+function showResult(result, response) {
 	const [summaryPart, todoPart] = response.split('[todo]');
 	const summary = summaryPart.replace('[summary]', '');
 	const todo = todoPart || '';
@@ -37,19 +40,19 @@ function present(result, response) {
 	};
 
 	chrome.runtime.sendMessage({
-		type: '(2) present',
+		type: '(3) show result',
 		data,
 	});
 }
 
-function error(error) {
+function showError(error) {
 	if (error.code === 'invalid_api_key') {
 		error.code = 'ChatGPT API 키 오류';
 		error.message = '환경 설정에서 올바른 API 키를 입력해주세요';
 	}
 
 	chrome.runtime.sendMessage({
-		type: 'error',
+		type: 'show error',
 		error,
 	});
 }

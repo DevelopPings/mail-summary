@@ -23,26 +23,38 @@ chrome.action.onClicked.addListener(() => {
 
 chrome.tabs.onActivated.addListener(async ({ tabId }) => {
 	const { path } = await chrome.sidePanel.getOptions({ tabId });
-	console.log(path);
 
-	if (path == loadingPage) {
-		chrome.sidePanel.setOptions({ path: detailPage });
-	} else {
-		chrome.sidePanel.setOptions({ path: path });
-	}
+	chrome.sidePanel.setOptions({
+		path,
+	});
 });
 
-chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+chrome.contextMenus.onClicked.addListener((info, tab) => {
 	if (info.menuItemId === 'Whale-Mail') {
 		try {
 			openSidePanel('public/loading.html');
 
-			await chrome.scripting.executeScript({
-				target: { tabId: tab.id },
-				files: ['assets/scripts/content.js'],
-			});
+			chrome.runtime.onMessage.addListener(
+				function onLoadingComplete(message) {
+					if (message.message === '(1) loading complete') {
+						chrome.runtime.onMessage.removeListener(
+							onLoadingComplete,
+						);
 
-			handleData(tab.id);
+						chrome.scripting
+							.executeScript({
+								target: { tabId: tab.id },
+								files: ['assets/scripts/content.js'],
+							})
+							.then(() => {
+								handleData(tab.id);
+							})
+							.catch((error) => {
+								console.error('[executeScript 오류] ' + error);
+							});
+					}
+				},
+			);
 		} catch (error) {
 			console.error('[contextMenu 이벤트 오류] ' + error);
 		}
@@ -51,14 +63,16 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 
 function handleData(tabId) {
 	chrome.tabs.sendMessage(tabId, {
-		message: '(1) handleData',
+		message: '(2) handle data',
 	});
 }
 
 function openSidePanel(path) {
 	chrome.tabs.query({ active: true }, (tabs) => {
 		const tabId = tabs[0]?.id;
-		if (!tabId) console.error('active tab does not exist');
+		if (!tabId) {
+			console.error('[tabs query 오류] 활성화 된 탭이 없습니다.');
+		}
 
 		chrome.sidePanel.setOptions({
 			tabId,

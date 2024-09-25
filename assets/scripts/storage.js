@@ -148,7 +148,7 @@ export async function readDocumentList() {
 			result.push(JSON.parse(items[key]));
 		}
 
-		result.sort((a, b) => new Date(a.createTime) - new Date(b.createTime));
+		result.sort((a, b) => new Date(b.createTime) - new Date(a.createTime));
 
 		return result;
 	} catch (error) {

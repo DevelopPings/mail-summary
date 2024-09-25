@@ -37,15 +37,14 @@ let itemCount = 0;
 storage
 	.readDocumentList()
 	.then((result) => {
-		itemCount = Object.keys(result).length;
+		itemCount = result.length;
+
 		if (itemCount === 0) {
 			showNoContent();
 		} else {
 			showContent();
 
-			for (const key in result) {
-				appendItem(result[key]);
-			}
+			result.forEach((item) => appendItem(item));
 
 			const option = optionMenu();
 			handleOptionMenu(option);

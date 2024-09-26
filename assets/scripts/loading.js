@@ -66,7 +66,7 @@ chrome.runtime.onMessage.addListener(async (response) => {
 		});
 	}
 
-	if (response.type === 'error') {
+	if (response.type === 'show error') {
 		const { code, message } = response.error;
 		showErrorModal(code, message);
 	}

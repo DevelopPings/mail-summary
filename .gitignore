@@ -29,7 +29,7 @@ replay_pid*
 node_modules/
 
 # Build directories
-dist/
+
 build/
 
 # Environment variables

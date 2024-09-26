@@ -61,7 +61,7 @@ chrome.runtime.onMessage.addListener(async (response) => {
 
 		chrome.tabs.query({ active: true }, () => {
 			chrome.sidePanel.setOptions({
-				path: '../public/detail.html',
+				path: 'public/detail.html',
 			});
 		});
 	}

@@ -17,6 +17,8 @@ const NO_SUMMARY = 'no-summary';
 const NO_CHECK_LIST = 'no-check-list';
 const FIX_ID = 'SUMMARY_RESULT';
 
+const filterId = ['API_KEY', 'CLICK_ID', 'DARK_MODE', 'SUMMARY_RESULT'];
+
 const editModeTimer = {
 	id: 0,
 	target: null,
@@ -110,18 +112,47 @@ function setSummary(key, value) {
 	currentSummary[key] = value;
 }
 
+async function isExistID(id) {
+	chrome.storage.local.get(null, (items) => {
+		console.log('isExistID start', id);
+		for (let key in items) {
+			console.log(key);
+			if (!filterId.includes(key) && id == key) {
+				console.log('isExistID', true);
+				return true;
+			}
+		}
+		console.log('isExistID', false);
+		return false;
+	});
+}
+
+async function checkNewSummary() {
+	const bodyClasses = getBodyClasses();
+	let summaryId = currentSummary.id;
+	const check = await isExistID(summaryId);
+
+	console.log('checkNewSummary()', summaryId);
+
+	if (!check) {
+		bodyClasses.add(BEFORE_SAVE);
+	}
+}
+
 async function loadDetail() {
 	let summaryId = await getClickSummaryId();
 
-	const bodyClasses = getBodyClasses();
+	console.log('loadDetail');
 
 	if (!summaryId) {
 		summaryId = FIX_ID;
-		bodyClasses.add(BEFORE_SAVE);
 	}
 
 	readDocument(summaryId).then((obj) => {
 		Summary(obj);
+		console.log('기다려');
+		checkNewSummary();
+		console.log('완료');
 		displayContents(obj);
 		controlDisplayContent();
 	});

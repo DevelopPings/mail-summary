@@ -21,6 +21,7 @@ export const DARK_MODE_VALUE = 'dark-mode';
 const MAIL_KEY_SUFFIX = 'wm-';
 const EOL = '\n';
 const API_KEY = 'API_KEY';
+const CLICK_ID_KEY = 'CLICK_ID';
 
 export function setItemInChromeStorage(key, value) {
 	return new Promise((resolve, reject) => {
@@ -311,6 +312,18 @@ export async function editApiKey(value) {
 
 // editApiKey('abcdefg12341234');
 
+export async function setClickSummaryId(id) {
+	await setItemInChromeStorage(CLICK_ID_KEY, id);
+}
+
+export async function resetClickSummaryId() {
+	await setItemInChromeStorage(CLICK_ID_KEY, null);
+}
+
+export async function getClickSummaryId() {
+	return await getItemInChromeStorage(CLICK_ID_KEY);
+}
+
 export default {
 	readDocument,
 	readDocumentList,
@@ -320,4 +333,7 @@ export default {
 	parseTextToJSON,
 	getItemCountInChromeStorage,
 	setItemInChromeStorage,
+	setClickSummaryId,
+	resetClickSummaryId,
+	getClickSummaryId,
 };

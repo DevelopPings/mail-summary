@@ -1,6 +1,14 @@
 import { date } from './util.js';
-import { readDocument, editDocument, deleteDocument } from './storage.js';
+import {
+	readDocument,
+	editDocument,
+	deleteDocument,
+	getClickSummaryId,
+	resetClickSummaryId,
+	setClickSummaryId,
+} from './storage.js';
 import optionMenu from './optionMenu.js';
+import { navigate } from './common.js';
 
 const BEFORE_SAVE = 'before-save';
 const EDIT_MODE = 'edit-mode';
@@ -102,11 +110,12 @@ function setSummary(key, value) {
 	currentSummary[key] = value;
 }
 
-function loadDetail() {
-	let summaryId = new URLSearchParams(location.search).get('id');
+async function loadDetail() {
+	let summaryId = await getClickSummaryId();
+
 	const bodyClasses = getBodyClasses();
 
-	if (summaryId == undefined) {
+	if (!summaryId) {
 		summaryId = FIX_ID;
 		bodyClasses.add(BEFORE_SAVE);
 	}
@@ -116,6 +125,10 @@ function loadDetail() {
 		displayContents(obj);
 		controlDisplayContent();
 	});
+
+	if (summaryId) {
+		await resetClickSummaryId();
+	}
 }
 
 function displayContents(content) {
@@ -209,7 +222,7 @@ const hideWarningModal = () => {
 	});
 };
 
-window.addEventListener('load', () => {
+window.addEventListener('load', async () => {
 	const { textareas } = getContents();
 
 	autoResizeList(textareas);
@@ -259,7 +272,7 @@ window.addEventListener('load', () => {
 		moveToMain();
 	});
 
-	loadDetail();
+	await loadDetail();
 });
 
 function clickReturnButton(event) {
@@ -653,7 +666,8 @@ function controlSaveSummary() {
 			// 메일 요약내용 처음 저장
 			bodyClasses.remove(BEFORE_SAVE);
 			saveSummary();
-			location.href = 'detail.html?id=' + currentSummary.id;
+			setClickSummaryId(currentSummary.id);
+			navigate('public/detail.html');
 		}
 	} else if (getElementValue(this) == '삭제하기') {
 		// 모든 내용 삭제 시 삭제
@@ -919,5 +933,5 @@ function controlFooterSaveButtonContent() {
 }
 
 function moveToMain() {
-	location.href = 'main.html';
+	navigate('public/main.html');
 }

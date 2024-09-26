@@ -2,7 +2,6 @@ import { date } from './util.js';
 import {
 	createHashKey,
 	parseTextToJSON,
-	resetClickSummaryId,
 	setItemInChromeStorage,
 } from './storage.js';
 import { navigate } from './common.js';
@@ -60,16 +59,9 @@ chrome.runtime.onMessage.addListener(async (response) => {
 		const summaryJson = parseTextToJSON(text, id);
 		await setItemInChromeStorage(SUMMARY_RESULT_KEY, summaryJson);
 
-		chrome.tabs.query({ active: true }, (tabs) => {
-			const tabId = tabs[0]?.id;
-			if (!tabId) {
-				console.error('[tabs query 오류] 활성화 된 탭이 없습니다.');
-			}
-
+		chrome.tabs.query({ active: true }, () => {
 			chrome.sidePanel.setOptions({
-				tabId,
 				path: '../public/detail.html',
-				enabled: true,
 			});
 		});
 	}

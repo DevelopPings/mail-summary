@@ -16,8 +16,10 @@ const mainPage = 'public/main.html';
 const detailPage = 'public/detail.html';
 const loadingPage = 'public/loading.html';
 
-chrome.action.onClicked.addListener(() => {
-	chrome.sidePanel.setOptions({ path: mainPage });
+chrome.action.onClicked.addListener(async () => {
+	// const { path } = await chrome.sidePanel.getOptions({ tabId });
+	// console.log('opened tab: ' + tabId + '\n' + 'path: ' + path + '\n');
+	// chrome.sidePanel.setOptions({ path: mainPage });
 	chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
 });
 
@@ -75,9 +77,7 @@ function openSidePanel(path) {
 		}
 
 		chrome.sidePanel.setOptions({
-			tabId,
 			path,
-			enabled: true,
 		});
 
 		chrome.sidePanel.open({ tabId });

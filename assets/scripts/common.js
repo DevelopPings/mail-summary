@@ -16,16 +16,9 @@ darkModeButton.addEventListener('click', async () => {
 });
 
 export function navigate(path) {
-	chrome.tabs.query({ active: true }, async (tabs) => {
-		const tabId = tabs[0]?.id;
-		if (!tabId) {
-			console.error('[tabs query 오류] 활성화 된 탭이 없습니다.');
-		}
-
+	chrome.tabs.query({ active: true }, () => {
 		chrome.sidePanel.setOptions({
-			tabId,
 			path,
-			enabled: true,
 		});
 	});
 }

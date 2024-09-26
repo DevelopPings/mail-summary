@@ -2,7 +2,6 @@ import { date } from './util.js';
 import {
 	createHashKey,
 	parseTextToJSON,
-	resetClickSummaryId,
 	setItemInChromeStorage,
 } from './storage.js';
 import { navigate } from './common.js';

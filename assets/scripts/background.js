@@ -13,8 +13,6 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 const mainPage = 'public/main.html';
-const detailPage = 'public/detail.html';
-const loadingPage = 'public/loading.html';
 
 chrome.action.onClicked.addListener(async () => {
 	// const { path } = await chrome.sidePanel.getOptions({ tabId });

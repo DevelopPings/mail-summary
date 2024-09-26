@@ -17,7 +17,6 @@ async function onHandleData(request) {
 				return;
 			}
 			showResult(crawlResult, data.choices[0].message.content);
-			showResult();
 		} catch (error) {
 			console.error(error);
 		}

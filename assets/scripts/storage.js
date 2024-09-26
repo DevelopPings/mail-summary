@@ -293,6 +293,7 @@ export async function loadApiKey() {
 
 	if (apiKey === undefined) {
 		await setItemInChromeStorage(API_KEY, null);
+		return null;
 	}
 
 	if (apiKey !== null) {

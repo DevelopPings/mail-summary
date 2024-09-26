@@ -12,12 +12,7 @@ chrome.runtime.onInstalled.addListener(() => {
 	});
 });
 
-const mainPage = 'public/main.html';
-
 chrome.action.onClicked.addListener(async () => {
-	// const { path } = await chrome.sidePanel.getOptions({ tabId });
-	// console.log('opened tab: ' + tabId + '\n' + 'path: ' + path + '\n');
-	// chrome.sidePanel.setOptions({ path: mainPage });
 	chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
 });
 

@@ -113,49 +113,42 @@ function setSummary(key, value) {
 }
 
 async function isExistID(id) {
-	chrome.storage.local.get(null, (items) => {
-		console.log('isExistID start', id);
-		for (let key in items) {
-			console.log(key);
-			if (!filterId.includes(key) && id == key) {
-				console.log('isExistID', true);
-				return true;
+	return new Promise((resolve) => {
+		chrome.storage.local.get(null, (items) => {
+			for (let key in items) {
+				if (!filterId.includes(key) && id == key) {
+					resolve(true);
+				}
 			}
-		}
-		console.log('isExistID', false);
-		return false;
+			resolve(false);
+		});
 	});
 }
 
 async function checkNewSummary() {
 	const bodyClasses = getBodyClasses();
 	let summaryId = currentSummary.id;
-	const check = await isExistID(summaryId);
-
-	console.log('checkNewSummary()', summaryId);
+	const check = await isExistID(summaryId); // await로 비동기 작업 대기
 
 	if (!check) {
-		bodyClasses.add(BEFORE_SAVE);
+		bodyClasses.add(BEFORE_SAVE); // 체크 후 추가
 	}
 }
 
 async function loadDetail() {
 	let summaryId = await getClickSummaryId();
 
-	console.log('loadDetail');
-
 	if (!summaryId) {
 		summaryId = FIX_ID;
 	}
+	const obj = await readDocument(summaryId);
 
-	readDocument(summaryId).then((obj) => {
-		Summary(obj);
-		console.log('기다려');
-		checkNewSummary();
-		console.log('완료');
-		displayContents(obj);
-		controlDisplayContent();
-	});
+	Summary(obj);
+
+	await checkNewSummary();
+
+	displayContents(obj);
+	controlDisplayContent();
 
 	if (summaryId) {
 		await resetClickSummaryId();

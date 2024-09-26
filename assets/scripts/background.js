@@ -13,6 +13,10 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 chrome.action.onClicked.addListener(async () => {
+	const { path } = await chrome.sidePanel.getOptions({ tabId });
+	chrome.sidePanel.setOptions({
+		path,
+	});
 	chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
 });
 

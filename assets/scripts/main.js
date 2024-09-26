@@ -5,9 +5,11 @@ import storage, {
 	getItemCountInChromeStorage,
 	loadApiKey,
 	readDocument,
+	setClickSummaryId,
 } from './storage.js';
 import { date } from './util.js';
 import optionMenu from './optionMenu.js';
+import { navigate } from './common.js';
 
 const NO_TITLE_TEXT = '제목 없음';
 
@@ -146,7 +148,9 @@ const appendItem = ({ id, title, createTime, status: { done, todo } }) => {
 
 	listItem.addEventListener('click', (event) => {
 		event.stopPropagation();
-		location.href = 'detail.html?id=' + id;
+
+		setClickSummaryId(id);
+		navigate('public/detail.html');
 	});
 
 	listElement.insertAdjacentElement('beforeend', listItem);

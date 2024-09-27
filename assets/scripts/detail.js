@@ -6,6 +6,7 @@ import {
 	getClickSummaryId,
 	resetClickSummaryId,
 	setClickSummaryId,
+	isExistDocument,
 } from './storage.js';
 import optionMenu from './optionMenu.js';
 import { navigate } from './common.js';
@@ -112,23 +113,10 @@ function setSummary(key, value) {
 	currentSummary[key] = value;
 }
 
-async function isExistID(id) {
-	return new Promise((resolve) => {
-		chrome.storage.local.get(null, (items) => {
-			for (let key in items) {
-				if (!filterId.includes(key) && id == key) {
-					resolve(true);
-				}
-			}
-			resolve(false);
-		});
-	});
-}
-
 async function checkNewSummary() {
 	const bodyClasses = getBodyClasses();
 	let summaryId = currentSummary.id;
-	const check = await isExistID(summaryId); // await로 비동기 작업 대기
+	const check = await isExistDocument(summaryId); // await로 비동기 작업 대기
 
 	if (!check) {
 		bodyClasses.add(BEFORE_SAVE); // 체크 후 추가
@@ -145,13 +133,13 @@ async function loadDetail() {
 
 	Summary(obj);
 
-	await checkNewSummary();
+	checkNewSummary();
 
 	displayContents(obj);
 	controlDisplayContent();
 
 	if (summaryId) {
-		await resetClickSummaryId();
+		resetClickSummaryId();
 	}
 }
 

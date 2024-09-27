@@ -126,6 +126,21 @@ export async function readDocument(key) {
 
 // readDocument('wm-5a06e78aac6f').then((doc) => console.log(doc));
 
+// 문서 존재하는지 확인
+export async function isExistDocument(key) {
+	try {
+		const data = await getItemInChromeStorage(key);
+
+		if (Object.keys(data).length > 0) {
+			return true;
+		}
+
+		return false;
+	} catch (error) {
+		console.error('[읽기 오류] ' + error);
+	}
+}
+
 // 문서 목록 읽기
 export async function readDocumentList() {
 	try {
@@ -336,4 +351,5 @@ export default {
 	setClickSummaryId,
 	resetClickSummaryId,
 	getClickSummaryId,
+	isExistDocument,
 };

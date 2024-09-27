@@ -466,7 +466,7 @@ header .toggle-mode {
   bottom: 0;
   width: 100%;
   align-items: center;
-  padding: 0 15px 14.56px;
+  padding: 18px 15px 14.56px;
   gap: 8px;
   z-index: 5;
 }
@@ -474,9 +474,22 @@ header .toggle-mode {
   display: flex;
   z-index: 3;
 }
+.edit-footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  background: linear-gradient(to top, rgba(var(--background-white), 1), rgba(var(--background-white), 0.6));
+}
+body.dark-mode .edit-footer::before {
+  background: linear-gradient(to top, rgba(var(--background-dark), 1), rgba(var(--background-dark), 0.6));
+}
 
 .edit-footer-space {
-  height: 60px;
+  height: 75px;
 }
 
 .save {

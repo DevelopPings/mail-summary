@@ -2,6 +2,12 @@ async function onHandleData(request) {
 	if (request.message === '(2) handle data') {
 		try {
 			const crawlResult = await crawlContent();
+			// crawlResult.content.length <= 10
+			if (isContentShort(crawlResult)) {
+				showError('few content');
+				return;
+			}
+
 			const apiKey = await chrome.storage.local.get('API_KEY');
 			if (!apiKey) {
 				console.error(
@@ -25,6 +31,13 @@ async function onHandleData(request) {
 	chrome.runtime.onMessage.removeListener(onHandleData);
 }
 
+function isContentShort(result) {
+	if (result.content.length <= 10) {
+		return true;
+	}
+	return false;
+}
+
 chrome.runtime.onMessage.addListener(onHandleData);
 
 function showResult(result, response) {
@@ -45,15 +58,27 @@ function showResult(result, response) {
 }
 
 function showError(error) {
-	if (error.code === 'invalid_api_key') {
+	if (error === 'few content') {
+		const result = {
+			code: '메일 내용 부족',
+			message: '메일 내용이 너무 짧아 요약이 불가능합니다',
+		};
+		// error.code = '메일 내용 부족';
+		// error.message = '메일 내용이 너무 짧아 요약이 불가능합니다';
+
+		chrome.runtime.sendMessage({
+			type: 'content error',
+			result,
+		});
+	} else if (error.code === 'invalid_api_key') {
 		error.code = 'ChatGPT API 키 오류';
 		error.message = '환경 설정에서 올바른 API 키를 입력해주세요';
-	}
 
-	chrome.runtime.sendMessage({
-		type: 'show error',
-		error,
-	});
+		chrome.runtime.sendMessage({
+			type: 'show error',
+			error,
+		});
+	}
 }
 
 function crawlContent() {

@@ -2,26 +2,24 @@ async function onHandleData(request) {
 	if (request.message === '(2) handle data') {
 		try {
 			const crawlResult = await crawlContent();
-			// crawlResult.content.length <= 10
-			if (isContentShort(crawlResult)) {
-				showError('few content');
+			let data = {
+				error: {},
+			};
+
+			if (isContentShort(crawlResult, data)) {
+				showError(data.error);
 				return;
 			}
 
 			const apiKey = await chrome.storage.local.get('API_KEY');
-			if (!apiKey) {
-				console.error(
-					'[API KEY 오류] API KEY가 등록되어 있지 않습니다.',
-				);
-			}
-			const data = await callChatGPT(
-				apiKey['API_KEY'],
-				crawlResult.content,
-			);
+
+			data = await callChatGPT(apiKey['API_KEY'], crawlResult.content);
+
 			if (data.error) {
 				showError(data.error);
 				return;
 			}
+
 			showResult(crawlResult, data.choices[0].message.content);
 		} catch (error) {
 			console.error(error);
@@ -31,8 +29,9 @@ async function onHandleData(request) {
 	chrome.runtime.onMessage.removeListener(onHandleData);
 }
 
-function isContentShort(result) {
+function isContentShort(result, data) {
 	if (result.content.length <= 10) {
+		data.error.code = 'few_content';
 		return true;
 	}
 	return false;
@@ -58,27 +57,18 @@ function showResult(result, response) {
 }
 
 function showError(error) {
-	if (error === 'few content') {
-		const result = {
-			code: '메일 내용 부족',
-			message: '메일 내용이 너무 짧아 요약이 불가능합니다',
-		};
-		// error.code = '메일 내용 부족';
-		// error.message = '메일 내용이 너무 짧아 요약이 불가능합니다';
-
-		chrome.runtime.sendMessage({
-			type: 'content error',
-			result,
-		});
+	if (error.code === 'few_content') {
+		error.code = '메일 내용 부족';
+		error.message = '메일 내용이 너무 짧아 요약이 불가능합니다';
 	} else if (error.code === 'invalid_api_key') {
 		error.code = 'ChatGPT API 키 오류';
 		error.message = '환경 설정에서 올바른 API 키를 입력해주세요';
-
-		chrome.runtime.sendMessage({
-			type: 'show error',
-			error,
-		});
 	}
+
+	chrome.runtime.sendMessage({
+		type: 'show error',
+		error,
+	});
 }
 
 function crawlContent() {

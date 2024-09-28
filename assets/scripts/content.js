@@ -5,7 +5,7 @@ async function onHandleData(request) {
 			let data = {
 				error: {},
 			};
-
+			console.log(crawlResult.time);
 			if (isContentShort(crawlResult, data)) {
 				showError(data.error);
 				return;
@@ -122,15 +122,92 @@ function crawlGoogleMail(mail) {
 		.querySelector('span.qu span.gD')
 		.getAttribute('email');
 
-	const timeContent = document
-		.querySelectorAll('.ajv')[2]
-		.querySelectorAll('span')[1].textContent;
+	const timeContent = gmailTime();
 
 	mail.time = convertTime(timeContent);
 
-	mail.content = document
-		.querySelector('.a3s.aiL div div')
-		.innerHTML.replace(/<\/?[^>]+(>|$)|\s+/g, '');
+	mail.content = contentType();
+	console.log(mail.content);
+}
+
+function gmailTime() {
+	document.querySelectorAll('.ajz')[0].click();
+	document.querySelectorAll('.ajz')[0].click();
+
+	// 처음 받을 때는 2번째인데
+	let checktime = document
+		.querySelectorAll('.ajv')[2]
+		.querySelectorAll('span')[1].textContent;
+
+	// 답장인 경우 3번째임
+	if (isNaN(checktime.charAt(0))) {
+		checktime = document
+			.querySelectorAll('.ajv')[3]
+			.querySelectorAll('span')[1].textContent;
+	}
+
+	return checktime;
+}
+
+function gmilText() {
+	// 구글 답변이 여러번 오고간 경우 > 마지막 메일은 무조건 display = ''
+	// 1개 == 마지막 메일(항상 열려있음)
+	// 2개만 열려있는 경우 마지막이 아닌 메일 1순위
+	// 3개 이상 열려있는 경우 마지막 메일 1순위 > 초반 메일은 이미 본 내용일거라고 가정 > 1개만 열려있는것과 같음
+	//document.querySelectorAll('.adn.ads')[0].querySelector('.a3s.aiL div div').innerHTML.replace(/<\/?[^>]+(>|$)|\s+/g, '')
+	let text = '';
+	const opennum = document.querySelectorAll('.adn.ads').length; // 열려있는 개수
+	let state = document.querySelectorAll('.adn.ads');
+
+	if (opennum == 2) {
+		for (let i = 0; i < opennum; i++) {
+			text = state[i]
+				.querySelector('.a3s.aiL')
+				.innerText.replace(/<\/?[^>]+(>|$)|\s+|&nbsp;/g, '');
+			if (text != '') return text;
+		}
+	}
+	return state[0]
+		.querySelector('.a3s.aiL')
+		.innerText.replace(/<\/?[^>]+(>|$)|\s+|&nbsp;/g, '');
+}
+
+// 네이버 메일은 한 페이지에 한개의 메일만 있음
+function contentType() {
+	let text = '';
+	let box = '';
+	let result = '';
+	// 1개 또는 3개 이상은 마지막 메일
+	text = gmilText();
+
+	// text 형태가 아닌 광고글
+	if (document.querySelector('center tbody tr' != null)) {
+		box = document
+			.querySelector('center tbody tr')
+			.innerHTML.replace(/<\/?[^>]+(>|$)|\s+/g, '');
+	}
+	if (text == '') {
+		// 피그마와 같이 사이트 사용한 경우
+		let list = document.querySelectorAll('.a3s.aiL div div');
+
+		list.forEach((item) => {
+			result =
+				result +
+				'\n' +
+				item.innerHTML.replace(/<\/?[^>]+(>|$)|\s+\s+|&nbsp;/g, '');
+			console.log(
+				item.innerHTML.replace(/<\/?[^>]+(>|$)|\s+\s+|&nbsp;/g, ''),
+			);
+		});
+	}
+
+	if (box == '') {
+		if (text.length < result.length) {
+			return result;
+		}
+		return text;
+	}
+	return box;
 }
 
 function convertTime(timeString) {
@@ -152,13 +229,6 @@ function convertTime(timeString) {
 }
 
 async function callChatGPT(api, question) {
-	// const prompt =
-	// 	'메일 내용을 최소 1개 ~ 최대 5줄로 요약하고 각 줄은 최소 10글자에서 최대 50글자로 요약해야 한다.' +
-	// 	'메일을 todo로 만들어주는데 최소 0개에서 최대 10개로 만들어주고 최소 10글자에서 최대 50글자 이내로 요약해야한다.' +
-	// 	'todo와 summary는 이름, 날짜, 시간, 전화번호, 숫자, 필수, 해주세요, 가능, 마감, 부탁, 안내, 일시, 장소, 주소, 진행, 방법, 확인이라는 글자가 있는 문구가 있는 내용은 중요한 내용으로 생각하고 필수로 넣어서 요약하거나 todo로 출력해야한다.' +
-	// 	'장소, 주소는 요약하지 말고 그대로 넣어서 요약해야한다. 요약은 [summary]로 머릿말을 시작하고, todo는 [todo]로 머릿말을 시작한다.' +
-	// 	'각 줄 앞에는 숫자로 표시해서 출력한다.';
-
 	const prompt =
 		'전달 받은 txt를 summary, todo로 재구성한다. \n' +
 		'아래는 재구성을 할 때 따라야하는 규칙이다. \n' +

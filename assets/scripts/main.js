@@ -238,6 +238,7 @@ const endEditMode = (hideOptionMenu) => {
 if (inputFocusArea) {
 	inputFocusArea.addEventListener('click', (event) => {
 		event.stopPropagation();
+		resetInput();
 		endEditMode();
 	});
 }

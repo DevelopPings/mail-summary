@@ -5,7 +5,7 @@ async function onHandleData(request) {
 			let data = {
 				error: {},
 			};
-			console.log(crawlResult.time);
+
 			if (isContentShort(crawlResult, data)) {
 				showError(data.error);
 				return;
@@ -127,7 +127,6 @@ function crawlGoogleMail(mail) {
 	mail.time = convertTime(timeContent);
 
 	mail.content = contentType();
-	console.log(mail.content);
 }
 
 function gmailTime() {
@@ -195,9 +194,9 @@ function contentType() {
 				result +
 				'\n' +
 				item.innerHTML.replace(/<\/?[^>]+(>|$)|\s+\s+|&nbsp;/g, '');
-			console.log(
-				item.innerHTML.replace(/<\/?[^>]+(>|$)|\s+\s+|&nbsp;/g, ''),
-			);
+			// console.log(
+			// 	item.innerHTML.replace(/<\/?[^>]+(>|$)|\s+\s+|&nbsp;/g, ''),
+			// );
 		});
 	}
 
@@ -223,9 +222,9 @@ function convertTime(timeString) {
 		.replace(/,+/g, ',')
 		.split(',')
 		.map(Number);
-
+	console.log('convertTime', timeParts);
 	const [year, month, day, hour, minute] = timeParts;
-	return `${year}-${month}-${day} ${hour + (isAfternoon ? 12 : 0)}:${minute}`;
+	return `${year}-${month}-${day} ${(hour % 12) + (isAfternoon ? 12 : 0)}:${minute}`;
 }
 
 async function callChatGPT(api, question) {

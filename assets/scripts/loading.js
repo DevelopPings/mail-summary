@@ -51,6 +51,7 @@ chrome.runtime.onMessage.addListener(async (response) => {
 		}
 
 		const { title, send, time, summary, todo } = response.data;
+
 		const formattedTime = date(new Date(time), 'yyyy-MM-dd HH:mm');
 
 		const id = await createHashKey();

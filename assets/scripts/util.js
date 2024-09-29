@@ -6,6 +6,7 @@ export const date = (data, pattern) => {
 		let now = new Date();
 		let timezone = now.getTimezoneOffset();
 		let abs = Math.abs(timezone);
+
 		temp = new Date(
 			data.replace(' ', 'T') +
 				(timezone < 0 ? '+' : '-') +

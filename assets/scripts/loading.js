@@ -18,7 +18,7 @@ noContent.style.display = 'flex';
 
 const currentTime = new Date();
 const formattedDate = date(currentTime, 'month _d, yyyy');
-const dateTime = date(currentTime, 'yyyy-mm-dd');
+const dateTime = date(currentTime, 'yyyy-MM-dd');
 
 todayDate.innerText = formattedDate;
 todayDate.setAttribute('datetime', dateTime);

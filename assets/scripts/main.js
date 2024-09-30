@@ -413,7 +413,7 @@ const updateHeader = async (count) => {
 
 	const currentTime = new Date();
 	const formattedDate = date(currentTime, 'month _d, yyyy');
-	const dateTime = date(currentTime, 'yyyy-mm-dd');
+	const dateTime = date(currentTime, 'yyyy-MM-dd');
 
 	taskCount.innerText = count;
 	todayDate.innerText = formattedDate;

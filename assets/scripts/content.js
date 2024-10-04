@@ -122,30 +122,11 @@ function crawlGoogleMail(mail) {
 		.querySelector('span.qu span.gD')
 		.getAttribute('email');
 
-	const timeContent = gmailTime();
+	const timeContent = document.querySelector('.g3').textContent;
 
 	mail.time = convertTime(timeContent);
 
 	mail.content = contentType();
-}
-
-function gmailTime() {
-	document.querySelectorAll('.ajz')[0].click();
-	document.querySelectorAll('.ajz')[0].click();
-
-	// 처음 받을 때는 2번째인데
-	let checktime = document
-		.querySelectorAll('.ajv')[2]
-		.querySelectorAll('span')[1].textContent;
-
-	// 답장인 경우 3번째임
-	if (isNaN(checktime.charAt(0))) {
-		checktime = document
-			.querySelectorAll('.ajv')[3]
-			.querySelectorAll('span')[1].textContent;
-	}
-
-	return checktime;
 }
 
 function gmilText() {
@@ -222,7 +203,7 @@ function convertTime(timeString) {
 		.replace(/,+/g, ',')
 		.split(',')
 		.map(Number);
-	console.log('convertTime', timeParts);
+
 	const [year, month, day, hour, minute] = timeParts;
 	return `${year}-${month}-${day} ${(hour % 12) + (isAfternoon ? 12 : 0)}:${minute}`;
 }

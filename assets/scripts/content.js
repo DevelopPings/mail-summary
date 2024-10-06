@@ -222,7 +222,7 @@ function convertTime(timeString) {
 		.replace(/,+/g, ',')
 		.split(',')
 		.map(Number);
-	console.log('convertTime', timeParts);
+
 	const [year, month, day, hour, minute] = timeParts;
 	return `${year}-${month}-${day} ${(hour % 12) + (isAfternoon ? 12 : 0)}:${minute}`;
 }

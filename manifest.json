@@ -8,7 +8,6 @@
 		"contextMenus",
 		"scripting",
 		"activeTab",
-		"nativeMessaging",
 		"tabs",
 		"storage",
 		"sidePanel"

@@ -6,7 +6,7 @@ const ALLOWED_DOMAINS = [
 chrome.runtime.onInstalled.addListener(() => {
 	chrome.contextMenus.create({
 		id: 'Whale-Mail',
-		title: '웨-일이 쉽지? (Whale Mail)',
+		title: '웨-일이 쉽지? (Whale Mail) : 메일 요약하기',
 		contexts: ['all'],
 		documentUrlPatterns: ALLOWED_DOMAINS,
 	});

@@ -138,6 +138,10 @@ function gmailTime() {
 		.querySelectorAll('.ajv')[2]
 		.querySelectorAll('span')[1].textContent;
 
+	if (monthCheck(checktime)) {
+		return checktime;
+	}
+
 	// 답장인 경우 3번째임
 	if (isNaN(checktime.charAt(0))) {
 		checktime = document
@@ -146,6 +150,33 @@ function gmailTime() {
 	}
 
 	return checktime;
+}
+
+function monthCheck(time) {
+	// 3글자 추출
+	const check = time.toLowerCase().substring(0, 3);
+
+	// 1월부터 12월까지
+	const months = [
+		'jan',
+		'feb',
+		'mar',
+		'apr',
+		'may',
+		'jun',
+		'jul',
+		'aug',
+		'sep',
+		'oct',
+		'nov',
+		'dec',
+	];
+
+	// 날짜가 맞는지 확인
+	if (months.includes(check)) {
+		return true;
+	}
+	return false;
 }
 
 function gmilText() {
@@ -222,7 +253,9 @@ function convertTime(timeString) {
 		.replace(/,+/g, ',')
 		.split(',')
 		.map(Number);
+
 	console.log('convertTime', timeParts);
+
 	const [year, month, day, hour, minute] = timeParts;
 	return `${year}-${month}-${day} ${(hour % 12) + (isAfternoon ? 12 : 0)}:${minute}`;
 }
